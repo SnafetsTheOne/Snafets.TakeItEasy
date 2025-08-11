@@ -1,19 +1,13 @@
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
-using Xunit;
 using Snafets.TakeItEasy.Domain;
+using Microsoft.Extensions.DependencyInjection;
+using Snafets.TakeItEasy.Application;
 
 namespace Snafets.TakeItEasy.IntegrationTests
 {
-    public class GameApiIntegrationTests : IClassFixture<CustomWebApplicationFactory>
+    public class GameApiIntegrationTests(CustomWebApplicationFactory factory) : IClassFixture<CustomWebApplicationFactory>
     {
-        private readonly HttpClient _client;
-
-        public GameApiIntegrationTests(CustomWebApplicationFactory factory)
-        {
-            _client = factory.CreateClient();
-        }
+        private readonly HttpClient _client = factory.CreateClient();
 
         [Fact]
         public async Task CreateGame_ThenGetGame_ReturnsCreatedGame()
@@ -103,6 +97,55 @@ namespace Snafets.TakeItEasy.IntegrationTests
                 Assert.NotNull(placedTiles);
                 Assert.True(placedTiles.Count == 2, $"Player {player.Name} should have 2 placed tiles, got {placedTiles.Count}");
             }
+        }
+        
+        [Fact]
+        public async Task PlayAllMovesWithSeededDrawBag_CheckScore()
+        {
+            // Set DrawBag RNG to a known seed
+            DrawBag.Rng = new Random(420);
+
+            // Get required services
+            var scopeFactory = factory.Services.GetRequiredService<IServiceScopeFactory>();
+            using var scope = scopeFactory.CreateScope();
+            var repo = scope.ServiceProvider.GetRequiredService<IGameRepository>();
+
+            // Create game instance for one player
+            var player = new Player { Id = Guid.NewGuid(), Name = "TestPlayer" };
+            var game = new TakeItEasyGame(new List<Player> { player });
+            await repo.SaveGameAsync(game);
+
+            // Play all 19 moves via the client
+            for (int i = 0; i < 19; i++)
+            {
+                // Get latest game state
+                var stateResponse = await _client.GetAsync($"/api/game/{game.Id}");
+                stateResponse.EnsureSuccessStatusCode();
+                var state = await stateResponse.Content.ReadFromJsonAsync<TakeItEasyGameDetail>();
+                var topTile = state.CallerBag?.Tiles?[0];
+                Assert.NotNull(topTile);
+                var playerBoard = state.PlayerBoards?.Find(pb => pb.Player?.Id == player.Id);
+                Assert.NotNull(playerBoard);
+                var firstEmptySpace = playerBoard.Spaces?.FirstOrDefault(s => s.PlacedTile == null);
+                Assert.NotNull(firstEmptySpace);
+                var moveResponse = await _client.PostAsync($"/api/game/move?gameId={game.Id}&playerId={player.Id}&index={firstEmptySpace.Index}&tileId={topTile.Id}", null);
+                moveResponse.EnsureSuccessStatusCode();
+            }
+
+            // Get final game state and check score
+            var finalResponse = await _client.GetAsync($"/api/game/{game.Id}");
+            finalResponse.EnsureSuccessStatusCode();
+            var finalState = await finalResponse.Content.ReadFromJsonAsync<TakeItEasyGameDetail>();
+            var finalPlayerBoard = finalState.PlayerBoards?.Find(pb => pb.Player?.Id == player.Id);
+            Assert.NotNull(finalPlayerBoard);
+
+            // Calculate expected score (deterministic for seed 42)
+            // For now, just assert the board is full and score is > 0
+            var placedTiles = finalPlayerBoard.Spaces?.Where(s => s.PlacedTile != null).ToList();
+            Assert.NotNull(placedTiles);
+            Assert.Equal(19, placedTiles.Count);
+            // If you know the expected score for seed 42, set it here:
+            Assert.Equal(24, finalPlayerBoard.Score);
         }
     }
 }

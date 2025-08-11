@@ -1,8 +1,5 @@
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Snafets.TakeItEasy.Api;
 
 namespace Snafets.TakeItEasy.IntegrationTests
 {

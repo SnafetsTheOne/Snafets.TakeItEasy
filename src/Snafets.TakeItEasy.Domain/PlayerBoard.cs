@@ -5,6 +5,8 @@ namespace Snafets.TakeItEasy.Domain
         public List<BoardSpace> Spaces { get; set; }
         public Player Player { get; set; }
 
+        public int Score => CalculateScore();
+
         public PlayerBoard(Player player)
         {
             Player = player;

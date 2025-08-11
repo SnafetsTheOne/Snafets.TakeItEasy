@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Snafets.TakeItEasy.IntegrationTests
 {
     public class TakeItEasyGameDetail
@@ -14,6 +11,7 @@ namespace Snafets.TakeItEasy.IntegrationTests
     {
         public List<BoardSpaceDetail>? Spaces { get; set; }
         public PlayerDetail? Player { get; set; }
+        public int Score { get; set; }
     }
 
     public class BoardSpaceDetail

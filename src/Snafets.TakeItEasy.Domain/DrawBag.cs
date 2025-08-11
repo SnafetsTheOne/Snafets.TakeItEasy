@@ -2,7 +2,9 @@ namespace Snafets.TakeItEasy.Domain
 {
     public class DrawBag
     {
-    public Queue<Tile> Tiles { get; set; }
+        public Queue<Tile> Tiles { get; set; }
+
+        public static Random Rng { get; set; }
 
         public DrawBag()
         {
@@ -20,12 +22,11 @@ namespace Snafets.TakeItEasy.Domain
             }
 
             // Shuffle the tiles
-            var rng = new Random();
             int n = tileList.Count;
             while (n > 1)
             {
                 n--;
-                int k = rng.Next(n + 1);
+                int k = Rng.Next(n + 1);
                 var value = tileList[k];
                 tileList[k] = tileList[n];
                 tileList[n] = value;
