@@ -24,6 +24,19 @@ namespace Snafets.TakeItEasy.Application
             return game;
         }
 
+        public async Task<List<TakeItEasyGame>> GetAllGamesAsync()
+        {
+            // Assuming repository has a method to get all games
+            var games = await _repository.GetAllGamesAsync();
+            return games.ToList();
+        }
+
+        public async Task<List<TakeItEasyGame>> LoadGameForPlayerAsync(Guid playerId)
+        {
+            var allGames = await _repository.GetAllGamesAsync();
+            return allGames.Where(g => g.PlayerBoards != null && g.PlayerBoards.Any(pb => pb.Player != null && pb.Player.Id == playerId)).ToList();
+        }
+
         /// <summary>
         /// Gets a game by its unique ID.
         /// </summary>

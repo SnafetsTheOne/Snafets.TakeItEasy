@@ -1,18 +1,40 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Build .NET Core Project",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build"
-            ],
-            "problemMatcher": "$msCompile",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        }
-    ]
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build .NET Core Project",
+			"command": "dotnet",
+			"type": "process",
+			"args": [
+				"build"
+			],
+			"problemMatcher": "$msCompile",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "Run API",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"run",
+				"--project",
+				"src/Snafets.TakeItEasy.Api"
+			],
+			"group": "build",
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"dependsOn": [],
+			"presentation": {
+				"reveal": "always"
+			},
+			"postBuildTask": {
+				"type": "shell",
+				"command": "start https://localhost:5124/swagger"
+			}
+		}
+	]
 }

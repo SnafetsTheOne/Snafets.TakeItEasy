@@ -10,5 +10,7 @@ namespace Snafets.TakeItEasy.Application
         Task<TakeItEasyGame> CreateGameAsync(List<Player> players);
         Task<TakeItEasyGame?> GetGameAsync(Guid id);
         Task<bool> AddPlayerMoveAsync(Guid gameId, Guid playerId, int index, int tileId);
+        Task<List<TakeItEasyGame>> GetAllGamesAsync();
+        Task<List<TakeItEasyGame>> LoadGameForPlayerAsync(Guid playerId);
     }
 }

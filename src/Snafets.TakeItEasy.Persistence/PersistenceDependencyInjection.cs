@@ -8,7 +8,7 @@ namespace Snafets.TakeItEasy.Persistence
         public static IServiceCollection AddPersistenceDependencies(this IServiceCollection services)
         {
             // Register persistence layer services here
-            services.AddScoped<IGameRepository, InMemoryGameRepository>();
+            services.AddSingleton<IGameRepository, InMemoryGameRepository>();
             return services;
         }
     }
