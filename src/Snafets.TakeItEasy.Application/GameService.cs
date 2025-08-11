@@ -9,15 +9,20 @@ namespace TakeItEasy.Application
     /// </summary>
     public class GameService
     {
-        private readonly Dictionary<Guid, TakeItEasyGame> _games = new();
+        private readonly IGameRepository _repository;
+
+        public GameService(IGameRepository repository)
+        {
+            _repository = repository;
+        }
 
         /// <summary>
-        /// Creates a new game for the given players and adds it to the service.
+        /// Creates a new game for the given players and adds it to the repository.
         /// </summary>
         public TakeItEasyGame CreateGame(List<Player> players)
         {
             var game = new TakeItEasyGame(players);
-            _games[game.Id] = game;
+            _repository.SaveGame(game);
             return game;
         }
 
@@ -26,8 +31,7 @@ namespace TakeItEasy.Application
         /// </summary>
         public TakeItEasyGame? GetGame(Guid id)
         {
-            _games.TryGetValue(id, out var game);
-            return game;
+            return _repository.LoadGame(id);
         }
     }
 }
