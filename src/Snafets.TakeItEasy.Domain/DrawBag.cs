@@ -48,7 +48,7 @@ namespace Snafets.TakeItEasy.Domain
         /// </summary>
         public Tile? PeekTopTile()
         {
-            if (Tiles != null && Tiles.Count > 0)
+            if (Tiles.Count > 0)
                 return Tiles.Peek();
             return null;
         }

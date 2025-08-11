@@ -34,7 +34,7 @@ namespace Snafets.TakeItEasy.Application
         public async Task<List<TakeItEasyGame>> LoadGameForPlayerAsync(Guid playerId)
         {
             var allGames = await _repository.GetAllGamesAsync();
-            return allGames.Where(g => g.PlayerBoards != null && g.PlayerBoards.Any(pb => pb.Player != null && pb.Player.Id == playerId)).ToList();
+            return allGames.Where(g => g.PlayerBoards.Any(pb => pb.Player.Id == playerId)).ToList();
         }
 
         /// <summary>
@@ -56,15 +56,15 @@ namespace Snafets.TakeItEasy.Application
         public async Task<bool> AddPlayerMoveAsync(Guid gameId, Guid playerId, int index, int tileId)
         {
             var game = await _repository.LoadGameAsync(gameId);
-            if (game == null)
+            if (game is null)
                 return false;
 
-            var playerBoard = game.PlayerBoards?.Find(pb => pb.Player != null && pb.Player.Id == playerId);
-            if (playerBoard == null)
+            var playerBoard = game.PlayerBoards.Find(pb => pb.Player.Id == playerId);
+            if (playerBoard is null)
                 return false;
 
-            var topTile = game.CallerBag?.PeekTopTile();
-            if (topTile == null || topTile.Id != tileId)
+            var topTile = game.CallerBag.PeekTopTile();
+            if (topTile is null || topTile.Id != tileId)
                 return false;
 
             return playerBoard.TryAddTileAtIndex(topTile, index);

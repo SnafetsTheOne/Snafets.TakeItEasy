@@ -20,7 +20,7 @@ namespace Snafets.TakeItEasy.Domain
         {
             // Assuming there is a collection of tiles, e.g., Tiles or BoardSpaces
             // Replace 'Tiles' with the actual collection name if different
-            return Spaces != null && Spaces.Any(space => space.PlacedTile == tile);
+            return Spaces.Any(space => space.PlacedTile == tile);
         }
 
         public static class TakeItEasyLines
@@ -71,17 +71,17 @@ namespace Snafets.TakeItEasy.Domain
                 foreach (var idx in line)
                 {
                     var tile = Spaces[idx].PlacedTile;
-                    if (tile == null)
+                    if (tile is null)
                     {
                         valid = false;
                         break;
                     }
                     int v = selector(tile);
-                    if (value == null) value = v;
+                    if (value is null) value = v;
                     else if (value != v) { valid = false; break; }
                     sum += v;
                 }
-                if (valid && value != null) total += sum;
+                if (valid && value is not null) total += sum;
             }
             return total;
         }
@@ -95,10 +95,10 @@ namespace Snafets.TakeItEasy.Domain
         /// <returns>True if the tile was added; otherwise, false.</returns>
         public bool TryAddTileAtIndex(Tile tile, int index)
         {
-            if (Spaces == null || index < 0 || index >= Spaces.Count)
+            if (index < 0 || index >= Spaces.Count)
                 return false;
             var space = Spaces[index];
-            if (space.PlacedTile != null)
+            if (space.PlacedTile is not null)
                 return false;
             if (ContainsTile(tile))
                 return false;

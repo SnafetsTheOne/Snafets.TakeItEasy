@@ -30,10 +30,6 @@
 			"dependsOn": [],
 			"presentation": {
 				"reveal": "always"
-			},
-			"postBuildTask": {
-				"type": "shell",
-				"command": "start https://localhost:5124/swagger"
 			}
 		}
 	]
