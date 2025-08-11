@@ -7,6 +7,46 @@ namespace TakeItEasy.Domain
     /// </summary>
     public class PlayerBoard
     {
+        /// <summary>
+        /// Calculates the score for the player board.
+        /// For each line type (Vertical, LeftDiagonal, RightDiagonal),
+        /// if all tiles are placed and all values are the same, sum and add to total score.
+        /// </summary>
+        public int CalculateScore()
+        {
+            int score = 0;
+            score += CalculateLineTypeScore(TakeItEasyLines.Vertical, t => t.Vertical);
+            score += CalculateLineTypeScore(TakeItEasyLines.LeftDiagonal, t => t.LeftDiagonal);
+            score += CalculateLineTypeScore(TakeItEasyLines.RightDiagonal, t => t.RightDiagonal);
+            return score;
+        }
+
+        private int CalculateLineTypeScore(int[][] lines, System.Func<Tile, int> selector)
+        {
+            int total = 0;
+            foreach (var line in lines)
+            {
+                int? value = null;
+                int sum = 0;
+                bool valid = true;
+                foreach (var idx in line)
+                {
+                    var tile = Spaces[idx].PlacedTile;
+                    if (tile == null)
+                    {
+                        valid = false;
+                        break;
+                    }
+                    int v = selector(tile);
+                    if (value == null) value = v;
+                    else if (value != v) { valid = false; break; }
+                    sum += v;
+                }
+                if (valid && value != null) total += sum;
+            }
+            return total;
+        }
+    
         public List<BoardSpace> Spaces { get; set; } = new List<BoardSpace>(19);
 
         // Indices laid out row-major:
