@@ -8,7 +8,6 @@ namespace Snafets.TakeItEasy.Domain
         public Guid Id { get; set; }
         public List<PlayerBoard> PlayerBoards { get; set; }
         public DrawBag CallerBag { get; set; }
-        public List<Tile> TileSet { get; set; }
 
         /// <summary>
         /// Creates a new TakeItEasyGame for the given players.
@@ -22,7 +21,6 @@ namespace Snafets.TakeItEasy.Domain
                 PlayerBoards.Add(new PlayerBoard(player));
             }
             CallerBag = new DrawBag();
-            TileSet = new List<Tile>();
         }
 
         /// <summary>

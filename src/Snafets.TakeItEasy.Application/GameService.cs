@@ -5,7 +5,7 @@ namespace Snafets.TakeItEasy.Application
     /// <summary>
     /// Application service for managing Take It Easy games.
     /// </summary>
-    public class GameService
+    public class GameService : IGameService
     {
         private readonly IGameRepository _repository;
 
@@ -50,15 +50,11 @@ namespace Snafets.TakeItEasy.Application
             if (playerBoard == null)
                 return false;
 
-            var tile = game.TileSet?.Find(t => t.Id == tileId);
-            if (tile == null)
-                return false;
-
             var topTile = game.CallerBag?.PeekTopTile();
             if (topTile == null || topTile.Id != tileId)
                 return false;
 
-            return playerBoard.TryAddTileAtIndex(tile, index);
+            return playerBoard.TryAddTileAtIndex(topTile, index);
         }
     }
 }
