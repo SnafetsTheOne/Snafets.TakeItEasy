@@ -37,7 +37,7 @@ namespace Snafets.TakeItEasy.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("all")]
+        [HttpGet]
         public async Task<ActionResult<List<TakeItEasyGame>>> GetAllGames()
         {
             var games = await _gameService.GetAllGamesAsync();

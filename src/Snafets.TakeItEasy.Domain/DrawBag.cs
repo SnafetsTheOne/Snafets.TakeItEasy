@@ -4,7 +4,7 @@ namespace Snafets.TakeItEasy.Domain
     {
         public Queue<Tile> Tiles { get; set; }
 
-        public static Random Rng { get; set; }
+        public static Random Rng { get; set; } = new Random();
 
         public DrawBag()
         {

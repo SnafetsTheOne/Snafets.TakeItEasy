@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Build .NET Core Project",
+      "label": "Build API",
       "command": "dotnet",
       "type": "process",
       "args": ["build"],
@@ -25,7 +25,7 @@
       }
     },
     {
-      "label": "Run Unit Tests",
+      "label": "Run API Unit Tests",
       "type": "shell",
       "command": "dotnet",
       "args": [
@@ -43,7 +43,7 @@
       }
     },
     {
-      "label": "Run Integration Tests",
+      "label": "Run API Integration Tests",
       "type": "shell",
       "command": "dotnet",
       "args": [
@@ -60,7 +60,7 @@
       }
     },
     {
-      "label": "Build Next.js UI",
+      "label": "Build UI",
       "type": "shell",
       "command": "npm run build",
       "options": {
@@ -84,11 +84,14 @@
       "problemMatcher": []
     },
     {
-      "label": "Run Next.js UI (Dev)",
+      "label": "Run UI (Dev)",
       "type": "shell",
       "command": "npm run dev",
       "options": {
-        "cwd": "${workspaceFolder}/src/snafets-take-it-easy-next-js"
+        "cwd": "${workspaceFolder}/src/snafets-take-it-easy-next-js",
+        "env": {
+          "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+        }
       },
       "group": {
         "kind": "build",
@@ -97,7 +100,7 @@
       "problemMatcher": []
     },
     {
-      "label": "Run API and UI",
+      "label": "Run API and UI (Dev)",
       "dependsOn": ["Run API", "Run Next.js UI (Dev)"],
       "type": "shell",
       "command": "echo 'Both API and UI are running.'",
