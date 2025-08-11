@@ -84,15 +84,12 @@
       "problemMatcher": []
     },
     {
-      "label": "Run UI (Dev)",
+      "label": "Run UI",
       "type": "shell",
       "command": "npm run dev",
       "dependsOn": ["Build UI"],
       "options": {
-        "cwd": "${workspaceFolder}/src/snafets-take-it-easy-next-js",
-        "env": {
-          "NODE_TLS_REJECT_UNAUTHORIZED": "0"
-        }
+        "cwd": "${workspaceFolder}/src/snafets-take-it-easy-next-js"
       },
       "group": {
         "kind": "build",
@@ -101,8 +98,8 @@
       "problemMatcher": []
     },
     {
-      "label": "Run API and UI (Dev)",
-      "dependsOn": ["Run API", "Run Next.js UI (Dev)"],
+      "label": "Run API and UI",
+      "dependsOn": ["Run API", "Run UI"],
       "type": "shell",
       "command": "echo 'Both API and UI are running.'",
       "group": {
