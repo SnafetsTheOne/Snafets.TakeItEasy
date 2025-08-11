@@ -31,6 +31,26 @@
 			"presentation": {
 				"reveal": "always"
 			}
+		},
+		{
+			"label": "Run Unit Tests",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"test",
+				"tests/Snafets.TakeItEasy.UnitTests/Snafets.TakeItEasy.UnitTests.csproj",
+				"--collect:XPlat Code Coverage"
+			],
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"presentation": {
+				"reveal": "always"
+			}
 		}
 	]
 }

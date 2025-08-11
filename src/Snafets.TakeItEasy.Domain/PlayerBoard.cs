@@ -9,6 +9,10 @@ namespace Snafets.TakeItEasy.Domain
         {
             Player = player;
             Spaces = new List<BoardSpace>(19);
+            for (int i = 0; i < 19; i++)
+            {
+                Spaces.Add(new BoardSpace { Index = i, PlacedTile = null });
+            }
         }
 
         /// <summary>

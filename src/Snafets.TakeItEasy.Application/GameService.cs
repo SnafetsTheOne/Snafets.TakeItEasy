@@ -67,7 +67,10 @@ namespace Snafets.TakeItEasy.Application
             if (topTile is null || topTile.Id != tileId)
                 return false;
 
-            return playerBoard.TryAddTileAtIndex(topTile, index);
+            var moveResult = playerBoard.TryAddTileAtIndex(topTile, index);
+            // Advance the draw bag if all players have placed the top tile
+            game.TryAdvanceDrawBagIfAllPlayersPlacedTopTile();
+            return moveResult;
         }
     }
 }
