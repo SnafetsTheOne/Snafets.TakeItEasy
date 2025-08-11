@@ -1,5 +1,6 @@
 "use client";
 import HoneycombCell from "@/components/HoneycombCell";
+import EmptyHoneycombCell from "@/components/EmptyHoneycombCell";
 
 import * as React from "react";
 
@@ -105,23 +106,13 @@ function totalCells(R) {
 
 // --- Component -----------------------------------------------------------------
 
-export default function HoneycombBoard({ tiles }) {
+export default function HoneycombBoard({ tiles, gameId, playerId }) {
   const radius = 2;
   const size = 40;
   const startCorner = 'topLeft'
   const ariaLabel = "Honeycomb board";
 
   const expected = totalCells(radius);
-
-  // Warn in dev if tiles length doesn't match the radius
-  React.useEffect(() => {
-    if (process.env.NODE_ENV !== "production" && tiles.length !== expected) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `[HoneycombBoard] tiles.length = ${tiles.length}, but radius ${radius} expects ${expected} cells.`
-      );
-    }
-  }, [tiles.length, expected, radius]);
 
   const cells = React.useMemo(
     () => layoutCells(tiles.length, radius, size, startCorner),
@@ -158,15 +149,25 @@ export default function HoneycombBoard({ tiles }) {
         <g transform={`rotate(90 ${cx} ${cy})`}>
           {cells.map((c) => {
             const pts = hexPolygonPoints(c.x, c.y, size);
-            const tile = tiles[c.i] ?? {};
-            return (
-              <HoneycombCell
+            const tile = tiles[c.i];
+            if(tile.placedTile) {
+                return <HoneycombCell
+                    key={c.i}
+                    cell={c}
+                    index={tile.index}
+                    tile={tile.placedTile}
+                    pts={pts}
+                />
+            }
+            return <EmptyHoneycombCell
+                key={c.i}
                 cell={c}
                 index={tile.index}
-                tile={tile.placedTile}
                 pts={pts}
+                playerId={playerId}
+                gameId={gameId}
               />
-            );
+            
           })}
         </g>
       </svg>

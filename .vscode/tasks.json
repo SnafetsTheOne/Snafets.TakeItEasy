@@ -19,7 +19,7 @@
       "args": ["run", "--project", "src/Snafets.TakeItEasy.Api"],
       "group": "build",
       "problemMatcher": ["$msCompile"],
-      "dependsOn": [],
+      "dependsOn": ["Build API"],
       "presentation": {
         "reveal": "always"
       }
@@ -74,7 +74,7 @@
     },
     {
       "label": "Build API and UI",
-      "dependsOn": ["Build .NET Core Project", "Build Next.js UI"],
+      "dependsOn": ["Build API", "Build UI"],
       "type": "shell",
       "command": "echo 'Both API and UI are built.'",
       "group": {
@@ -87,6 +87,7 @@
       "label": "Run UI (Dev)",
       "type": "shell",
       "command": "npm run dev",
+      "dependsOn": ["Build UI"],
       "options": {
         "cwd": "${workspaceFolder}/src/snafets-take-it-easy-next-js",
         "env": {

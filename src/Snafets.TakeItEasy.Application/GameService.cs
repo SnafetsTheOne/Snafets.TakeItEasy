@@ -53,7 +53,7 @@ namespace Snafets.TakeItEasy.Application
         /// <param name="index">The index on the board.</param>
         /// <param name="tile">The tile to place.</param>
         /// <returns>True if the move was successful; otherwise, false.</returns>
-        public async Task<bool> AddPlayerMoveAsync(Guid gameId, Guid playerId, int index, int tileId)
+        public async Task<bool> AddPlayerMoveAsync(Guid gameId, Guid playerId, int index)
         {
             var game = await _repository.LoadGameAsync(gameId);
             if (game is null)
@@ -64,7 +64,7 @@ namespace Snafets.TakeItEasy.Application
                 return false;
 
             var topTile = game.CallerBag.PeekTopTile();
-            if (topTile is null || topTile.Id != tileId)
+            if (topTile is null)
                 return false;
 
             var moveResult = playerBoard.TryAddTileAtIndex(topTile, index);

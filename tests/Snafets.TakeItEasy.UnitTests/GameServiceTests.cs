@@ -91,10 +91,10 @@ public class GameServiceTests
         Assert.NotNull(topTile);
         int index = 0;
         // Add move for first player
-        var result = await service.AddPlayerMoveAsync(gameId, playerId, index, topTile.Id);
+        var result = await service.AddPlayerMoveAsync(gameId, playerId, index);
         Assert.True(result);
         // Add move for second player
-        var result2 = await service.AddPlayerMoveAsync(gameId, players[1].Id, index, topTile.Id);
+        var result2 = await service.AddPlayerMoveAsync(gameId, players[1].Id, index);
         Assert.True(result2);
         // After both players have placed, draw bag should advance
         var newTopTile = game.CallerBag.PeekTopTile();
@@ -111,11 +111,8 @@ public class GameServiceTests
         var topTile = game.CallerBag.PeekTopTile();
         Assert.NotNull(topTile);
         // Invalid index
-        var result = await service.AddPlayerMoveAsync(gameId, playerId, -1, topTile.Id);
+        var result = await service.AddPlayerMoveAsync(gameId, playerId, -1);
         Assert.False(result);
-        // Invalid tile id
-        var result2 = await service.AddPlayerMoveAsync(gameId, playerId, 0, -999);
-        Assert.False(result2);
     }
 
     [Fact]
@@ -129,7 +126,7 @@ public class GameServiceTests
         Assert.NotNull(topTile);
         int index = 0;
         // Add move for only one player
-        var result = await service.AddPlayerMoveAsync(gameId, playerId, index, topTile.Id);
+        var result = await service.AddPlayerMoveAsync(gameId, playerId, index);
         Assert.True(result);
         // Draw bag should NOT advance yet
         var stillTopTile = game.CallerBag.PeekTopTile();

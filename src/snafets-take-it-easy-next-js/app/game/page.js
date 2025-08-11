@@ -1,7 +1,9 @@
-import React from 'react';
 import Link from 'next/link';
+import { fetchAllGames } from '@/data-access/game';
 
-export default function Game({ games }) {
+export default async function GamesPage() {
+  const games = await fetchAllGames();
+
   return (
     <div>
       <h1>Game Page</h1>
@@ -17,16 +19,4 @@ export default function Game({ games }) {
       </ul>
     </div>
   );
-}
-
-export async function getServerSideProps() {
-  // Fetch all games
-  const res = await fetch(`http://localhost:5124/api/Game`);
-  const games = await res.json();
-
-  return {
-    props: {
-      games,
-    },
-  };
 }

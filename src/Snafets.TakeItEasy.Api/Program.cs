@@ -3,6 +3,8 @@ using Snafets.TakeItEasy.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging.AddConsole();
+
 // Add CORS services
 builder.Services.AddCors(options =>
 {
