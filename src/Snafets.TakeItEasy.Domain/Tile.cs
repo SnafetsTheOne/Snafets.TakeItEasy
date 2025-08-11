@@ -17,6 +17,10 @@ namespace Snafets.TakeItEasy.Domain
             Vertical = vertical;
             LeftDiagonal = leftDiagonal;
             RightDiagonal = rightDiagonal;
+            if (!IsValid())
+            {
+                throw new ArgumentException($"Invalid tile values: vertical={vertical}, leftDiagonal={leftDiagonal}, rightDiagonal={rightDiagonal}");
+            }
         }
 
         public bool IsValid()

@@ -31,15 +31,15 @@ public class PlayerBoardTests
         var player = new Player { Id = Guid.NewGuid(), Name = "TestPlayer" };
         var playerBoard = new PlayerBoard(player);
         // Set multiple tiles (example positions and values)
-        playerBoard.TryAddTileAtIndex(new Tile(1, 1, 3, 2), 0);
-        playerBoard.TryAddTileAtIndex(new Tile(2, 5, 3, 2), 1);
-        playerBoard.TryAddTileAtIndex(new Tile(3, 9, 3, 2), 2);
+        playerBoard.TryAddTileAtIndex(new Tile(1, 1, 2, 3), 0);
+        playerBoard.TryAddTileAtIndex(new Tile(2, 5, 2, 3), 1);
+        playerBoard.TryAddTileAtIndex(new Tile(3, 9, 2, 3), 2);
 
         // Act
         int score = playerBoard.CalculateScore();
 
         // Assert
-        Assert.Equal(9, score);
+        Assert.Equal(6, score);
     }
 
     [Fact]

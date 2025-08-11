@@ -1,8 +1,8 @@
 using Snafets.TakeItEasy.Domain;
 
-namespace Snafets.TakeItEasy.UnitTests
-{
-    public class TileTests
+namespace Snafets.TakeItEasy.UnitTests;
+
+public class TileTests
 {
     [Theory]
     [InlineData(1, 1, 2, 3, true)]
@@ -16,8 +16,15 @@ namespace Snafets.TakeItEasy.UnitTests
     [InlineData(9, 1, 2, 9, false)] // invalid right diagonal
     public void IsValid_ReturnsExpected(int id, int vertical, int leftDiagonal, int rightDiagonal, bool expected)
     {
-        var tile = new Tile(id, vertical, leftDiagonal, rightDiagonal);
-        Assert.Equal(expected, tile.IsValid());
+        if (expected)
+        {
+            var tile = new Tile(id, vertical, leftDiagonal, rightDiagonal);
+            Assert.True(tile.IsValid());
+        }
+        else
+        {
+            Assert.Throws<ArgumentException>(() => new Tile(id, vertical, leftDiagonal, rightDiagonal));
+        }
     }
 
     [Fact]
@@ -42,6 +49,5 @@ namespace Snafets.TakeItEasy.UnitTests
         var tile1 = new Tile(1, 1, 2, 3);
         var tile2 = new Tile(1, 1, 2, 3);
         Assert.Equal(tile1.GetHashCode(), tile2.GetHashCode());
-    }
     }
 }

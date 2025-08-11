@@ -1,56 +1,63 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"label": "Build .NET Core Project",
-			"command": "dotnet",
-			"type": "process",
-			"args": [
-				"build"
-			],
-			"problemMatcher": "$msCompile",
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			}
-		},
-		{
-			"label": "Run API",
-			"type": "shell",
-			"command": "dotnet",
-			"args": [
-				"run",
-				"--project",
-				"src/Snafets.TakeItEasy.Api"
-			],
-			"group": "build",
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"dependsOn": [],
-			"presentation": {
-				"reveal": "always"
-			}
-		},
-		{
-			"label": "Run Unit Tests",
-			"type": "shell",
-			"command": "dotnet",
-			"args": [
-				"test",
-				"tests/Snafets.TakeItEasy.UnitTests/Snafets.TakeItEasy.UnitTests.csproj",
-				"--collect:XPlat Code Coverage"
-			],
-			"group": {
-				"kind": "test",
-				"isDefault": true
-			},
-			"problemMatcher": [
-				"$msCompile"
-			],
-			"presentation": {
-				"reveal": "always"
-			}
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build .NET Core Project",
+      "command": "dotnet",
+      "type": "process",
+      "args": ["build"],
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Run API",
+      "type": "shell",
+      "command": "dotnet",
+      "args": ["run", "--project", "src/Snafets.TakeItEasy.Api"],
+      "group": "build",
+      "problemMatcher": ["$msCompile"],
+      "dependsOn": [],
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Run Unit Tests",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "test",
+        "tests/Snafets.TakeItEasy.UnitTests/Snafets.TakeItEasy.UnitTests.csproj",
+        "--collect:XPlat Code Coverage"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": ["$msCompile"],
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Run Integration Tests",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "test",
+        "tests/Snafets.TakeItEasy.IntegrationTests/Snafets.TakeItEasy.IntegrationTests.csproj",
+        "--collect:XPlat Code Coverage"
+      ],
+      "group": {
+        "kind": "test"
+      },
+      "problemMatcher": ["$msCompile"],
+      "presentation": {
+        "reveal": "always"
+      }
+    }
+  ]
 }
