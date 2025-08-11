@@ -1,4 +1,4 @@
-namespace TakeItEasy.Domain
+namespace Snafets.TakeItEasy.Domain
 {
     public class BoardSpace
     {

@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using TakeItEasy.Application;
-using TakeItEasy.Domain;
+using System.Threading.Tasks;
+using Snafets.TakeItEasy.Domain;
+using Snafets.TakeItEasy.Application;
 
 namespace Snafets.TakeItEasy.Persistence
 {
@@ -9,9 +10,27 @@ namespace Snafets.TakeItEasy.Persistence
     {
         private readonly Dictionary<Guid, TakeItEasyGame> _store = new();
 
-        public void SaveGame(TakeItEasyGame game) => _store[game.Id] = game;
-        public TakeItEasyGame? LoadGame(Guid id) => _store.TryGetValue(id, out var game) ? game : null;
-        public IEnumerable<TakeItEasyGame> GetAllGames() => _store.Values;
-        public void DeleteGame(Guid id) => _store.Remove(id);
+        public async Task SaveGameAsync(TakeItEasyGame game)
+        {
+            _store[game.Id] = game;
+            await Task.CompletedTask;
+        }
+
+        public async Task<TakeItEasyGame?> LoadGameAsync(Guid id)
+        {
+            _store.TryGetValue(id, out var game);
+            return await Task.FromResult(game);
+        }
+
+        public async Task<IEnumerable<TakeItEasyGame>> GetAllGamesAsync()
+        {
+            return await Task.FromResult(_store.Values);
+        }
+
+        public async Task DeleteGameAsync(Guid id)
+        {
+            _store.Remove(id);
+            await Task.CompletedTask;
+        }
     }
 }

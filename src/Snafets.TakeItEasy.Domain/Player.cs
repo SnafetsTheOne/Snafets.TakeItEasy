@@ -1,6 +1,4 @@
-using System;
-
-namespace TakeItEasy.Domain
+namespace Snafets.TakeItEasy.Domain
 {
     public class Player
     {

@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-
-namespace TakeItEasy.Domain
+namespace Snafets.TakeItEasy.Domain
 {
     public class PlayerBoard
     {
@@ -11,6 +9,18 @@ namespace TakeItEasy.Domain
         {
             Player = player;
             Spaces = new List<BoardSpace>(19);
+        }
+
+        /// <summary>
+        /// Checks whether the specified tile is on the board.
+        /// </summary>
+        /// <param name="tile">The tile to check.</param>
+        /// <returns>True if the tile is on the board; otherwise, false.</returns>
+        public bool ContainsTile(Tile tile)
+        {
+            // Assuming there is a collection of tiles, e.g., Tiles or BoardSpaces
+            // Replace 'Tiles' with the actual collection name if different
+            return Spaces != null && Spaces.Any(space => space.PlacedTile == tile);
         }
 
         public static class TakeItEasyLines
@@ -74,6 +84,26 @@ namespace TakeItEasy.Domain
                 if (valid && value != null) total += sum;
             }
             return total;
+        }
+        
+        /// <summary>
+        /// Attempts to add a tile to the board at the specified index.
+        /// Checks that the index is valid, the space is empty, and the tile is not already present on the board.
+        /// </summary>
+        /// <param name="tile">The tile to add.</param>
+        /// <param name="index">The index to add the tile at.</param>
+        /// <returns>True if the tile was added; otherwise, false.</returns>
+        public bool TryAddTileAtIndex(Tile tile, int index)
+        {
+            if (Spaces == null || index < 0 || index >= Spaces.Count)
+                return false;
+            var space = Spaces[index];
+            if (space.PlacedTile != null)
+                return false;
+            if (ContainsTile(tile))
+                return false;
+            space.PlacedTile = tile;
+            return true;
         }
     }
 }

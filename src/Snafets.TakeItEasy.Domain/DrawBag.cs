@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-
-namespace TakeItEasy.Domain
+namespace Snafets.TakeItEasy.Domain
 {
     public class DrawBag
     {
-        public Queue<Tile> Tiles { get; set; } = new Queue<Tile>();
+    public Queue<Tile> Tiles { get; set; }
 
         public DrawBag()
         {
@@ -45,6 +42,15 @@ namespace TakeItEasy.Domain
             }
 
             Tiles = new Queue<Tile>(tileList);
+        }
+        /// <summary>
+        /// Returns the tile at the front of the draw bag without removing it.
+        /// </summary>
+        public Tile? PeekTopTile()
+        {
+            if (Tiles != null && Tiles.Count > 0)
+                return Tiles.Peek();
+            return null;
         }
     }
 }

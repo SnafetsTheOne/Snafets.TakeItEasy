@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-
-namespace TakeItEasy.Domain
+namespace Snafets.TakeItEasy.Domain
 {
     /// <summary>
     /// Represents the Take It Easy game domain model.
@@ -26,5 +24,10 @@ namespace TakeItEasy.Domain
             CallerBag = new DrawBag();
             TileSet = new List<Tile>();
         }
+
+        /// <summary>
+        /// Returns true if all player boards are fully filled (no empty spaces).
+        /// </summary>
+        public bool IsCompleted => PlayerBoards != null && PlayerBoards.All(pb => pb.Spaces != null && pb.Spaces.All(space => space.PlacedTile != null));
     }
 }

@@ -13,3 +13,4 @@ applyTo: '**/*.cs'
    - Keep methods small and focused on a single task.
    - Use async/await for all I/O-bound operations.
    - Document public APIs using XML comments.
+   - Add new Functions at the end of the class.
