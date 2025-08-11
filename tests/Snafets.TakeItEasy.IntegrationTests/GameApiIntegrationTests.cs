@@ -43,15 +43,18 @@ namespace Snafets.TakeItEasy.IntegrationTests
             Assert.NotNull(fetchedGame);
             Assert.Equal(createdGame.Id, fetchedGame.Id);
         }
-        
+
         [Fact]
-        public async Task PlayThreeMoves_ShouldUpdateGameStateCorrectly()
+        public async Task TwoPlayers_TwoMovesEach_ShouldUpdateGameStateCorrectly()
         {
-            // Arrange
             var client = _client;
-            // Create a new game with one player
-            var playerId = Guid.NewGuid();
-            var players = new[] { new Player { Id = playerId, Name = "player1" } };
+            // Create a new game with two players
+            var player1Id = Guid.NewGuid();
+            var player2Id = Guid.NewGuid();
+            var players = new[] {
+                new Player { Id = player1Id, Name = "Alice" },
+                new Player { Id = player2Id, Name = "Bob" }
+            };
             var playersJson = System.Text.Json.JsonSerializer.Serialize(players);
             var createResponse = await client.PostAsync(
                 "/api/game/create",
@@ -62,33 +65,44 @@ namespace Snafets.TakeItEasy.IntegrationTests
             Assert.NotNull(createdGame);
             Assert.NotNull(createdGame.Id);
 
-            // Play 3 moves using the top tile from the draw bag, updating after each move
-            for (int i = 0; i < 3; i++)
+            // Each player plays 2 moves
+            for (int move = 0; move < 2; move++)
             {
-                // Fetch latest game state to get the current top tile
-                var gameStateResponse = await client.GetAsync($"/api/game/{createdGame.Id}");
-                gameStateResponse.EnsureSuccessStatusCode();
-                var gameState = await gameStateResponse.Content.ReadFromJsonAsync<TakeItEasyGameDetail>();
-                Assert.NotNull(gameState);
-                var topTile = gameState.CallerBag?.Tiles?[0];
-                Assert.NotNull(topTile);
-                var moveResponse = await client.PostAsync(
-                    $"/api/game/move?gameId={createdGame.Id}&playerId={playerId}&index={i}&tileId={topTile.Id}",
-                    null
-                );
-                moveResponse.EnsureSuccessStatusCode();
+                foreach (var player in players)
+                {
+                    // Fetch latest game state to get the current top tile
+                    var gameStateResponse = await client.GetAsync($"/api/game/{createdGame.Id}");
+                    gameStateResponse.EnsureSuccessStatusCode();
+                    var gameState = await gameStateResponse.Content.ReadFromJsonAsync<TakeItEasyGameDetail>();
+                    Assert.NotNull(gameState);
+                    var topTile = gameState.CallerBag?.Tiles?[0];
+                    Assert.NotNull(topTile);
+                    // Find first empty space for this player
+                    var playerBoard = gameState.PlayerBoards?.Find(pb => pb.Player?.Id == player.Id);
+                    Assert.NotNull(playerBoard);
+                    var firstEmptySpace = playerBoard.Spaces?.FirstOrDefault(s => s.PlacedTile == null);
+                    Assert.NotNull(firstEmptySpace);
+                    var moveResponse = await client.PostAsync(
+                        $"/api/game/move?gameId={createdGame.Id}&playerId={player.Id}&index={move}&tileId={topTile.Id}&spaceIndex={firstEmptySpace.Index}",
+                        null
+                    );
+                    moveResponse.EnsureSuccessStatusCode();
+                }
             }
 
-            // Assert: Get game state and check moves
+            // Assert: Each player should have 2 placed tiles
             var stateResponse = await client.GetAsync($"/api/game/{createdGame.Id}");
             stateResponse.EnsureSuccessStatusCode();
             var stateObj = await stateResponse.Content.ReadFromJsonAsync<TakeItEasyGameDetail>();
             Assert.NotNull(stateObj);
-            var playerBoard = stateObj.PlayerBoards?.Find(pb => pb.Player?.Id == playerId);
-            Assert.NotNull(playerBoard);
-            var placedTiles = playerBoard.Spaces?.Where(s => s.PlacedTile != null).ToList();
-            Assert.NotNull(placedTiles);
-            Assert.True(placedTiles.Count >= 3, $"Expected at least 3 placed tiles, got {placedTiles.Count}");
+            foreach (var player in players)
+            {
+                var playerBoard = stateObj.PlayerBoards?.Find(pb => pb.Player?.Id == player.Id);
+                Assert.NotNull(playerBoard);
+                var placedTiles = playerBoard.Spaces?.Where(s => s.PlacedTile != null).ToList();
+                Assert.NotNull(placedTiles);
+                Assert.True(placedTiles.Count == 2, $"Player {player.Name} should have 2 placed tiles, got {placedTiles.Count}");
+            }
         }
     }
 }
