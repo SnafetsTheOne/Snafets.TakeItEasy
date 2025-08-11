@@ -98,12 +98,10 @@ namespace Snafets.TakeItEasy.IntegrationTests
                 Assert.True(placedTiles.Count == 2, $"Player {player.Name} should have 2 placed tiles, got {placedTiles.Count}");
             }
         }
-        
+
         [Fact]
         public async Task PlayAllMovesWithSeededDrawBag_CheckScore()
         {
-            // Set DrawBag RNG to a known seed
-            DrawBag.Rng = new Random(420);
 
             // Get required services
             var scopeFactory = factory.Services.GetRequiredService<IServiceScopeFactory>();
@@ -112,6 +110,9 @@ namespace Snafets.TakeItEasy.IntegrationTests
 
             // Create game instance for one player
             var player = new Player { Id = Guid.NewGuid(), Name = "TestPlayer" };
+
+            // Set DrawBag RNG to a known seed
+            DrawBag.Rng = new Random(420);
             var game = new TakeItEasyGame(new List<Player> { player });
             await repo.SaveGameAsync(game);
 

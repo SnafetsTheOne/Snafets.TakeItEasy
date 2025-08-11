@@ -58,6 +58,43 @@
       "presentation": {
         "reveal": "always"
       }
+    },
+    {
+      "label": "Build Next.js UI",
+      "type": "shell",
+      "command": "npm run build",
+      "options": {
+        "cwd": "${workspaceFolder}/src/snafets-take-it-easy-next-js"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Next.js UI (Dev)",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": {
+        "cwd": "${workspaceFolder}/src/snafets-take-it-easy-next-js"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run API and UI",
+      "dependsOn": ["Run API", "Run Next.js UI (Dev)"],
+      "type": "shell",
+      "command": "echo Both API and UI are running.",
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "problemMatcher": []
     }
   ]
 }

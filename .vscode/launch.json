@@ -1,26 +1,44 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Run API with Swagger UI",
-            "type": "coreclr",
-            "request": "launch",
-            "program": "${workspaceFolder}/src/Snafets.TakeItEasy.Api/bin/Debug/net9.0/Snafets.TakeItEasy.Api.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/Snafets.TakeItEasy.Api",
-            "stopAtEntry": false,
-            "serverReadyAction": {
-                "action": "openExternally",
-            "pattern": "Now listening on: (https?://.*)",
-                "uriFormat": "%s/swagger"
-            },
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            }
-        }
-
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run API with Swagger UI",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/Snafets.TakeItEasy.Api/bin/Debug/net9.0/Snafets.TakeItEasy.Api.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Snafets.TakeItEasy.Api",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "Now listening on: (https?://.*)",
+        "uriFormat": "%s/swagger"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    {
+      "name": "Run Next.js UI (Dev)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/snafets-take-it-easy-next-js/node_modules/next/dist/bin/next",
+      "args": ["dev"],
+      "cwd": "${workspaceFolder}/src/snafets-take-it-easy-next-js",
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "- Local:\\s*(https?://localhost:[0-9]+)",
+        "uriFormat": "%s"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Run API and UI",
+      "configurations": ["Run API with Swagger UI", "Run Next.js UI (Dev)"]
+    }
+  ]
 }
