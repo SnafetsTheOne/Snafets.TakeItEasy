@@ -73,6 +73,17 @@
       "problemMatcher": []
     },
     {
+      "label": "Build API and UI",
+      "dependsOn": ["Build .NET Core Project", "Build Next.js UI"],
+      "type": "shell",
+      "command": "echo 'Both API and UI are built.'",
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Run Next.js UI (Dev)",
       "type": "shell",
       "command": "npm run dev",
@@ -89,7 +100,7 @@
       "label": "Run API and UI",
       "dependsOn": ["Run API", "Run Next.js UI (Dev)"],
       "type": "shell",
-      "command": "echo Both API and UI are running.",
+      "command": "echo 'Both API and UI are running.'",
       "group": {
         "kind": "build",
         "isDefault": false
