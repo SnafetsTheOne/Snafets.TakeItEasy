@@ -3,6 +3,15 @@ using System.Collections.Generic;
 namespace TakeItEasy.Domain
 {
     /// <summary>
+    /// Represents a player in the Take It Easy game.
+    /// </summary>
+    public class Player
+    {
+        public Guid Id { get; set; } = Guid.NewGuid();
+        public string Name { get; set; } = string.Empty;
+    }
+
+    /// <summary>
     /// Represents a player's board with 19 spaces arranged in a honeycomb pattern.
     /// </summary>
     public class PlayerBoard
@@ -47,7 +56,14 @@ namespace TakeItEasy.Domain
             return total;
         }
     
-        public List<BoardSpace> Spaces { get; set; } = new List<BoardSpace>(19);
+        public List<BoardSpace> Spaces { get; set; }
+        public Player Player { get; set; }
+
+        public PlayerBoard(Player player)
+        {
+            Player = player;
+            Spaces = new List<BoardSpace>(19);
+        }
 
         // Indices laid out row-major:
         //
@@ -189,8 +205,24 @@ namespace TakeItEasy.Domain
     /// </summary>
     public class TakeItEasyGame
     {
-        public List<PlayerBoard> PlayerBoards { get; set; } = new List<PlayerBoard>();
-        public DrawBag CallerBag { get; set; } = new DrawBag();
-        public List<Tile> TileSet { get; set; } = new List<Tile>();
+        public Guid Id { get; set; }
+        public List<PlayerBoard> PlayerBoards { get; set; }
+        public DrawBag CallerBag { get; set; }
+        public List<Tile> TileSet { get; set; }
+
+        /// <summary>
+        /// Creates a new TakeItEasyGame for the given players.
+        /// </summary>
+        public TakeItEasyGame(List<Player> players)
+        {
+            Id = Guid.NewGuid();
+            PlayerBoards = new List<PlayerBoard>();
+            foreach (var player in players)
+            {
+                PlayerBoards.Add(new PlayerBoard(player));
+            }
+            CallerBag = new DrawBag();
+            TileSet = new List<Tile>();
+        }
     }
 }
