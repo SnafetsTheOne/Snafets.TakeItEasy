@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Snafets.TakeItEasy.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+873a96b2530cee174257b3aeac71c820a611b948")]
 [assembly: System.Reflection.AssemblyProductAttribute("Snafets.TakeItEasy.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Snafets.TakeItEasy.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -30,3 +30,4 @@ C:\s\vibe\take-it-easy-online\src\Snafets.TakeItEasy.Api\obj\Debug\net9.0\refint
 C:\s\vibe\take-it-easy-online\src\Snafets.TakeItEasy.Api\obj\Debug\net9.0\Snafets.TakeItEasy.Api.pdb
 C:\s\vibe\take-it-easy-online\src\Snafets.TakeItEasy.Api\obj\Debug\net9.0\Snafets.TakeItEasy.Api.genruntimeconfig.cache
 C:\s\vibe\take-it-easy-online\src\Snafets.TakeItEasy.Api\obj\Debug\net9.0\ref\Snafets.TakeItEasy.Api.dll
+C:\s\vibe\take-it-easy-online\src\Snafets.TakeItEasy.Api\obj\Debug\net9.0\Snafets.TakeItEasy.Api.sourcelink.json
