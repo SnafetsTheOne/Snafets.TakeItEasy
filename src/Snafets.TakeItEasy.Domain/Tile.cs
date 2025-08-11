@@ -2,10 +2,31 @@ namespace Snafets.TakeItEasy.Domain
 {
     public class Tile
     {
-        public int Id { get; set; }
-        public int Vertical { get; set; }
-        public int LeftDiagonal { get; set; }
-        public int RightDiagonal { get; set; }
+        public static readonly int[] ValidVerticals = { 1, 5, 9 };
+        public static readonly int[] ValidLeftDiagonals = { 2, 6, 7 };
+        public static readonly int[] ValidRightDiagonals = { 3, 4, 8 };
+
+        public int Id { get; }
+        public int Vertical { get; }
+        public int LeftDiagonal { get; }
+        public int RightDiagonal { get; }
+
+        public Tile(int id, int vertical, int leftDiagonal, int rightDiagonal)
+        {
+            Id = id;
+            Vertical = vertical;
+            LeftDiagonal = leftDiagonal;
+            RightDiagonal = rightDiagonal;
+        }
+
+        public bool IsValid()
+        {
+            // Only allow values used in DrawBag
+            return ValidVerticals.Contains(Vertical)
+                && ValidLeftDiagonals.Contains(LeftDiagonal)
+                && ValidRightDiagonals.Contains(RightDiagonal);
+        }
+
         public override bool Equals(object? obj)
         {
             if (obj is Tile other)

@@ -8,23 +8,13 @@ namespace Snafets.TakeItEasy.Domain
         {
             var tileList = new List<Tile>();
             int id = 1;
-            int[] verticals = { 1, 5, 9 };
-            int[] leftDiagonals = { 2, 6, 7 };
-            int[] rightDiagonals = { 3, 4, 8 };
-
-            foreach (var v in verticals)
+            foreach (var v in Tile.ValidVerticals)
             {
-                foreach (var l in leftDiagonals)
+                foreach (var l in Tile.ValidLeftDiagonals)
                 {
-                    foreach (var r in rightDiagonals)
+                    foreach (var r in Tile.ValidRightDiagonals)
                     {
-                        tileList.Add(new Tile
-                        {
-                            Id = id++,
-                            Vertical = v,
-                            LeftDiagonal = l,
-                            RightDiagonal = r
-                        });
+                        tileList.Add(new Tile(id++, v, l, r));
                     }
                 }
             }
