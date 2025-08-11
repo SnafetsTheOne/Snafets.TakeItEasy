@@ -1,4 +1,3 @@
-using Xunit;
 using Snafets.TakeItEasy.Domain;
 
 namespace Snafets.TakeItEasy.UnitTests
