@@ -53,29 +53,50 @@ function makeRowStarts(R) {
 
 // Cell: { i, q, r, s, x, y }
 
-function layoutCells(tilesLen, R, size) {
-  const rowStarts = makeRowStarts(R);
+function layoutCells(tilesLen, R, size, startCorner = 'topLeft') {
+  const rows = [];
+  for (let r = -R; r <= R; r++) rows.push(r);
+
+  const verticalFromTop = startCorner === 'topLeft' || startCorner === 'topRight';
+  if (!verticalFromTop) rows.reverse();
+
   const cells = [];
-  for (let i = 0; i < tilesLen; i++) {
-    // find rIndex such that rowStarts[rIndex] <= i < rowStarts[rIndex] + rowLength(r, R)
-    let rIndex = 0;
-    while (
-      rIndex < rowStarts.length - 1 &&
-      !(
-        i >= rowStarts[rIndex] &&
-        i < rowStarts[rIndex] + rowLength(-R + rIndex, R)
-      )
-    ) {
-      rIndex++;
+  let i = 0;
+  for (const r of rows) {
+    const qs = [];
+    for (let q = qMin(r, R); q <= qMax(r, R); q++) qs.push(q);
+
+    const horizontalFromLeft = startCorner === 'topLeft' || startCorner === 'bottomLeft';
+    if (!horizontalFromLeft) qs.reverse();
+
+    for (const q of qs) {
+      if (i >= tilesLen) break;
+      const s = -q - r;
+      const { x, y } = axialToPixel(q, r, size);
+      cells.push({ i, q, r, s, x, y });
+      i++;
     }
-    const r = -R + rIndex;
-    const iInRow = i - rowStarts[rIndex];
-    const q = qMin(r, R) + iInRow;
-    const s = -q - r;
-    const { x, y } = axialToPixel(q, r, size);
-    cells.push({ i, q, r, s, x, y });
   }
   return cells;
+}
+
+function enumerateAxials(R, startCorner = 'topLeft') {
+  const rows = [];
+  for (let r = -R; r <= R; r++) rows.push(r);
+  const verticalFromTop = startCorner === 'topLeft' || startCorner === 'topRight';
+  if (!verticalFromTop) rows.reverse();
+  const coords = [];
+  for (const r of rows) {
+    const qs = [];
+    for (let q = qMin(r, R); q <= qMax(r, R); q++) qs.push(q);
+    const horizontalFromLeft = startCorner === 'topLeft' || startCorner === 'bottomLeft';
+    if (!horizontalFromLeft) qs.reverse();
+    for (const q of qs) {
+      const s = -q - r;
+      coords.push({ q, r, s });
+    }
+  }
+  return coords;
 }
 
 function totalCells(R) {
@@ -87,9 +108,7 @@ function totalCells(R) {
 export default function HoneycombBoard({ tiles }) {
   const radius = 2;
   const size = 40;
-  const strokeColor = "#334155"; // slate-700
-  const strokeWidth = 2;
-  const onCellClick = () => {};
+  const startCorner = 'topLeft'
   const ariaLabel = "Honeycomb board";
 
   const expected = totalCells(radius);
@@ -105,8 +124,8 @@ export default function HoneycombBoard({ tiles }) {
   }, [tiles.length, expected, radius]);
 
   const cells = React.useMemo(
-    () => layoutCells(tiles.length, radius, size),
-    [tiles.length, radius, size]
+    () => layoutCells(tiles.length, radius, size, startCorner),
+    [tiles.length, radius, size, startCorner]
   );
 
   // Compute extents for a tight SVG viewBox
@@ -124,8 +143,8 @@ export default function HoneycombBoard({ tiles }) {
   const width = maxX - minX;
   const height = maxY - minY + 60;
   // Center point for rotation (in SVG/viewBox coords)
-  const cy = (minX + maxX) / 2;
-  const cx = (minY + maxY - 30) / 2;
+  const cx = (minX + maxX) / 2 - 20;
+  const cy = (minY + maxY) / 2 + 20;
 
   return (
     <div style={{ display: "grid", placeItems: "center" }}>
@@ -143,49 +162,26 @@ export default function HoneycombBoard({ tiles }) {
             return (
               <HoneycombCell
                 cell={c}
-                tile={tile}
+                index={tile.index}
+                tile={tile.placedTile}
                 pts={pts}
-                strokeColor={strokeColor}
-                strokeWidth={strokeWidth}
-                onCellClick={onCellClick}
               />
             );
           })}
         </g>
       </svg>
-
-      <div style={{ marginTop: 8, fontSize: 12, opacity: 0.7 }}>
-        <span>
-          Radius: {radius} • Cells: {expected} • Indexing: row‑major
-          (top→bottom, left→right)
-        </span>
-      </div>
     </div>
   );
 }
 
 // --- Optional helpers you might want to reuse elsewhere ------------------------
-export function indexToAxial(i, radius) {
-  const rowStarts = makeRowStarts(radius);
-  let rIndex = 0;
-  while (
-    rIndex < rowStarts.length - 1 &&
-    !(
-      i >= rowStarts[rIndex] &&
-      i < rowStarts[rIndex] + rowLength(-radius + rIndex, radius)
-    )
-  ) {
-    rIndex++;
-  }
-  const r = -radius + rIndex;
-  const iInRow = i - rowStarts[rIndex];
-  const q = qMin(r, radius) + iInRow;
-  const s = -q - r;
+export function indexToAxial(i, radius, startCorner = 'topLeft') {
+  const coords = enumerateAxials(radius, startCorner);
+  const { q, r, s } = coords[i];
   return { q, r, s };
 }
 
-export function axialToIndex(q, r, radius) {
-  const rowStarts = makeRowStarts(radius);
-  const rIndex = r + radius;
-  return rowStarts[rIndex] + (q - qMin(r, radius));
+export function axialToIndex(q, r, radius, startCorner = 'topLeft') {
+  const coords = enumerateAxials(radius, startCorner);
+  return coords.findIndex((c) => c.q === q && c.r === r);
 }
