@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Snafets.TakeItEasy.Application.Features.Player;
 using Snafets.TakeItEasy.Api.Requests;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Snafets.TakeItEasy.Domain;
-using Microsoft.Extensions.Logging;
+using Snafets.TakeItEasy.Api.Contracts.Models;
 
 namespace Snafets.TakeItEasy.Api.Controllers;
 
@@ -16,7 +14,7 @@ public class PlayerController(IPlayerService playerService, ILogger<PlayerContro
     {
         logger.LogInformation("POST /api/player/signup: {Name}", request.Name);
         var player = await playerService.CreatePlayerAsync(request.Name, request.PasswordHash);
-        return CreatedAtAction(nameof(SignIn), null, player);
+        return CreatedAtAction(nameof(SignIn), null, PlayerDto.FromModel(player));
     }
 
     [HttpPost("signin")]
@@ -26,6 +24,16 @@ public class PlayerController(IPlayerService playerService, ILogger<PlayerContro
         var player = await playerService.SignInAsync(request.Name, request.PasswordHash);
         if (player == null)
             return Unauthorized();
-        return Ok(player);
+        return Ok(PlayerDto.FromModel(player));
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetPlayerById(Guid id)
+    {
+        logger.LogInformation("GET /api/player/{Id}", id);
+        var player = await playerService.GetPlayerByIdAsync(id);
+        if (player == null)
+            return NotFound();
+        return Ok(PlayerDto.FromModel(player));
     }
 }

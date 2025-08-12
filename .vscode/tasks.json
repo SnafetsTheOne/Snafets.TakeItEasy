@@ -64,7 +64,7 @@
       "type": "shell",
       "command": "npm run build",
       "options": {
-        "cwd": "${workspaceFolder}/src/snafets-take-it-easy-next-js"
+        "cwd": "${workspaceFolder}/src/snafets-take-it-easy-react"
       },
       "group": {
         "kind": "build",
@@ -86,10 +86,10 @@
     {
       "label": "Run UI",
       "type": "shell",
-      "command": "npm run dev",
+      "command": "npm run start",
       "dependsOn": ["Build UI"],
       "options": {
-        "cwd": "${workspaceFolder}/src/snafets-take-it-easy-next-js"
+        "cwd": "${workspaceFolder}/src/snafets-take-it-easy-react"
       },
       "group": {
         "kind": "build",
