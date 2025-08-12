@@ -12,6 +12,7 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
     [HttpPost]
     public async Task<ActionResult<TakeItEasyGame>> CreateGame([FromBody] CreateGameRequest createGameRequest)
     {
+        logger.LogInformation("POST /api/game: {PlayerIds}", string.Join(",", createGameRequest.PlayerIds));
         var game = await gameService.CreateGameAsync(createGameRequest.PlayerIds);
         return Ok(game);
     }
@@ -19,6 +20,7 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
     [HttpGet]
     public async Task<ActionResult<List<TakeItEasyGame>>> GetAllGames()
     {
+        logger.LogInformation("GET /api/game");
         var games = await gameService.GetAllGamesAsync();
         return Ok(games);
     }
@@ -26,6 +28,7 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
     [HttpGet("{id}")]
     public async Task<ActionResult<TakeItEasyGame?>> GetGame(Guid id)
     {
+        logger.LogInformation("GET /api/game/{id}", id);
         var game = await gameService.GetGameAsync(id);
         if (game == null) return NotFound();
         return Ok(game);
@@ -34,6 +37,7 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
     [HttpPost("{id}/move")]
     public async Task<ActionResult<bool>> AddPlayerMove(Guid id, [FromBody] PlayerMoveRequest request)
     {
+        logger.LogInformation("POST /api/game/{id}/move {PlayerId} {Index}", id, request.PlayerId, request.Index);
         var result = await gameService.AddPlayerMoveAsync(id, request.PlayerId, request.Index);
         if (!result)
         {
