@@ -106,7 +106,7 @@ function totalCells(R) {
 
 // --- Component -----------------------------------------------------------------
 
-export default function HoneycombBoard({ tiles, gameId, playerId }) {
+export default function HoneycombBoard({ tiles, gameId, playerId, refreshGame }) {
   const radius = 2;
   const size = 40;
   const startCorner = 'topLeft'
@@ -166,6 +166,7 @@ export default function HoneycombBoard({ tiles, gameId, playerId }) {
                 pts={pts}
                 playerId={playerId}
                 gameId={gameId}
+                refreshGame={refreshGame}
               />
             
           })}

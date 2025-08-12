@@ -64,7 +64,7 @@ public class GameServiceTests
         var service = CreateServiceWithPlayerIds(out var playerIds);
         await service.CreateGameAsync(playerIds, "name");
         await service.CreateGameAsync(playerIds, "name");
-        var gamesForAlice = await service.LoadGameForPlayerAsync(playerIds[0]);
+        var gamesForAlice = await service.GetGamesByPlayerIdAsync(playerIds[0]);
         foreach (var game in gamesForAlice)
         {
             Assert.Contains(game.PlayerBoards, pb => pb.PlayerId == playerIds[0]);
@@ -83,10 +83,10 @@ public class GameServiceTests
         int index = 0;
         // Add move for first player
         var result = await service.AddPlayerMoveAsync(gameId, playerId, index);
-        Assert.True(result);
+        Assert.NotNull(result);
         // Add move for second player
         var result2 = await service.AddPlayerMoveAsync(gameId, playerIds[1], index);
-        Assert.True(result2);
+        Assert.NotNull(result2);
         // After both players have placed, draw bag should advance
         var newTopTile = game.CallerBag.PeekTopTile();
         Assert.NotEqual(topTile.Id, newTopTile?.Id);
@@ -103,7 +103,7 @@ public class GameServiceTests
         Assert.NotNull(topTile);
         // Invalid index
         var result = await service.AddPlayerMoveAsync(gameId, playerId, -1);
-        Assert.False(result);
+        Assert.Null(result);
     }
 
     [Fact]
@@ -118,7 +118,7 @@ public class GameServiceTests
         int index = 0;
         // Add move for only one player
         var result = await service.AddPlayerMoveAsync(gameId, playerId, index);
-        Assert.True(result);
+        Assert.NotNull(result);
         // Draw bag should NOT advance yet
         var stillTopTile = game.CallerBag.PeekTopTile();
         Assert.Equal(topTile.Id, stillTopTile?.Id);

@@ -82,7 +82,7 @@ public class GameApiIntegrationTests(CustomWebApplicationFactory factory) : ICla
                 gameStateResponse.EnsureSuccessStatusCode();
                 var gameState = await gameStateResponse.Content.ReadFromJsonAsync<GameDto>();
                 Assert.NotNull(gameState);
-                var topTile = gameState.CallerBag?.Tiles?[0];
+                var topTile = gameState.NextTile;
                 Assert.NotNull(topTile);
                 // Find first empty space for this player
                 var playerBoard = gameState.PlayerBoards?.Find(pb => pb.PlayerId == player.Id);
@@ -135,7 +135,7 @@ public class GameApiIntegrationTests(CustomWebApplicationFactory factory) : ICla
             var stateResponse = await _client.GetAsync($"/api/game/{game.Id}");
             stateResponse.EnsureSuccessStatusCode();
             var state = await stateResponse.Content.ReadFromJsonAsync<GameDto>();
-            var topTile = state?.CallerBag?.Tiles?[0];
+            var topTile = state?.NextTile;
             Assert.NotNull(topTile);
             var playerBoard = state?.PlayerBoards?.Find(pb => pb.PlayerId == player.Id);
             Assert.NotNull(playerBoard);

@@ -1,10 +1,12 @@
-import logo from './logo.svg';
+import logo from '../logo.svg';
 import './App.css';
 import { AppRoutes } from "./AppRoutes";
+import Navbar from "./Navbar";
 
 function App() {
   return (
     <div className="App">
+      <Navbar />
       <div className="flex-grow">
         <AppRoutes />
       </div>

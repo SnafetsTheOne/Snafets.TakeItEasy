@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchAllGames } from '../../data-access/game';
+import { getPlayersGames } from '../../data-access/game';
 import GameCard from "./GameCard";
 
 export const GamesPage = () => {
@@ -7,7 +7,7 @@ export const GamesPage = () => {
   const isYourTurn = true; // Replace with actual logic if needed
 
   useEffect(() => {
-    fetchAllGames().then(setGames);
+      getPlayersGames().then(setGames);
   }, []);
 
   return (

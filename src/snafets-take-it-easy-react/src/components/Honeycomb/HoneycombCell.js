@@ -19,7 +19,7 @@ export default function HoneycombCell({ cell, tile, pts }) {
   const verticalColor = vertical_colors[tile.vertical] || "#0000ff"; // blue
   const leftDiagonalColor = diag_left_colors[tile.leftDiagonal] || "#00ff00"; // green
   const rightDiagonalColor = diag_right_colors[tile.rightDiagonal] || "#ff00ff"; // magenta
-  const strokeColor = "#334155";
+  const strokeColor = "#000000ff";
   const strokeWidth = 2;
   const lineWidth = 10;
   const opacityLine = 0.7;

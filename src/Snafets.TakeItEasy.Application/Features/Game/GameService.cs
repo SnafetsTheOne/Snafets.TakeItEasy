@@ -32,7 +32,7 @@ public class GameService : IGameService
         return games.ToList();
     }
 
-    public async Task<List<GameModel>> LoadGameForPlayerAsync(Guid playerId)
+    public async Task<List<GameModel>> GetGamesByPlayerIdAsync(Guid playerId)
     {
         var allGames = await _repository.GetAllGamesAsync();
         return allGames.Where(g => g.PlayerBoards.Any(pb => pb.PlayerId == playerId)).ToList();
@@ -54,23 +54,27 @@ public class GameService : IGameService
     /// <param name="index">The index on the board.</param>
     /// <param name="tile">The tile to place.</param>
     /// <returns>True if the move was successful; otherwise, false.</returns>
-    public async Task<bool> AddPlayerMoveAsync(Guid gameId, Guid playerId, int index)
+    public async Task<GameModel?> AddPlayerMoveAsync(Guid gameId, Guid playerId, int index)
     {
         var game = await _repository.LoadGameAsync(gameId);
         if (game is null)
-            return false;
+            return null;
 
         var playerBoard = game.PlayerBoards.Find(pb => pb.PlayerId == playerId);
         if (playerBoard is null)
-            return false;
+            return null;
 
         var topTile = game.CallerBag.PeekTopTile();
         if (topTile is null)
-            return false;
+            return null;
 
         var moveResult = playerBoard.TryAddTileAtIndex(topTile, index);
+        if (!moveResult) return null;
         // Advance the draw bag if all players have placed the top tile
         game.TryAdvanceDrawBagIfAllPlayersPlacedTopTile();
-        return moveResult;
+
+        await _repository.SaveGameAsync(game);
+        
+        return game;
     }
 }

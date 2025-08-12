@@ -54,9 +54,7 @@ public class InMemoryLobbyRepository : ILobbyRepository
     {
         return Task.FromResult(_lobbies.TryRemove(lobbyId, out _));
     }
-    /// <summary>
-    /// Gets all lobbies.
-    /// </summary>
+
     public Task<IEnumerable<LobbyModel>> GetAllLobbiesAsync()
     {
         return Task.FromResult(_lobbies.Values as IEnumerable<LobbyModel>);

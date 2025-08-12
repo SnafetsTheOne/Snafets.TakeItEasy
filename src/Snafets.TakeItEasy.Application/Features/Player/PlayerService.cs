@@ -11,7 +11,7 @@ public class PlayerService : IPlayerService
         _playerRepository = playerRepository;
     }
 
-    public async Task<PlayerModel> CreatePlayerAsync(string name, string passwordHash)
+    public async Task<PlayerModel> SignUpAsync(string name, string passwordHash)
     {
         var player = new PlayerModel { Id = Guid.NewGuid(), Name = name, PasswordHash = passwordHash };
         await _playerRepository.AddPlayerAsync(player);
@@ -23,7 +23,7 @@ public class PlayerService : IPlayerService
         return await _playerRepository.GetPlayerByIdAsync(id);
     }
 
-    public async Task<PlayerModel?> SignInAsync(string name, string passwordHash)
+    public async Task<PlayerModel?> LoginAsync(string name, string passwordHash)
     {
         var player = await _playerRepository.GetPlayerByNameAndHashAsync(name, passwordHash);
         if (player == null)

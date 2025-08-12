@@ -26,12 +26,12 @@
       "name": "Run UI",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/src/snafets-take-it-easy-next-js/node_modules/next/dist/bin/next",
-      "args": ["dev"],
-      "cwd": "${workspaceFolder}/src/snafets-take-it-easy-next-js",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
+      "cwd": "${workspaceFolder}/src/snafets-take-it-easy-react",
       "serverReadyAction": {
         "action": "openExternally",
-        "pattern": "- Local:\\s*(https?://localhost:[0-9]+)",
+        "pattern": "Local:\\s*(https?://localhost:[0-9]+)",
         "uriFormat": "%s"
       }
     }

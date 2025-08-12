@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Snafets.TakeItEasy.Api.Requests;
 using Snafets.TakeItEasy.Application.Features.Lobby;
-using Microsoft.Extensions.Logging;
+using Snafets.TakeItEasy.Api.Contracts.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Snafets.TakeItEasy.Api.Controllers;
 
@@ -20,7 +21,7 @@ public class LobbyController(ILobbyService lobbyService, ILogger<LobbyController
     [HttpGet("{id}")]
     public async Task<IActionResult> GetLobbyById(Guid id)
     {
-        logger.LogInformation("GET /api/lobby/{id}", id);
+        logger.LogInformation("GET /api/lobby/{Id}", id);
         var lobby = await lobbyService.GetLobbyAsync(id);
         if (lobby == null)
         {
@@ -29,7 +30,7 @@ public class LobbyController(ILobbyService lobbyService, ILogger<LobbyController
         return Ok(lobby);
     }
 
-    [HttpPost]
+    [HttpPost, Authorize]
     public async Task<IActionResult> CreateLobby([FromBody] CreateLobbyRequest request)
     {
         logger.LogInformation("POST /api/lobby: {Name} {CreatorId}", request.Name, request.CreatorId);
@@ -37,10 +38,10 @@ public class LobbyController(ILobbyService lobbyService, ILogger<LobbyController
         return CreatedAtAction(nameof(GetLobbyById), new { id = lobby.Id }, lobby);
     }
 
-    [HttpPost("{id}/join")]
+    [HttpPost("{id}/join"), Authorize]
     public async Task<IActionResult> JoinLobby(Guid id, [FromBody] PlayerActionRequest request)
     {
-        logger.LogInformation("POST /api/lobby/{id}/join {PlayerId}", id, request.PlayerId);
+        logger.LogInformation("POST /api/lobby/{Id}/join {PlayerId}", id, request.PlayerId);
         var lobby = await lobbyService.UpdateLobby_AddPlayerAsync(id, request.PlayerId);
         if (lobby == null)
         {
@@ -49,10 +50,10 @@ public class LobbyController(ILobbyService lobbyService, ILogger<LobbyController
         return Ok(lobby);
     }
 
-    [HttpPost("{id}/leave")]
+    [HttpPost("{id}/leave"), Authorize]
     public async Task<IActionResult> LeaveLobby(Guid id, [FromBody] PlayerActionRequest request)
     {
-        logger.LogInformation("POST /api/lobby/{id}/leave {PlayerId}", id, request.PlayerId);
+        logger.LogInformation("POST /api/lobby/{Id}/leave {PlayerId}", id, request.PlayerId);
         var success = await lobbyService.UpdateLobby_RemovePlayerAsync(id, request.PlayerId);
         if (!success)
         {
@@ -61,15 +62,26 @@ public class LobbyController(ILobbyService lobbyService, ILogger<LobbyController
         return NoContent();
     }
 
-    [HttpPost("{id}/start")]
+    [HttpPost("{id}/start"), Authorize]
     public async Task<IActionResult> StartGame(Guid id)
     {
-        logger.LogInformation("POST /api/lobby/{id}/start", id);
+        logger.LogInformation("POST /api/lobby/{Id}/start", id);
         var game = await lobbyService.DeleteLobbyAndStartGameAsync(id);
         if (game == null)
         {
             return NotFound();
         }
-        return Ok(game);
+        return Ok(GameDto.FromDomain(game));
+    }
+
+    /// <summary>
+    /// Deletes a lobby by id.
+    /// </summary>
+    [HttpDelete("{id}"), Authorize]
+    public async Task<IActionResult> DeleteLobby(Guid id)
+    {
+        logger.LogInformation("DELETE /api/lobby/{Id}", id);
+        await lobbyService.DeleteLobbyAsync(id);
+        return NoContent();
     }
 }

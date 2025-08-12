@@ -10,7 +10,7 @@ public interface IGameService
 {
     Task<GameModel> CreateGameAsync(List<Guid> playerIds, string name);
     Task<GameModel?> GetGameAsync(Guid id);
-    Task<bool> AddPlayerMoveAsync(Guid gameId, Guid playerId, int index);
+    Task<GameModel?> AddPlayerMoveAsync(Guid gameId, Guid playerId, int index);
     Task<List<GameModel>> GetAllGamesAsync();
-    Task<List<GameModel>> LoadGameForPlayerAsync(Guid playerId);
+    Task<List<GameModel>> GetGamesByPlayerIdAsync(Guid playerId);
 }

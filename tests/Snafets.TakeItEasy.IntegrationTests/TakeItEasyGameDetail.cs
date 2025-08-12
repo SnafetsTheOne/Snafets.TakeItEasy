@@ -11,7 +11,7 @@ public class GameDto
 {
     public Guid? Id { get; set; }
     public List<PlayerBoardDto>? PlayerBoards { get; set; }
-    public DrawBagDto? CallerBag { get; set; }
+    public TileDto? NextTile { get; set; }
 }
 
 public class PlayerBoardDto

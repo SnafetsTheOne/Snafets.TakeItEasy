@@ -2,16 +2,16 @@
 
 
 import { useState } from "react";
-import { makeMoveAction } from "./EmptyHoneycombCell.Actions";
+import { postPlayerMove } from '../../data-access/game';
 
-export default function EmptyHoneycombCell({ cell, index, pts, playerId, gameId }) {
+export default function EmptyHoneycombCell({ cell, index, pts, playerId, gameId, refreshGame }) {
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
     setLoading(true);
-    await makeMoveAction({ gameId, playerId, index });
+    await postPlayerMove(gameId, playerId, index);
+    await refreshGame();
     setLoading(false);
-    // Optionally trigger a state update or re-fetch here
   };
 
   return (

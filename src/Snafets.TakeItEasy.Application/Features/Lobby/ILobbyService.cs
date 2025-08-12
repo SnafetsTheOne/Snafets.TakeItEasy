@@ -11,4 +11,5 @@ public interface ILobbyService
     Task<LobbyModel?> UpdateLobby_AddPlayerAsync(Guid lobbyId, Guid playerId);
     Task<bool> UpdateLobby_RemovePlayerAsync(Guid lobbyId, Guid playerId);
     Task<IEnumerable<LobbyModel>> GetAllLobbiesAsync();
+    Task<bool> DeleteLobbyAsync(Guid lobbyId);
 }

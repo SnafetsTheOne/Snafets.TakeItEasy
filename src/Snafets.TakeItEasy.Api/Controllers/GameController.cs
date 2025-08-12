@@ -1,4 +1,7 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Snafets.TakeItEasy.Api.Contracts.Models;
 using Snafets.TakeItEasy.Api.Requests;
 using Snafets.TakeItEasy.Application.Features.Game;
 using Snafets.TakeItEasy.Domain.Game;
@@ -9,32 +12,43 @@ namespace Snafets.TakeItEasy.Api.Controllers;
 [Route("api/[controller]")]
 public class GameController(IGameService gameService, ILogger<GameController> logger) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet, Authorize]
     public async Task<ActionResult<List<GameModel>>> GetAllGames()
     {
         logger.LogInformation("GET /api/game");
-        var games = await gameService.GetAllGamesAsync();
-        return Ok(games);
+        var playerId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.Sid)!);
+        var games = await gameService.GetGamesByPlayerIdAsync(playerId);
+        return Ok(games.Select(GameDto.FromDomain));
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id}"), Authorize]
     public async Task<ActionResult<GameModel?>> GetGame(Guid id)
     {
         logger.LogInformation("GET /api/game/{id}", id);
         var game = await gameService.GetGameAsync(id);
         if (game == null) return NotFound();
-        return Ok(game);
+        var playerId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.Sid)!);
+        if (game.PlayerBoards.Any(x => x.PlayerId == playerId))
+        {
+            return Ok(GameDto.FromDomain(game));
+        }
+        return Forbid();
     }
 
-    [HttpPost("{id}/move")]
+    [HttpPost("{id}/move"), Authorize]
     public async Task<ActionResult<bool>> AddPlayerMove(Guid id, [FromBody] PlayerMoveRequest request)
     {
         logger.LogInformation("POST /api/game/{id}/move {PlayerId} {Index}", id, request.PlayerId, request.Index);
-        var result = await gameService.AddPlayerMoveAsync(id, request.PlayerId, request.Index);
-        if (!result)
+        var playerId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.Sid)!);
+        if (playerId != request.PlayerId)
+        {
+            return Forbid();
+        }
+        var updatedGame = await gameService.AddPlayerMoveAsync(id, request.PlayerId, request.Index);
+        if (updatedGame == null)
         {
             return BadRequest("Invalid move.");
         }
-        return Ok(result);
+        return Ok(GameDto.FromDomain(updatedGame));
     }
 }

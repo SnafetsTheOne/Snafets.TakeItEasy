@@ -50,4 +50,9 @@ public class LobbyService : ILobbyService
     {
         return await _repository.GetAllLobbiesAsync();
     }
+
+    public async Task<bool> DeleteLobbyAsync(Guid lobbyId)
+    {
+        return await _repository.DeleteLobbyAsync(lobbyId);
+    }
 }
