@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Run API with Swagger UI",
+      "name": "Run API",
       "type": "coreclr",
       "request": "launch",
       "program": "${workspaceFolder}/src/Snafets.TakeItEasy.Api/bin/Debug/net9.0/Snafets.TakeItEasy.Api.dll",
@@ -17,12 +17,13 @@
         "pattern": "Now listening on: (https?://.*)",
         "uriFormat": "%s/swagger"
       },
+      "preLaunchTask": "Build API",
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     {
-      "name": "Run Next.js UI (Dev)",
+      "name": "Run UI",
       "type": "node",
       "request": "launch",
       "program": "${workspaceFolder}/src/snafets-take-it-easy-next-js/node_modules/next/dist/bin/next",
@@ -38,7 +39,7 @@
   "compounds": [
     {
       "name": "Run API and UI",
-      "configurations": ["Run API with Swagger UI", "Run Next.js UI (Dev)"]
+      "configurations": ["Run API", "Run UI"]
     }
   ]
 }

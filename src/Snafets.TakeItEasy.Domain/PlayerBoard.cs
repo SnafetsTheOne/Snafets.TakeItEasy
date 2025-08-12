@@ -33,19 +33,19 @@ namespace Snafets.TakeItEasy.Domain
         {
             public static readonly int[][] Vertical = new[]
             {
-                new[] {  7, 12, 16 },
-                new[] {  3,  8, 13, 17 },
-                new[] {  0,  4,  9, 14, 18 },
-                new[] {  1,  5, 10, 15 },
-                new[] {  2,  6, 11 }
-            };
-            public static readonly int[][] LeftDiagonal = new[]
-            {
                 new[] {  0,  1,  2 },
                 new[] {  3,  4,  5,  6 },
                 new[] {  7,  8,  9, 10, 11 },
                 new[] { 12, 13, 14, 15 },
                 new[] { 16, 17, 18 }
+            };
+            public static readonly int[][] LeftDiagonal = new[]
+            {
+                new[] {  7, 12, 16 },
+                new[] {  3,  8, 13, 17 },
+                new[] {  0,  4,  9, 14, 18 },
+                new[] {  1,  5, 10, 15 },
+                new[] {  2,  6, 11 }
             };
             public static readonly int[][] RightDiagonal = new[]
             {
