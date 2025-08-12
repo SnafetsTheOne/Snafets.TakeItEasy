@@ -25,7 +25,8 @@ export const GamePage = () => {
   if (!game || !game.id) return <div style={{ color: '#888', textAlign: 'center', marginTop: '2rem' }}>Game not found.</div>;
 
   const playerBoard = game.playerBoards.find(board => board.playerId === playerId);
-  const currentTile = game.NextTile;
+  const currentTile = game.nextTile;
+  const canPlay = currentTile !== null && playerBoard !== undefined && playerBoard.spaces.some(space => space.placedTile?.id === currentTile.id);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, boxSizing: 'border-box', alignItems: 'center', justifyContent: 'flex-start',
@@ -55,6 +56,7 @@ export const GamePage = () => {
             tiles={playerBoard.spaces} 
             playerId={playerId} 
             gameId={gameId} 
+            canPlay={canPlay}
             refreshGame={async () => setGame(await fetchGameById(gameId))}
           />
         </div>
