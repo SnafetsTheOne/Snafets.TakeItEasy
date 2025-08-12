@@ -6,4 +6,5 @@ public interface IPlayerRepository
 {
     Task<PlayerModel> AddPlayerAsync(PlayerModel player);
     Task<PlayerModel?> GetPlayerByIdAsync(Guid id);
+    Task<PlayerModel?> GetPlayerByNameAndHashAsync(string name, string passwordHash);
 }

@@ -14,7 +14,7 @@ public class GameApiIntegrationTests(CustomWebApplicationFactory factory) : ICla
     private async Task<PlayerModel> CreatePlayerAsync(string name, string passwordHash)
     {
         var request = new { Name = name, PasswordHash = passwordHash };
-        var response = await _client.PostAsJsonAsync("/api/player/", request);
+        var response = await _client.PostAsJsonAsync("/api/player/signup", request);
         response.EnsureSuccessStatusCode();
         var player = await response.Content.ReadFromJsonAsync<PlayerModel>();
         Assert.NotNull(player);

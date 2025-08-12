@@ -14,12 +14,12 @@ export async function fetchGameById(id) {
 }
 
 export async function postPlayerMove(gameId, playerId, index) {
-    const response = await fetch(`http://localhost:5124/api/Game/move?gameId=${gameId}&playerId=${playerId}&index=${index}`, {
+    const response = await fetch(`http://localhost:5124/api/Game/${gameId}/move`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ PlayerId: playerId, Index: index }),
     });
     if (!response.ok) throw new Error('Failed to post move');
 }

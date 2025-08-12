@@ -7,7 +7,7 @@ export default async function GamePage({ params }) {
   const playerBoard = game.playerBoards[0];
   const currentTile = game.isCompleted ? null : game.callerBag.tiles[0];
   const gameId = game.id;
-  const playerId = playerBoard.player.id;
+  const playerId = playerBoard.playerId;
 
   return (
     <div>

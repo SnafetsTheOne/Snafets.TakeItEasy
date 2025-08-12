@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Snafets.TakeItEasy.Application.Features.Player;
 using Snafets.TakeItEasy.Api.Requests;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Snafets.TakeItEasy.Domain;
 
 namespace Snafets.TakeItEasy.Api.Controllers;
 
@@ -15,19 +17,19 @@ public class PlayerController : ControllerBase
         _playerService = playerService;
     }
 
-    [HttpPost]
+    [HttpPost("signup")]
     public async Task<IActionResult> CreatePlayer([FromBody] CreatePlayerRequest request)
     {
         var player = await _playerService.CreatePlayerAsync(request.Name, request.PasswordHash);
-        return CreatedAtAction(nameof(GetPlayerById), new { id = player.Id }, player);
+        return CreatedAtAction(nameof(SignIn), null, player);
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetPlayerById(Guid id)
+    [HttpPost("signin")]
+    public async Task<IActionResult> SignIn([FromBody] CreatePlayerRequest request)
     {
-        var player = await _playerService.GetPlayerByIdAsync(id);
+        var player = await _playerService.SignInAsync(request.Name, request.PasswordHash);
         if (player == null)
-            return NotFound();
+            return Unauthorized();
         return Ok(player);
     }
 }
