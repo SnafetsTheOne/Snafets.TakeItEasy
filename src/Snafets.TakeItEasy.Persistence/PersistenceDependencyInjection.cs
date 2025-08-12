@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using Snafets.TakeItEasy.Application;
+using Snafets.TakeItEasy.Application.Features.Game;
 
 namespace Snafets.TakeItEasy.Persistence
 {

@@ -1,4 +1,4 @@
-namespace Snafets.TakeItEasy.Domain
+namespace Snafets.TakeItEasy.Domain.Game
 {
     /// <summary>
     /// Represents the Take It Easy game domain model.

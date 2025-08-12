@@ -1,4 +1,4 @@
-using Snafets.TakeItEasy.Application;
+using Snafets.TakeItEasy.Application.Features.Game;
 using Snafets.TakeItEasy.Domain;
 using Snafets.TakeItEasy.Persistence;
 
@@ -98,7 +98,7 @@ public class GameServiceTests
         Assert.True(result2);
         // After both players have placed, draw bag should advance
         var newTopTile = game.CallerBag.PeekTopTile();
-        Assert.NotEqual(topTile.Id, newTopTile.Id);
+        Assert.NotEqual(topTile.Id, newTopTile?.Id);
     }
 
     [Fact]
@@ -130,6 +130,6 @@ public class GameServiceTests
         Assert.True(result);
         // Draw bag should NOT advance yet
         var stillTopTile = game.CallerBag.PeekTopTile();
-        Assert.Equal(topTile.Id, stillTopTile.Id);
+        Assert.Equal(topTile.Id, stillTopTile?.Id);
     }
 }

@@ -1,6 +1,6 @@
 "use client";
-import HoneycombCell from "@/components/HoneycombCell";
-import EmptyHoneycombCell from "@/components/EmptyHoneycombCell";
+import HoneycombCell from "@/components/Honeycomb/HoneycombCell";
+import EmptyHoneycombCell from "@/components/Honeycomb/EmptyHoneycombCell";
 
 import * as React from "react";
 

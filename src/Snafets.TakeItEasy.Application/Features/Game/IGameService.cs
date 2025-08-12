@@ -1,6 +1,7 @@
 using Snafets.TakeItEasy.Domain;
+using Snafets.TakeItEasy.Domain.Game;
 
-namespace Snafets.TakeItEasy.Application
+namespace Snafets.TakeItEasy.Application.Features.Game
 {
     /// <summary>
     /// Interface for application service managing Take It Easy games.

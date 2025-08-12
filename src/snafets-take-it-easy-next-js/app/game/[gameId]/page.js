@@ -1,20 +1,13 @@
-import HoneycombCell from "@/components/HoneycombCell";
-import HoneycombBoard from "@/components/HoneycombBoard";
+import HoneycombStandaloneCell from "@/components/Honeycomb/HoneycombStandaloneCell";
+import HoneycombBoard from "@/components/Honeycomb/HoneycombBoard";
 import { fetchGameById } from '@/data-access/game';
 
 export default async function GamePage({ params }) {
   const game = await fetchGameById((await params).gameId);
-  const playerBoard = game?.playerBoards?.[0];
-  const currentTile = game?.isCompleted ? null : game?.callerBag?.tiles?.[0];
-  const gameId = game?.id;
-  const playerId = playerBoard?.player?.id;
-  const minX = 60;
-  const minY = -80;
-  const maxX = 160;
-  const maxY = 40;
-  const width = maxX - minX;
-  const height = maxY - minY;
-  const viewBox = `${minX} ${minY} ${width} ${height}`;
+  const playerBoard = game.playerBoards[0];
+  const currentTile = game.isCompleted ? null : game.callerBag.tiles[0];
+  const gameId = game.id;
+  const playerId = playerBoard.player.id;
 
   return (
     <div>
@@ -28,27 +21,19 @@ export default async function GamePage({ params }) {
             )}
         {currentTile && (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            
-            <h2>Current Tile</h2>
-            <svg viewBox={viewBox} width={width} height={height} role="img">
-              <g transform={`rotate(90 0 0)`}>
-                <HoneycombCell
-                  cell={{ i: 0, x: 0, y: -120 }}
-                  index={0}
-                  tile={currentTile}
-                  pts="34.6,-140 34.6,-100 0,-80 -34.6,-100 -34.6,-140 0,-160"
-                />
-              </g>
-            </svg>
+            <h2>Next</h2>
+            <HoneycombStandaloneCell 
+              tile={currentTile} 
+            />
           </div>
         )}
         {playerBoard && playerId && (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <h2>Player Board</h2>
             <HoneycombBoard 
               tiles={playerBoard.spaces} 
               playerId={playerId} 
-              gameId={gameId} />
+              gameId={gameId} 
+            />
           </div>
         )}
       </div>

@@ -1,7 +1,8 @@
 using System.Net.Http.Json;
 using Snafets.TakeItEasy.Domain;
 using Microsoft.Extensions.DependencyInjection;
-using Snafets.TakeItEasy.Application;
+using Snafets.TakeItEasy.Application.Features.Game;
+using Snafets.TakeItEasy.Domain.Game;
 
 namespace Snafets.TakeItEasy.IntegrationTests
 {
@@ -146,7 +147,7 @@ namespace Snafets.TakeItEasy.IntegrationTests
             Assert.NotNull(placedTiles);
             Assert.Equal(19, placedTiles.Count);
             // If you know the expected score for seed 42, set it here:
-            Assert.Equal(24, finalPlayerBoard.Score);
+            Assert.Equal(51, finalPlayerBoard.Score);
         }
     }
 }

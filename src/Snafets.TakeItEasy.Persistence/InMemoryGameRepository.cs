@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Snafets.TakeItEasy.Domain;
-using Snafets.TakeItEasy.Application;
+using Snafets.TakeItEasy.Application.Features.Game;
+using Snafets.TakeItEasy.Domain.Game;
 
 namespace Snafets.TakeItEasy.Persistence
 {

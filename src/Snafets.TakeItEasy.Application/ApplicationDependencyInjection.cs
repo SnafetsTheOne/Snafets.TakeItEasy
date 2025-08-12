@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Snafets.TakeItEasy.Application.Features.Game;
 
 namespace Snafets.TakeItEasy.Application
 {
