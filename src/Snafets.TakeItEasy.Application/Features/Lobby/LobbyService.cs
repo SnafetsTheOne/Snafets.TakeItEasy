@@ -15,7 +15,7 @@ public class LobbyService : ILobbyService
         _gameService = gameService;
     }
 
-    public async Task<LobbyModel> AddLobbyAsync(string name, Guid creatorId)
+    public async Task<LobbyModel> CreateLobbyAsync(string name, Guid creatorId)
     {
         return await _repository.AddLobbyAsync(name, creatorId);
     }
@@ -44,5 +44,10 @@ public class LobbyService : ILobbyService
         var game = await _gameService.CreateGameAsync(lobby.PlayerIds);
         await _repository.DeleteLobbyAsync(lobbyId);
         return game;
+    }
+
+    public async Task<IEnumerable<LobbyModel>> GetAllLobbiesAsync()
+    {
+        return await _repository.GetAllLobbiesAsync();
     }
 }

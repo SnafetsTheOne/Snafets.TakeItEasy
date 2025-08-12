@@ -10,10 +10,10 @@ public class InMemoryPlayerRepository : IPlayerRepository
 {
     private readonly Dictionary<Guid, PlayerModel> _players = new();
 
-    public Task AddPlayerAsync(PlayerModel player)
+    public Task<PlayerModel> AddPlayerAsync(PlayerModel player)
     {
         _players[player.Id] = player;
-        return Task.CompletedTask;
+        return Task.FromResult(player);
     }
 
     public Task<PlayerModel?> GetPlayerByIdAsync(Guid id)

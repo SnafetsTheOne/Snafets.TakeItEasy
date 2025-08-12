@@ -3,13 +3,13 @@ namespace Snafets.TakeItEasy.Domain.Game;
 public class PlayerBoard
 {
     public List<BoardSpace> Spaces { get; set; }
-        public Guid PlayerId { get; set; }
+    public Guid PlayerId { get; set; }
 
     public int Score => CalculateScore();
 
-        public PlayerBoard(Guid playerId)
+    public PlayerBoard(Guid playerId)
     {
-            PlayerId = playerId;
+        PlayerId = playerId;
         Spaces = new List<BoardSpace>(19);
         for (int i = 0; i < 19; i++)
         {

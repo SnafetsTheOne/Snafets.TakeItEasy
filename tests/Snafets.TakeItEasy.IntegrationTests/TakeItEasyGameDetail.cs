@@ -10,7 +10,7 @@ namespace Snafets.TakeItEasy.IntegrationTests
     public class PlayerBoardDetail
     {
         public List<BoardSpaceDetail>? Spaces { get; set; }
-        public PlayerDetail? Player { get; set; }
+        public Guid? PlayerId { get; set; }
         public int Score { get; set; }
     }
 

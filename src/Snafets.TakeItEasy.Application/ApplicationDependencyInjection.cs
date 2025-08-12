@@ -1,5 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Snafets.TakeItEasy.Application.Features.Game;
+using Snafets.TakeItEasy.Application.Features.Lobby;
+using Snafets.TakeItEasy.Application.Features.Player;
 
 namespace Snafets.TakeItEasy.Application
 {
@@ -9,6 +11,8 @@ namespace Snafets.TakeItEasy.Application
         {
             // Register application layer services here
             services.AddScoped<IGameService, GameService>();
+            services.AddScoped<IPlayerService, PlayerService>();
+            services.AddScoped<ILobbyService, LobbyService>();
             return services;
         }
     }

@@ -4,6 +4,6 @@ namespace Snafets.TakeItEasy.Application.Features.Player;
 
 public interface IPlayerRepository
 {
-    Task AddPlayerAsync(PlayerModel player);
+    Task<PlayerModel> AddPlayerAsync(PlayerModel player);
     Task<PlayerModel?> GetPlayerByIdAsync(Guid id);
 }

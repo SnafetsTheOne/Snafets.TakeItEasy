@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Snafets.TakeItEasy.Application.Features.Lobby;
 using Snafets.TakeItEasy.Domain.Lobby;
@@ -52,5 +53,12 @@ public class InMemoryLobbyRepository : ILobbyRepository
     public Task<bool> DeleteLobbyAsync(Guid lobbyId)
     {
         return Task.FromResult(_lobbies.TryRemove(lobbyId, out _));
+    }
+    /// <summary>
+    /// Gets all lobbies.
+    /// </summary>
+    public Task<IEnumerable<LobbyModel>> GetAllLobbiesAsync()
+    {
+        return Task.FromResult(_lobbies.Values as IEnumerable<LobbyModel>);
     }
 }
