@@ -35,13 +35,13 @@ public class LobbyService : ILobbyService
         return await _repository.GetLobbyAsync(lobbyId);
     }
 
-    public async Task<TakeItEasyGame?> DeleteLobbyAndStartGameAsync(Guid lobbyId)
+    public async Task<GameModel?> DeleteLobbyAndStartGameAsync(Guid lobbyId)
     {
         var lobby = await _repository.GetLobbyAsync(lobbyId);
         if (lobby == null || lobby.PlayerIds.Count == 0)
             return null;
 
-        var game = await _gameService.CreateGameAsync(lobby.PlayerIds);
+        var game = await _gameService.CreateGameAsync(lobby.PlayerIds, lobby.Name);
         await _repository.DeleteLobbyAsync(lobbyId);
         return game;
     }

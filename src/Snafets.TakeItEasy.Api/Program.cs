@@ -52,7 +52,7 @@ var player1 = await app.Services.GetRequiredService<IPlayerRepository>().AddPlay
 	PasswordHash = "hash1"
 });
 
-await app.Services.GetRequiredService<IGameRepository>().SaveGameAsync(new Snafets.TakeItEasy.Domain.Game.TakeItEasyGame(new List<Guid>{player1.Id}));
+await app.Services.GetRequiredService<IGameRepository>().SaveGameAsync(new Snafets.TakeItEasy.Domain.Game.GameModel(new List<Guid>{player1.Id}, "name"));
 
 await app.RunAsync();
 

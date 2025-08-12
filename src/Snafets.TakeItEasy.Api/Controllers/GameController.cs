@@ -9,16 +9,8 @@ namespace Snafets.TakeItEasy.Api.Controllers;
 [Route("api/[controller]")]
 public class GameController(IGameService gameService, ILogger<GameController> logger) : ControllerBase
 {
-    [HttpPost]
-    public async Task<ActionResult<TakeItEasyGame>> CreateGame([FromBody] CreateGameRequest createGameRequest)
-    {
-        logger.LogInformation("POST /api/game: {PlayerIds}", string.Join(",", createGameRequest.PlayerIds));
-        var game = await gameService.CreateGameAsync(createGameRequest.PlayerIds);
-        return Ok(game);
-    }
-
     [HttpGet]
-    public async Task<ActionResult<List<TakeItEasyGame>>> GetAllGames()
+    public async Task<ActionResult<List<GameModel>>> GetAllGames()
     {
         logger.LogInformation("GET /api/game");
         var games = await gameService.GetAllGamesAsync();
@@ -26,7 +18,7 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<TakeItEasyGame?>> GetGame(Guid id)
+    public async Task<ActionResult<GameModel?>> GetGame(Guid id)
     {
         logger.LogInformation("GET /api/game/{id}", id);
         var game = await gameService.GetGameAsync(id);

@@ -14,7 +14,7 @@ public class GameServiceTests
         var service = new GameService(repo);
 
         // Act
-        var game = await service.CreateGameAsync(playerIds);
+        var game = await service.CreateGameAsync(playerIds, "name");
 
         // Assert
         Assert.NotNull(game);
@@ -42,7 +42,7 @@ public class GameServiceTests
     public async Task GetGameAsync_ReturnsCreatedGame()
     {
         var service = CreateServiceWithPlayerIds(out var playerIds);
-        var game = await service.CreateGameAsync(playerIds);
+        var game = await service.CreateGameAsync(playerIds, "name");
         var loaded = await service.GetGameAsync(game.Id);
         Assert.NotNull(loaded);
         Assert.Equal(game.Id, loaded.Id);
@@ -52,8 +52,8 @@ public class GameServiceTests
     public async Task GetAllGamesAsync_ReturnsAllCreatedGames()
     {
         var service = CreateServiceWithPlayerIds(out var playerIds);
-        await service.CreateGameAsync(playerIds);
-        await service.CreateGameAsync(playerIds);
+        await service.CreateGameAsync(playerIds, "name");
+        await service.CreateGameAsync(playerIds, "name");
         var allGames = await service.GetAllGamesAsync();
         Assert.Equal(2, allGames.Count);
     }
@@ -62,8 +62,8 @@ public class GameServiceTests
     public async Task LoadGameForPlayerAsync_ReturnsGamesForPlayer()
     {
         var service = CreateServiceWithPlayerIds(out var playerIds);
-        await service.CreateGameAsync(playerIds);
-        await service.CreateGameAsync(playerIds);
+        await service.CreateGameAsync(playerIds, "name");
+        await service.CreateGameAsync(playerIds, "name");
         var gamesForAlice = await service.LoadGameForPlayerAsync(playerIds[0]);
         foreach (var game in gamesForAlice)
         {
@@ -75,7 +75,7 @@ public class GameServiceTests
     public async Task AddPlayerMoveAsync_AddsMoveAndAdvancesDrawBagCorrectly()
     {
         var service = CreateServiceWithPlayerIds(out var playerIds);
-        var game = await service.CreateGameAsync(playerIds);
+        var game = await service.CreateGameAsync(playerIds, "name");
         var gameId = game.Id;
         var playerId = playerIds[0];
         var topTile = game.CallerBag.PeekTopTile();
@@ -96,7 +96,7 @@ public class GameServiceTests
     public async Task AddPlayerMoveAsync_FailsForInvalidTileOrIndex()
     {
         var service = CreateServiceWithPlayerIds(out var playerIds);
-        var game = await service.CreateGameAsync(playerIds);
+        var game = await service.CreateGameAsync(playerIds, "name");
         var gameId = game.Id;
         var playerId = playerIds[0];
         var topTile = game.CallerBag.PeekTopTile();
@@ -110,7 +110,7 @@ public class GameServiceTests
     public async Task AddPlayerMoveAsync_DoesNotAdvanceDrawBagIfNotAllPlayersPlaced()
     {
         var service = CreateServiceWithPlayerIds(out var playerIds);
-        var game = await service.CreateGameAsync(playerIds);
+        var game = await service.CreateGameAsync(playerIds, "name");
         var gameId = game.Id;
         var playerId = playerIds[0];
         var topTile = game.CallerBag.PeekTopTile();

@@ -8,9 +8,9 @@ namespace Snafets.TakeItEasy.Application.Features.Game;
 /// </summary>
 public interface IGameService
 {
-    Task<TakeItEasyGame> CreateGameAsync(List<Guid> playerIds);
-    Task<TakeItEasyGame?> GetGameAsync(Guid id);
+    Task<GameModel> CreateGameAsync(List<Guid> playerIds, string name);
+    Task<GameModel?> GetGameAsync(Guid id);
     Task<bool> AddPlayerMoveAsync(Guid gameId, Guid playerId, int index);
-    Task<List<TakeItEasyGame>> GetAllGamesAsync();
-    Task<List<TakeItEasyGame>> LoadGameForPlayerAsync(Guid playerId);
+    Task<List<GameModel>> GetAllGamesAsync();
+    Task<List<GameModel>> LoadGameForPlayerAsync(Guid playerId);
 }

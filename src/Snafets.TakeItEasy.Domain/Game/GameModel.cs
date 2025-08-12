@@ -3,19 +3,20 @@ namespace Snafets.TakeItEasy.Domain.Game;
 /// <summary>
 /// Represents the Take It Easy game domain model.
 /// </summary>
-public class TakeItEasyGame
-
+public class GameModel
 {
     public Guid Id { get; set; }
+    public string Name { get; set; }
     public List<PlayerBoard> PlayerBoards { get; set; }
     public DrawBag CallerBag { get; set; }
 
     /// <summary>
     /// Creates a new TakeItEasyGame for the given players.
     /// </summary>
-    public TakeItEasyGame(List<Guid> playerIds)
+    public GameModel(List<Guid> playerIds, string name)
     {
         Id = Guid.NewGuid();
+        Name = name;
         PlayerBoards = playerIds.Select(id => new PlayerBoard(id)).ToList();
         CallerBag = new DrawBag();
     }

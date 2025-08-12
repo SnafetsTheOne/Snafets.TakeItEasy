@@ -18,21 +18,21 @@ public class GameService : IGameService
     /// <summary>
     /// Creates a new game for the given players and adds it to the repository.
     /// </summary>
-    public async Task<TakeItEasyGame> CreateGameAsync(List<Guid> playerIds)
+    public async Task<GameModel> CreateGameAsync(List<Guid> playerIds, string name)
     {
-        var game = new TakeItEasyGame(playerIds);
+        var game = new GameModel(playerIds, name);
         await _repository.SaveGameAsync(game);
         return game;
     }
 
-    public async Task<List<TakeItEasyGame>> GetAllGamesAsync()
+    public async Task<List<GameModel>> GetAllGamesAsync()
     {
         // Assuming repository has a method to get all games
         var games = await _repository.GetAllGamesAsync();
         return games.ToList();
     }
 
-    public async Task<List<TakeItEasyGame>> LoadGameForPlayerAsync(Guid playerId)
+    public async Task<List<GameModel>> LoadGameForPlayerAsync(Guid playerId)
     {
         var allGames = await _repository.GetAllGamesAsync();
         return allGames.Where(g => g.PlayerBoards.Any(pb => pb.PlayerId == playerId)).ToList();
@@ -41,7 +41,7 @@ public class GameService : IGameService
     /// <summary>
     /// Gets a game by its unique ID.
     /// </summary>
-    public async Task<TakeItEasyGame?> GetGameAsync(Guid id)
+    public async Task<GameModel?> GetGameAsync(Guid id)
     {
         return await _repository.LoadGameAsync(id);
     }

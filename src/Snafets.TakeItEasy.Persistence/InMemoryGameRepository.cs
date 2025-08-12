@@ -8,21 +8,21 @@ namespace Snafets.TakeItEasy.Persistence;
 
 public class InMemoryGameRepository : IGameRepository
 {
-    private readonly Dictionary<Guid, TakeItEasyGame> _store = new();
+    private readonly Dictionary<Guid, GameModel> _store = new();
 
-    public async Task SaveGameAsync(TakeItEasyGame game)
+    public async Task SaveGameAsync(GameModel game)
     {
         _store[game.Id] = game;
         await Task.CompletedTask;
     }
 
-    public async Task<TakeItEasyGame?> LoadGameAsync(Guid id)
+    public async Task<GameModel?> LoadGameAsync(Guid id)
     {
         _store.TryGetValue(id, out var game);
         return await Task.FromResult(game);
     }
 
-    public async Task<IEnumerable<TakeItEasyGame>> GetAllGamesAsync()
+    public async Task<IEnumerable<GameModel>> GetAllGamesAsync()
     {
         return await Task.FromResult(_store.Values);
     }
