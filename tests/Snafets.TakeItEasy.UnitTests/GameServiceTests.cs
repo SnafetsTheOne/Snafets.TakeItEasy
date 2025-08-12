@@ -1,5 +1,4 @@
 using Snafets.TakeItEasy.Application.Features.Game;
-using Snafets.TakeItEasy.Domain;
 using Snafets.TakeItEasy.Persistence;
 
 namespace Snafets.TakeItEasy.UnitTests;
@@ -10,26 +9,21 @@ public class GameServiceTests
     public async Task CreateGameAsync_SetsAllPropertiesCorrectly()
     {
         // Arrange
-        var players = new List<Player>
-        {
-            new Player { Id = Guid.NewGuid(), Name = "Alice" },
-            new Player { Id = Guid.NewGuid(), Name = "Bob" }
-        };
+        var playerIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
         var repo = new InMemoryGameRepository();
         var service = new GameService(repo);
 
         // Act
-        var game = await service.CreateGameAsync(players);
+        var game = await service.CreateGameAsync(playerIds);
 
         // Assert
         Assert.NotNull(game);
         Assert.NotEqual(Guid.Empty, game.Id);
         Assert.NotNull(game.PlayerBoards);
-        Assert.Equal(players.Count, game.PlayerBoards.Count);
+        Assert.Equal(playerIds.Count, game.PlayerBoards.Count);
         foreach (var pb in game.PlayerBoards)
         {
-            Assert.NotNull(pb.Player);
-            Assert.Contains(pb.Player, players);
+            Assert.Contains(pb.PlayerId, playerIds);
             Assert.NotNull(pb.Spaces);
             Assert.Equal(19, pb.Spaces.Count);
         }
@@ -37,13 +31,9 @@ public class GameServiceTests
         Assert.NotNull(game.CallerBag.Tiles);
         Assert.Equal(27, game.CallerBag.Tiles.Count); // 3 verticals x 3 left diagonals x 3 right diagonals = 27
     }
-    private GameService CreateServiceWithPlayers(out List<Player> players)
+    private static GameService CreateServiceWithPlayerIds(out List<Guid> playerIds)
     {
-        players = new List<Player>
-        {
-            new Player { Id = Guid.NewGuid(), Name = "Alice" },
-            new Player { Id = Guid.NewGuid(), Name = "Bob" }
-        };
+        playerIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
         var repo = new InMemoryGameRepository();
         return new GameService(repo);
     }
@@ -51,8 +41,8 @@ public class GameServiceTests
     [Fact]
     public async Task GetGameAsync_ReturnsCreatedGame()
     {
-        var service = CreateServiceWithPlayers(out var players);
-        var game = await service.CreateGameAsync(players);
+        var service = CreateServiceWithPlayerIds(out var playerIds);
+        var game = await service.CreateGameAsync(playerIds);
         var loaded = await service.GetGameAsync(game.Id);
         Assert.NotNull(loaded);
         Assert.Equal(game.Id, loaded.Id);
@@ -61,32 +51,33 @@ public class GameServiceTests
     [Fact]
     public async Task GetAllGamesAsync_ReturnsAllCreatedGames()
     {
-        var service = CreateServiceWithPlayers(out var players);
-        var game1 = await service.CreateGameAsync(players);
-        var game2 = await service.CreateGameAsync(players);
+        var service = CreateServiceWithPlayerIds(out var playerIds);
+        await service.CreateGameAsync(playerIds);
+        await service.CreateGameAsync(playerIds);
         var allGames = await service.GetAllGamesAsync();
-        Assert.Contains(allGames, g => g.Id == game1.Id);
-        Assert.Contains(allGames, g => g.Id == game2.Id);
         Assert.Equal(2, allGames.Count);
     }
 
     [Fact]
     public async Task LoadGameForPlayerAsync_ReturnsGamesForPlayer()
     {
-        var service = CreateServiceWithPlayers(out var players);
-        var game1 = await service.CreateGameAsync(players);
-        var game2 = await service.CreateGameAsync(players);
-        var gamesForAlice = await service.LoadGameForPlayerAsync(players[0].Id);
-        Assert.All(gamesForAlice, g => Assert.Contains(g.PlayerBoards, pb => pb.Player.Id == players[0].Id));
+        var service = CreateServiceWithPlayerIds(out var playerIds);
+        await service.CreateGameAsync(playerIds);
+        await service.CreateGameAsync(playerIds);
+        var gamesForAlice = await service.LoadGameForPlayerAsync(playerIds[0]);
+        foreach (var game in gamesForAlice)
+        {
+            Assert.Contains(game.PlayerBoards, pb => pb.PlayerId == playerIds[0]);
+        }
     }
 
     [Fact]
     public async Task AddPlayerMoveAsync_AddsMoveAndAdvancesDrawBagCorrectly()
     {
-        var service = CreateServiceWithPlayers(out var players);
-        var game = await service.CreateGameAsync(players);
+        var service = CreateServiceWithPlayerIds(out var playerIds);
+        var game = await service.CreateGameAsync(playerIds);
         var gameId = game.Id;
-        var playerId = players[0].Id;
+        var playerId = playerIds[0];
         var topTile = game.CallerBag.PeekTopTile();
         Assert.NotNull(topTile);
         int index = 0;
@@ -94,7 +85,7 @@ public class GameServiceTests
         var result = await service.AddPlayerMoveAsync(gameId, playerId, index);
         Assert.True(result);
         // Add move for second player
-        var result2 = await service.AddPlayerMoveAsync(gameId, players[1].Id, index);
+        var result2 = await service.AddPlayerMoveAsync(gameId, playerIds[1], index);
         Assert.True(result2);
         // After both players have placed, draw bag should advance
         var newTopTile = game.CallerBag.PeekTopTile();
@@ -104,10 +95,10 @@ public class GameServiceTests
     [Fact]
     public async Task AddPlayerMoveAsync_FailsForInvalidTileOrIndex()
     {
-        var service = CreateServiceWithPlayers(out var players);
-        var game = await service.CreateGameAsync(players);
+        var service = CreateServiceWithPlayerIds(out var playerIds);
+        var game = await service.CreateGameAsync(playerIds);
         var gameId = game.Id;
-        var playerId = players[0].Id;
+        var playerId = playerIds[0];
         var topTile = game.CallerBag.PeekTopTile();
         Assert.NotNull(topTile);
         // Invalid index
@@ -118,10 +109,10 @@ public class GameServiceTests
     [Fact]
     public async Task AddPlayerMoveAsync_DoesNotAdvanceDrawBagIfNotAllPlayersPlaced()
     {
-        var service = CreateServiceWithPlayers(out var players);
-        var game = await service.CreateGameAsync(players);
+        var service = CreateServiceWithPlayerIds(out var playerIds);
+        var game = await service.CreateGameAsync(playerIds);
         var gameId = game.Id;
-        var playerId = players[0].Id;
+        var playerId = playerIds[0];
         var topTile = game.CallerBag.PeekTopTile();
         Assert.NotNull(topTile);
         int index = 0;

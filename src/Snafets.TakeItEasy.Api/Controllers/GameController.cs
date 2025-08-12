@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Snafets.TakeItEasy.Application.Features.Game;
-using Snafets.TakeItEasy.Domain;
 using Snafets.TakeItEasy.Domain.Game;
 
 namespace Snafets.TakeItEasy.Api.Controllers
@@ -10,9 +9,9 @@ namespace Snafets.TakeItEasy.Api.Controllers
     public class GameController(IGameService gameService, ILogger<GameController> logger) : ControllerBase
     {
         [HttpPost("create")]
-        public async Task<ActionResult<TakeItEasyGame>> CreateGame([FromBody] List<Player> players)
+        public async Task<ActionResult<TakeItEasyGame>> CreateGame([FromBody] List<Guid> playerIds)
         {
-            var game = await gameService.CreateGameAsync(players);
+            var game = await gameService.CreateGameAsync(playerIds);
             return Ok(game);
         }
 

@@ -1,8 +1,8 @@
 using System.Net.Http.Json;
-using Snafets.TakeItEasy.Domain;
 using Microsoft.Extensions.DependencyInjection;
-using Snafets.TakeItEasy.Application.Features.Game;
 using Snafets.TakeItEasy.Domain.Game;
+using Snafets.TakeItEasy.Application.Features.Game;
+using Snafets.TakeItEasy.Domain;
 
 namespace Snafets.TakeItEasy.IntegrationTests
 {
@@ -14,10 +14,10 @@ namespace Snafets.TakeItEasy.IntegrationTests
         public async Task CreateGame_ThenGetGame_ReturnsCreatedGame()
         {
             // Arrange: create a new game with two players
-            var players = new List<Player>
+            var players = new List<PlayerModel>
             {
-                new Player { Id = Guid.Parse("00000000-0000-0000-0000-000000000001"), Name = "Alice" },
-                new Player { Id = Guid.Parse("00000000-0000-0000-0000-000000000002"), Name = "Bob" }
+                new PlayerModel { Id = Guid.Parse("00000000-0000-0000-0000-000000000001"), Name = "Alice" },
+                new PlayerModel { Id = Guid.Parse("00000000-0000-0000-0000-000000000002"), Name = "Bob" }
             };
             var playersJson = System.Text.Json.JsonSerializer.Serialize(players);
             var createResponse = await _client.PostAsync(
@@ -47,8 +47,8 @@ namespace Snafets.TakeItEasy.IntegrationTests
             var player1Id = Guid.NewGuid();
             var player2Id = Guid.NewGuid();
             var players = new[] {
-                new Player { Id = player1Id, Name = "Alice" },
-                new Player { Id = player2Id, Name = "Bob" }
+                new PlayerModel { Id = player1Id, Name = "Alice" },
+                new PlayerModel { Id = player2Id, Name = "Bob" }
             };
             var playersJson = System.Text.Json.JsonSerializer.Serialize(players);
             var createResponse = await client.PostAsync(
@@ -110,11 +110,11 @@ namespace Snafets.TakeItEasy.IntegrationTests
             var repo = scope.ServiceProvider.GetRequiredService<IGameRepository>();
 
             // Create game instance for one player
-            var player = new Player { Id = Guid.NewGuid(), Name = "TestPlayer" };
+            var player = new PlayerModel { Id = Guid.NewGuid(), Name = "TestPlayer" };
 
             // Set DrawBag RNG to a known seed
             DrawBag.Rng = new Random(420);
-            var game = new TakeItEasyGame(new List<Player> { player });
+            var game = new TakeItEasyGame(new List<PlayerModel> { player });
             await repo.SaveGameAsync(game);
 
             // Play all 19 moves via the client
@@ -124,9 +124,9 @@ namespace Snafets.TakeItEasy.IntegrationTests
                 var stateResponse = await _client.GetAsync($"/api/game/{game.Id}");
                 stateResponse.EnsureSuccessStatusCode();
                 var state = await stateResponse.Content.ReadFromJsonAsync<TakeItEasyGameDetail>();
-                var topTile = state.CallerBag?.Tiles?[0];
+                var topTile = state?.CallerBag?.Tiles?[0];
                 Assert.NotNull(topTile);
-                var playerBoard = state.PlayerBoards?.Find(pb => pb.Player?.Id == player.Id);
+                var playerBoard = state?.PlayerBoards?.Find(pb => pb.Player?.Id == player.Id);
                 Assert.NotNull(playerBoard);
                 var firstEmptySpace = playerBoard.Spaces?.FirstOrDefault(s => s.PlacedTile == null);
                 Assert.NotNull(firstEmptySpace);
@@ -138,7 +138,7 @@ namespace Snafets.TakeItEasy.IntegrationTests
             var finalResponse = await _client.GetAsync($"/api/game/{game.Id}");
             finalResponse.EnsureSuccessStatusCode();
             var finalState = await finalResponse.Content.ReadFromJsonAsync<TakeItEasyGameDetail>();
-            var finalPlayerBoard = finalState.PlayerBoards?.Find(pb => pb.Player?.Id == player.Id);
+            var finalPlayerBoard = finalState?.PlayerBoards?.Find(pb => pb.Player?.Id == player.Id);
             Assert.NotNull(finalPlayerBoard);
 
             // Calculate expected score (deterministic for seed 42)
