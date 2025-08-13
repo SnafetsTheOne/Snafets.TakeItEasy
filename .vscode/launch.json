@@ -8,9 +8,9 @@
       "name": "Run API",
       "type": "coreclr",
       "request": "launch",
-      "program": "${workspaceFolder}/src/Snafets.TakeItEasy.Api/bin/Debug/net9.0/Snafets.TakeItEasy.Api.dll",
+      "program": "${workspaceFolder}/src/api/Snafets.TakeItEasy.Api/bin/Debug/net9.0/Snafets.TakeItEasy.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Snafets.TakeItEasy.Api",
+      "cwd": "${workspaceFolder}/src/api/Snafets.TakeItEasy.Api",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
@@ -28,7 +28,7 @@
       "request": "launch",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "start"],
-      "cwd": "${workspaceFolder}/src/snafets-take-it-easy-react",
+      "cwd": "${workspaceFolder}/src/ui",
       "serverReadyAction": {
         "action": "openExternally",
         "pattern": "Local:\\s*(https?://localhost:[0-9]+)",

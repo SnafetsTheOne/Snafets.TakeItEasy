@@ -1,6 +1,0 @@
-@Snafets.TakeItEasy.Api_HostAddress = http://localhost:5124
-
-GET {{Snafets.TakeItEasy.Api_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

@@ -7,6 +7,7 @@ using Snafets.TakeItEasy.Api.SignalR;
 using Snafets.TakeItEasy.Persistence;
 using Snafets.TakeItEasy.Api.Services;
 using Snafets.TakeItEasy.Application.Features;
+using Snafets.TakeItEasy.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,12 +21,14 @@ static bool IsApiOrSignalR(HttpRequest req)
 
 builder.Logging.AddConsole();
 
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<AllowedOrigins>();
+
 // Add CORS services
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5124", "http://localhost:3000") // React dev server
+        policy.WithOrigins(allowedOrigins!.Origins.ToArray()) // React dev server
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -101,15 +104,18 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHub<UpdatesHub>("/hubs/updates").RequireAuthorization();
 
-var player1 = await app.Services.GetRequiredService<IPlayerRepository>().AddPlayerAsync(new Snafets.TakeItEasy.Domain.PlayerModel()
+if (app.Environment.IsDevelopment())
 {
-	Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
-	Name = "Alice",
-	PasswordHash = "hash1"
-});
+    var player1 = await app.Services.GetRequiredService<IPlayerRepository>().AddPlayerAsync(new Snafets.TakeItEasy.Domain.PlayerModel()
+    {
+        Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+        Name = "Alice",
+        PasswordHash = "hash1"
+    });
 
-await app.Services.GetRequiredService<IGameRepository>().SaveGameAsync(new Snafets.TakeItEasy.Domain.Game.GameModel(new List<Guid>{player1.Id}, "name"));
-await app.Services.GetRequiredService<ILobbyRepository>().AddLobbyAsync("Test Lobby", player1.Id);
+    await app.Services.GetRequiredService<IGameRepository>().SaveGameAsync(new Snafets.TakeItEasy.Domain.Game.GameModel(new List<Guid>{player1.Id}, "name"));
+    await app.Services.GetRequiredService<ILobbyRepository>().AddLobbyAsync("Test Lobby", player1.Id);
+}
 await app.RunAsync();
 
 // Required for WebApplicationFactory in integration tests

@@ -16,7 +16,7 @@
       "label": "Run API",
       "type": "shell",
       "command": "dotnet",
-      "args": ["run", "--project", "src/Snafets.TakeItEasy.Api"],
+      "args": ["run", "--project", "src/api/Snafets.TakeItEasy.Api"],
       "group": "build",
       "problemMatcher": ["$msCompile"],
       "dependsOn": ["Build API"],
@@ -64,7 +64,7 @@
       "type": "shell",
       "command": "npm run build",
       "options": {
-        "cwd": "${workspaceFolder}/src/snafets-take-it-easy-react"
+        "cwd": "${workspaceFolder}/src/ui"
       },
       "group": {
         "kind": "build",
@@ -89,7 +89,7 @@
       "command": "npm run start",
       "dependsOn": ["Build UI"],
       "options": {
-        "cwd": "${workspaceFolder}/src/snafets-take-it-easy-react"
+        "cwd": "${workspaceFolder}/src/ui"
       },
       "group": {
         "kind": "build",

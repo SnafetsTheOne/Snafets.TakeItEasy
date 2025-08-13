@@ -26,8 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Snafets.TakeItEasy.Application\Snafets.TakeItEasy.Application.csproj" />
-    <ProjectReference Include="..\..\src\Snafets.TakeItEasy.Persistence\Snafets.TakeItEasy.Persistence.csproj" />
+    <ProjectReference Include="..\..\src\api\Snafets.TakeItEasy.Application\Snafets.TakeItEasy.Application.csproj" />
+    <ProjectReference Include="..\..\src\api\Snafets.TakeItEasy.Persistence\Snafets.TakeItEasy.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

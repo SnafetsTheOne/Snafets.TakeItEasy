@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Snafets.TakeItEasy.Api\Snafets.TakeItEasy.Api.csproj" />
+    <ProjectReference Include="..\..\src\api\Snafets.TakeItEasy.Api\Snafets.TakeItEasy.Api.csproj" />
   </ItemGroup>
 
 </Project>

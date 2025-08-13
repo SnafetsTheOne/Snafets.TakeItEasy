@@ -5,13 +5,13 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snafets.TakeItEasy.Api", "src\Snafets.TakeItEasy.Api\Snafets.TakeItEasy.Api.csproj", "{2816FCB5-35DD-4C41-B6FC-89908A596CA4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snafets.TakeItEasy.Api", "src\api\Snafets.TakeItEasy.Api\Snafets.TakeItEasy.Api.csproj", "{2816FCB5-35DD-4C41-B6FC-89908A596CA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snafets.TakeItEasy.Domain", "src\Snafets.TakeItEasy.Domain\Snafets.TakeItEasy.Domain.csproj", "{00FF2A94-C515-4C65-8DB1-584F89792FAC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snafets.TakeItEasy.Domain", "src\api\Snafets.TakeItEasy.Domain\Snafets.TakeItEasy.Domain.csproj", "{00FF2A94-C515-4C65-8DB1-584F89792FAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snafets.TakeItEasy.Application", "src\Snafets.TakeItEasy.Application\Snafets.TakeItEasy.Application.csproj", "{4AB10A32-822B-4538-91BB-F331ADC51E18}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snafets.TakeItEasy.Application", "src\api\Snafets.TakeItEasy.Application\Snafets.TakeItEasy.Application.csproj", "{4AB10A32-822B-4538-91BB-F331ADC51E18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snafets.TakeItEasy.Persistence", "src\Snafets.TakeItEasy.Persistence\Snafets.TakeItEasy.Persistence.csproj", "{B063E522-C9B7-4A54-9079-FA9D0BD6B7F2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snafets.TakeItEasy.Persistence", "src\api\Snafets.TakeItEasy.Persistence\Snafets.TakeItEasy.Persistence.csproj", "{B063E522-C9B7-4A54-9079-FA9D0BD6B7F2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject
