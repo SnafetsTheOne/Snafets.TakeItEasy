@@ -4,10 +4,11 @@
 import { useState } from "react";
 import { postPlayerMove } from '../../data-access/game';
 
-export default function EmptyHoneycombCell({ cell, index, pts, playerId, gameId, refreshGame }) {
+export default function EmptyHoneycombCell({ cell, index, pts, playerId, gameId, canPlay, refreshGame }) {
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
+    if (loading || !canPlay) return; // Prevent action if already loading or can't play
     setLoading(true);
     await postPlayerMove(gameId, playerId, index);
     await refreshGame();
