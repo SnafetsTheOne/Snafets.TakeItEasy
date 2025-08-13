@@ -12,15 +12,24 @@ export const GamePage = () => {
   const [loading, setLoading] = useState(true);
   const [boardIndex, setBoardIndex] = useState(0);
   const [playerNames, setPlayerNames] = useState({});
+  const [showPopup, setShowPopup] = useState(false);
+
   const { user } = useAuth();
-  const playerId = user?.id;
   const { on } = useRealtime();
+  const playerId = user?.id;
 
   // reload game
   const reloadGame = async () => {
     const gameData = await fetchGameById(gameId);
     setGame(gameData);
   }
+  const handleSwipe = (direction) => {
+    setBoardIndex(idx => {
+      if (direction === 'left') return idx === 0 ? allBoards.length - 1 : idx - 1;
+      if (direction === 'right') return idx === allBoards.length - 1 ? 0 : idx + 1;
+      return idx;
+    });
+  };
 
   // load page
   useEffect(() => {
@@ -51,13 +60,24 @@ export const GamePage = () => {
     });
   }, [gameId]);
 
+  // Check if game is completed
+  useEffect(() => {
+    if (game && game.isCompleted) {
+      setShowPopup(true);
+    } else {
+      setShowPopup(false);
+    }
+  }, [game]);
+
   if (loading) return <div>Loading...</div>;
   if (!game?.id || !playerId) return <div style={{ color: '#888', textAlign: 'center', marginTop: '2rem' }}>Game not found.</div>;
 
   const playerBoard = game.myBoard;
   const currentTile = game.nextTile;
   const canPlay = game.myTurn;
-  const isCompleted = game.isCompleted
+  const scores = [game.myBoard, ...(game.otherPlayerBoards || [])]
+                  .map(b => ({ id: b.playerId, name: playerNames[b.playerId], score: b.score }))
+                  .sort((a, b) => b.score - a.score);
   const otherGameboards = game.otherPlayerBoards || [];
   const allBoards = [
     { title: playerNames[playerBoard?.playerId] || 'My Game', playerBoard, currentTile, canPlay, playerId, gameId, refreshGame: reloadGame },
@@ -72,14 +92,6 @@ export const GamePage = () => {
     }))
   ];
 
-  const handleSwipe = (direction) => {
-    setBoardIndex(idx => {
-      if (direction === 'left') return idx === 0 ? allBoards.length - 1 : idx - 1;
-      if (direction === 'right') return idx === allBoards.length - 1 ? 0 : idx + 1;
-      return idx;
-    });
-  };
-
   return (
     <div style={{ width: '100%', maxWidth: 900, margin: '0 auto', position: 'relative' }}>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 24 }}>
@@ -89,6 +101,30 @@ export const GamePage = () => {
         </div>
         <button onClick={() => handleSwipe('right')} style={{ fontSize: 24, padding: '0.5rem 1rem', borderRadius: 8, border: '1px solid #ccc', background: '#f5f5f5', cursor: 'pointer' }}>&gt;</button>
       </div>
+      {showPopup && (
+        <>
+          <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.6)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000 }}>
+            <div style={{ background: "linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%)", padding: "48px 40px", borderRadius: "18px", minWidth: "420px", maxWidth: "90vw", boxShadow: "0 8px 32px rgba(0,0,0,0.18)", textAlign: "center", border: "2px solid #6366f1" }}>
+              <h2 style={{ fontSize: "2.5rem", marginBottom: "1rem", color: "#6366f1" }}>Game Over</h2>
+              <h3 style={{ fontSize: "1.5rem", marginBottom: "1.5rem", color: "#334155" }}>Player Scores</h3>
+              <ul style={{ listStyle: "none", padding: 0, marginBottom: "2rem" }}>
+                {scores.map(({ id, name, score }) => (
+                  <li key={id} style={{ fontSize: "1.25rem", margin: "0.5rem 0", color: "#475569", fontWeight: "bold" }}>
+                    {name}: <span style={{ color: "#6366f1" }}>{score}</span>
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={() => setShowPopup(false)}
+                style={{ fontSize: "1.1rem", padding: "0.75rem 2rem", borderRadius: "8px", border: "none", background: "#6366f1", color: "#fff", cursor: "pointer", boxShadow: "0 2px 8px rgba(99,102,241,0.15)" }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
+export default GamePage;
