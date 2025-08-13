@@ -57,7 +57,7 @@ export async function deleteLobby(lobbyId) {
             'Content-Type': 'application/json',
         },
     });
-    return response;
+    if (!response.ok) throw new Error(`Failed to delete lobby ${response.statusText}`);
 }
 
 export async function startGameFromLobby(lobbyId) {

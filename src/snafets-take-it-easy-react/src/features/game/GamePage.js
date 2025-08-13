@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import HoneycombStandaloneCell from "../../components/Honeycomb/HoneycombStandaloneCell";
-import HoneycombBoard from "../../components/Honeycomb/HoneycombBoard";
 import { fetchGameById } from '../../data-access/game';
 import { useAuth } from "../../infra/AuthProvider";
 import { useRealtime } from "../../infra/RealtimeProvider";
+import { GameBoard } from "./GameBoard";
 
 export const GamePage = () => {
   const { gameId } = useParams();
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [boardIndex, setBoardIndex] = useState(0);
   const { user } = useAuth();
   const playerId = user?.id;
   const { on } = useRealtime();
@@ -38,39 +38,36 @@ export const GamePage = () => {
   const playerBoard = game.myBoard;
   const currentTile = game.nextTile;
   const canPlay = game.myTurn;
+  const otherGameboards = game.otherPlayerBoards || [];
+  const allBoards = [
+    { title: 'My Game', playerBoard, currentTile, canPlay, playerId, gameId, refreshGame: fetchGame },
+    ...otherGameboards.map((b, i) => ({
+      title: b.playerName || `Player ${i+1}`,
+      playerBoard: b,
+      currentTile: currentTile,
+      canPlay: false,
+      playerId: b.playerId,
+      gameId,
+      refreshGame: () => {},
+    }))
+  ];
+
+  const handleSwipe = (direction) => {
+    setBoardIndex(idx => {
+      if (direction === 'left') return idx === 0 ? allBoards.length - 1 : idx - 1;
+      if (direction === 'right') return idx === allBoards.length - 1 ? 0 : idx + 1;
+      return idx;
+    });
+  };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, boxSizing: 'border-box', alignItems: 'center', justifyContent: 'flex-start',
-    }}>
-      <div style={{display: 'flex',flexDirection: 'column',gap: 32,alignItems: 'center',justifyContent: 'flex-start',width: '100%',maxWidth: 900,margin: '0 auto',boxSizing: 'border-box',
-      }}>
-        <div style={{ display: 'flex', flexDirection: 'row', gap: 40, alignItems: 'flex-start', justifyContent: 'center', width: '100%' }}>
-          {/* Score */}
-          <div style={{ minWidth: 120, textAlign: 'center', background: '#ffffffff', padding: '1.2rem 1.5rem', borderRadius: 10, boxShadow: '0 1px 6px rgba(0,0,0,0.04)', fontWeight: 600, fontSize: '1.1rem', color: '#222', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 120 }}>
-            <span style={{ fontSize: '0.9rem', color: '#888', fontWeight: 400, marginBottom: 4 }}>Score</span>
-            <span style={{ fontSize: '2rem', fontWeight: 700 }}>{playerBoard?.score != null ? playerBoard.score : '-'}</span>
-          </div>
-
-          {/* Next Cell Preview (no text) */}
-          <div style={{ minWidth: 120, textAlign: 'center', background: '#ffffffff', padding: '1.2rem 1.5rem', borderRadius: 10, boxShadow: '0 1px 6px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 120 }}>
-            {currentTile ? (
-              <HoneycombStandaloneCell tile={currentTile} />
-            ) : (
-              <span style={{ color: '#bbb', fontSize: '1.2rem' }}>—</span>
-            )}
-          </div>
+    <div style={{ width: '100%', maxWidth: 900, margin: '0 auto', position: 'relative' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 24 }}>
+        <button onClick={() => handleSwipe('left')} style={{ fontSize: 24, padding: '0.5rem 1rem', borderRadius: 8, border: '1px solid #ccc', background: '#f5f5f5', cursor: 'pointer' }}>&lt;</button>
+        <div style={{ flex: 1 }}>
+          <GameBoard {...allBoards[boardIndex]} />
         </div>
-
-        {/* Game Board below */}
-        <div style={{ width: '50%', minWidth: 320, maxWidth: 480, display: 'flex', background: '#ffffffff', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 10, boxShadow: '0 1px 6px rgba(0,0,0,0.04)', padding: '1.2rem 1.5rem', minHeight: 400 }}>
-          <HoneycombBoard 
-            tiles={playerBoard.spaces} 
-            playerId={playerId} 
-            gameId={gameId} 
-            canPlay={canPlay}
-            refreshGame={async () => setGame(await fetchGameById(gameId))}
-          />
-        </div>
+        <button onClick={() => handleSwipe('right')} style={{ fontSize: 24, padding: '0.5rem 1rem', borderRadius: 8, border: '1px solid #ccc', background: '#f5f5f5', cursor: 'pointer' }}>&gt;</button>
       </div>
     </div>
   );

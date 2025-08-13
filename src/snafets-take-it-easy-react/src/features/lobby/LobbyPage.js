@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getLobbyById, startGameFromLobby } from '../../data-access/lobby';
+import { getLobbyById, startGameFromLobby, joinLobby, leaveLobby, deleteLobby } from '../../data-access/lobby';
 import { getPlayerById } from '../../data-access/player';
 import { useAuth } from "../../infra/AuthProvider";
 import { useRealtime } from "../../infra/RealtimeProvider";
@@ -20,35 +20,13 @@ export const LobbyPage = () => {
 
   const handleJoinLobby = async () => {
     if (!lobbyId || !myUserId) return;
-    await import('../../data-access/lobby').then(mod => mod.joinLobby(lobbyId, myUserId));
-    // Refresh lobby after join
-    const lobbyData = await getLobbyById(lobbyId);
-    setLobby(lobbyData);
-    if (lobbyData?.playerIds) {
-      const userObjs = await Promise.all(
-        lobbyData.playerIds.map(async (id) => {
-          const player = await getPlayerById(id);
-          return { id, name: player ? player.name : 'Unknown' };
-        })
-      );
-      setUsers(userObjs);
-    }
+    await joinLobby(lobbyId, myUserId);
+    await fetchLobby();
   };
   const handleLeaveLobby = async () => {
     if (!lobbyId || !myUserId) return;
-    await import('../../data-access/lobby').then(mod => mod.leaveLobby(lobbyId, myUserId));
-    // Refresh lobby after leave
-    const lobbyData = await getLobbyById(lobbyId);
-    setLobby(lobbyData);
-    if (lobbyData?.playerIds) {
-      const userObjs = await Promise.all(
-        lobbyData.playerIds.map(async (id) => {
-          const player = await getPlayerById(id);
-          return { id, name: player ? player.name : 'Unknown' };
-        })
-      );
-      setUsers(userObjs);
-    }
+    await leaveLobby(lobbyId, myUserId);
+    await fetchLobby();
   };
 
   const fetchLobby = async () => {
@@ -93,11 +71,16 @@ export const LobbyPage = () => {
     navigate(`/game/${game.id}`);
   };
 
+  const handleDeleteLobby = async () => {
+    await deleteLobby(lobbyId);
+    navigate('/');
+  };
+
   if (loading) return <div style={{ color: '#888', textAlign: 'center', marginTop: '2rem' }}>Loading...</div>;
   if (!lobby) return <div style={{ color: '#888', textAlign: 'center', marginTop: '2rem' }}>Lobby not found.</div>;
 
   return (
-    <div style={{ maxWidth: 480, margin: '2rem auto', padding: '0 1rem', background: '#fff', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+    <div style={{ maxWidth: 480, margin: '2rem auto', padding: '1rem 1rem 1rem 1rem', background: '#fff', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
       <h1 style={{ fontSize: '2rem', fontWeight: 600, marginBottom: '1.5rem', color: '#222', textAlign: 'center' }}>
         Lobby: {lobby.name}
       </h1>
@@ -109,38 +92,44 @@ export const LobbyPage = () => {
           </li>
         ))}
       </ul>
-      {/* Join/Leave buttons */}
-      {myUserId && !isInLobby && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+        {myUserId && !isInLobby && (
           <button
             type="button"
             onClick={handleJoinLobby}
             style={{ padding: '0.75rem 2rem', fontSize: '1.1rem', border: '1px solid #4caf50', borderRadius: '6px', background: '#e8f5e9', color: '#222', fontWeight: 500, cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,0.03)', transition: 'background 0.2s, border 0.2s' }}
           >
-            Join Lobby
+            Join
           </button>
-        </div>
-      )}
-      {myUserId && isInLobby && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+        )}
+        {myUserId && isInLobby && (
+          <>
+            <button
+              type="button"
+              onClick={handleLeaveLobby}
+              style={{ padding: '0.75rem 2rem', fontSize: '1.1rem', border: '1px solid #f44336', borderRadius: '6px', background: '#ffebee', color: '#222', fontWeight: 500, cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,0.03)', transition: 'background 0.2s, border 0.2s' }}
+            >
+              Leave
+            </button>
+            <button
+              type="button"
+              onClick={handleDeleteLobby}
+              style={{ padding: '0.75rem 2rem', fontSize: '1.1rem', border: '1px solid #d32f2f', borderRadius: '6px', background: '#ffcdd2', color: '#222', fontWeight: 500, cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,0.03)', transition: 'background 0.2s, border 0.2s' }}
+            >
+              Delete
+            </button>
+          </>
+        )}
+        <form onSubmit={handleStartGame} style={{ margin: 0 }}>
           <button
-            type="button"
-            onClick={handleLeaveLobby}
-            style={{ padding: '0.75rem 2rem', fontSize: '1.1rem', border: '1px solid #f44336', borderRadius: '6px', background: '#ffebee', color: '#222', fontWeight: 500, cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,0.03)', transition: 'background 0.2s, border 0.2s' }}
+            type="submit"
+            disabled={!isInLobby}
+            style={{ padding: '0.75rem 2rem', fontSize: '1.1rem', border: '1px solid #1976d2', borderRadius: '6px', background: !isInLobby ? '#e3f2fd' : '#1976d2', color: !isInLobby ? '#1976d2' : '#fff', fontWeight: 500, cursor: !isInLobby ? 'not-allowed' : 'pointer', boxShadow: '0 1px 4px rgba(25, 118, 210, 0.08)', transition: 'background 0.2s, border 0.2s', opacity: !isInLobby ? 0.6 : 1, }}
           >
-            Leave Lobby
+            Start
           </button>
-        </div>
-      )}
-      <form onSubmit={handleStartGame} style={{ display: 'flex', justifyContent: 'center' }}>
-        <button
-          type="submit"
-          disabled={!isInLobby}
-          style={{ padding: '0.75rem 2rem', fontSize: '1.1rem', border: '1px solid #1976d2', borderRadius: '6px', background: !isInLobby ? '#e3f2fd' : '#1976d2', color: !isInLobby ? '#1976d2' : '#fff', fontWeight: 500, cursor: !isInLobby ? 'not-allowed' : 'pointer', boxShadow: '0 1px 4px rgba(25, 118, 210, 0.08)', transition: 'background 0.2s, border 0.2s', opacity: !isInLobby ? 0.6 : 1, }}
-        >
-          Start Game
-        </button>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };
