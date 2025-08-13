@@ -18,7 +18,7 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
         logger.LogInformation("GET /api/game");
         var playerId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var games = await gameService.GetGamesByPlayerIdAsync(playerId);
-        return Ok(games.Select(GameDto.FromDomain));
+        return Ok(games.Select(x => GameDto.FromDomain(x, playerId)));
     }
 
     [HttpGet("{id}"), Authorize]
@@ -30,7 +30,7 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
         var playerId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         if (game.PlayerBoards.Any(x => x.PlayerId == playerId))
         {
-            return Ok(GameDto.FromDomain(game));
+            return Ok(GameDto.FromDomain(game, playerId));
         }
         return Forbid();
     }
@@ -49,6 +49,6 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
         {
             return BadRequest("Invalid move.");
         }
-        return Ok(GameDto.FromDomain(updatedGame));
+        return Ok(GameDto.FromDomain(updatedGame, playerId));
     }
 }

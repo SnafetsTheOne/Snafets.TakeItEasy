@@ -35,9 +35,9 @@ export const GamePage = () => {
   if (loading) return <div>Loading...</div>;
   if (!game?.id || !playerId) return <div style={{ color: '#888', textAlign: 'center', marginTop: '2rem' }}>Game not found.</div>;
 
-  const playerBoard = game.playerBoards.find(board => board.playerId === playerId);
+  const playerBoard = game.myBoard;
   const currentTile = game.nextTile;
-  const canPlay = currentTile !== null && playerBoard !== undefined && !playerBoard.spaces.some(space => space.placedTile?.id === currentTile.id);
+  const canPlay = game.myTurn;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, boxSizing: 'border-box', alignItems: 'center', justifyContent: 'flex-start',

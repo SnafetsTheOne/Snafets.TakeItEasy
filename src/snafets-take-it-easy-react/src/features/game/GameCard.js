@@ -6,11 +6,12 @@ const nameStyle = {fontSize: "1.6rem",fontWeight: 700,color: "#222",letterSpacin
 
 const idStyle = {fontSize: "0.8rem",color: "#bbb",marginLeft: "1.2rem",fontWeight: 400,letterSpacing: "0.01em",display: "block",marginTop: "0.2rem",};
 
-const turnBadgeStyle = {background: "#e0f7fa",color: "#00796b",borderRadius: "6px",padding: "0.3rem 0.7rem",fontSize: "0.95rem",fontWeight: 500,marginLeft: "1.2rem",boxShadow: "0 1px 4px rgba(0,0,0,0.04)",};
+const turnBadgeStyle = {background: "#e0f7fa",color: "#00796b",borderRadius: "6px",padding: "0.3rem 0.7rem",fontSize: "0.95rem",fontWeight: 500,marginLeft: "1.2rem",boxShadow: "0 1px 4px rgba(0,0,0,0.04)"};
+const completedBadgeStyle = {background: "#c8e6c9",color: "#388e3c",borderRadius: "6px",padding: "0.3rem 0.7rem",fontSize: "0.95rem",fontWeight: 500,marginLeft: "1.2rem",boxShadow: "0 1px 4px rgba(0,0,0,0.04)"};
 
 const clickableCardStyle = {...cardStyle,cursor: "pointer",userSelect: "none",};
 
-export default function GameCard({ id, game, isYourTurn }) {
+export default function GameCard({ id, game }) {
   const navigate = useNavigate();
 
   return (
@@ -26,7 +27,8 @@ export default function GameCard({ id, game, isYourTurn }) {
         <span style={nameStyle}>{game.name}</span>
         <span style={idStyle}>ID: {game.id}</span>
 
-        {isYourTurn && <span style={turnBadgeStyle}>Your Turn</span>}
+        {game.myTurn && <span style={turnBadgeStyle}>Your Turn</span>}
+        {game.isCompleted && <span style={completedBadgeStyle}>Completed</span>}
       </div>
     </button>
   );

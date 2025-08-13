@@ -4,7 +4,6 @@ import GameCard from "./GameCard";
 
 export const GamesPage = () => {
   const [games, setGames] = useState([]);
-  const isYourTurn = true; // Replace with actual logic if needed
 
   useEffect(() => {
       getPlayersGames().then(setGames);
@@ -20,7 +19,6 @@ export const GamesPage = () => {
               key={game.id}
               id={game.id}
               game={game}
-              isYourTurn={isYourTurn}
             />
           ))
         ) : (

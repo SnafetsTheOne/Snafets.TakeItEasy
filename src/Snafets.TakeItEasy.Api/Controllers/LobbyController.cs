@@ -73,7 +73,7 @@ public class LobbyController(ILobbyService lobbyService, ILogger<LobbyController
         {
             return NotFound();
         }
-        return Ok(GameDto.FromDomain(game));
+        return Ok(GameDto.FromDomain(game, playerId));
     }
 
     /// <summary>

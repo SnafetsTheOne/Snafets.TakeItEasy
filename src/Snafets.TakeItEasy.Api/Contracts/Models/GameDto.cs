@@ -6,20 +6,26 @@ public class GameDto
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
-    public List<PlayerBoardDto> PlayerBoards { get; set; }
+    public PlayerBoardDto MyBoard { get; set; }
+    public List<PlayerBoardDto> OtherPlayerBoards { get; set; }
     public TileDto? NextTile { get; set; }
+    public bool MyTurn { get; set; }
     public bool IsCompleted { get; set; }
 
-    public static GameDto FromDomain(GameModel game)
+    public static GameDto FromDomain(GameModel game, Guid playerId)
     {
-        var nextTile = game.CallerBag.PeekTopTile();
+        var isCompleted = game.CallerBag.Tiles.Count <= 8;
+        var nextTile = isCompleted ? null : game.CallerBag.PeekTopTile();
+        var myBoard = PlayerBoardDto.FromDomain(game.PlayerBoards.First(p => p.PlayerId == playerId));
         return new GameDto
         {
             Id = game.Id,
             Name = game.Name,
-            PlayerBoards = game.PlayerBoards.Select(PlayerBoardDto.FromDomain).ToList(),
+            MyBoard = myBoard,
+            OtherPlayerBoards = game.PlayerBoards.Where(p => p.PlayerId != playerId).Select(PlayerBoardDto.FromDomain).ToList(),
             NextTile = nextTile != null ? TileDto.FromDomain(nextTile) : null,
-            IsCompleted = game.CallerBag.Tiles.Count == 8
+            MyTurn = nextTile != null && !myBoard.Spaces.Any(x => x.PlacedTile?.Id == nextTile?.Id),
+            IsCompleted = isCompleted
         };
     }
 }
