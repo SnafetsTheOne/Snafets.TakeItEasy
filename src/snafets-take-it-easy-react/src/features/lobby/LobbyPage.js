@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getLobbyById, startGameFromLobby } from '../../data-access/lobby';
 import { getPlayerById } from '../../data-access/player';
 import { useAuth } from "../../infra/AuthProvider";
+import { useRealtime } from "../../infra/RealtimeProvider";
 
 export const LobbyPage = () => {
   const { lobbyId } = useParams();
@@ -11,6 +12,9 @@ export const LobbyPage = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const { on } = useRealtime();
+
+
   const myUserId = user?.id;
   const isInLobby = myUserId != null && lobby?.playerIds?.includes(myUserId);
 
@@ -47,9 +51,8 @@ export const LobbyPage = () => {
     }
   };
 
-  useEffect(() => {
-    async function fetchLobby() {
-      const lobbyData = await getLobbyById(lobbyId);
+  const fetchLobby = async () => {
+    const lobbyData = await getLobbyById(lobbyId);
       setLobby(lobbyData);
       if (lobbyData?.playerIds) {
         const userObjs = await Promise.all(
@@ -61,8 +64,27 @@ export const LobbyPage = () => {
         setUsers(userObjs);
       }
       setLoading(false);
-    }
+  }
+
+  useEffect(() => {
     fetchLobby();
+  }, [lobbyId]);
+
+  useEffect(() => {
+    const update = on("lobbyUpdate", (p) => {
+      if(p == lobbyId) {
+        fetchLobby();
+      }
+    });
+    const gameUpdate = on("gameStart", ({lobbyId: updateLobbyId, gameId}) => {
+      if(lobbyId == updateLobbyId) {
+        navigate(`/game/${gameId}`);
+      }
+    });
+    return () => {
+      update();
+      gameUpdate();
+    };
   }, [lobbyId]);
 
   const handleStartGame = async (e) => {

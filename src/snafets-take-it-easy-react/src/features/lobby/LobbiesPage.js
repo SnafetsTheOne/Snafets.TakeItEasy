@@ -13,14 +13,18 @@ export const LobbiesPage = () => {
 
   const currentUserId = user?.id;
 
-  React.useEffect(() => {
+  const reloadPage = () => {
     fetchAllLobbies().then(setLobbys);
+  };
+
+  React.useEffect(() => {
+    reloadPage();
   }, []);
 
   const handleJoin = async (lobbyId) => {
     await joinLobby(lobbyId, currentUserId);
     // Refresh lobbys after join
-    fetchAllLobbies().then(setLobbys);
+    reloadPage();
   };
 
   const [newLobbyName, setNewLobbyName] = React.useState("");
@@ -30,7 +34,7 @@ export const LobbiesPage = () => {
     if (!newLobbyName.trim()) return;
     await createLobby(newLobbyName.trim(), currentUserId);
     setNewLobbyName("");
-    fetchAllLobbies().then(setLobbys);
+    reloadPage();
   };
 
   return (
@@ -38,7 +42,7 @@ export const LobbiesPage = () => {
       <h1
         style={{ fontSize: "2rem", fontWeight: 600, marginBottom: "2rem", color: "#222", textAlign: "center", }}
       >
-        Lobbys
+        Lobbies
       </h1>
       <div>
         <form
@@ -72,7 +76,7 @@ export const LobbiesPage = () => {
           })
         ) : (
           <div
-            style={{ color: "#888", textAlign: "center", marginTop: "2rem" }}
+            style={{ color: "#888", background: '#ffffffff', padding: '1.5rem', borderRadius: '10px', textAlign: "center", marginTop: "2rem" }}
           >
             No lobbys found.
           </div>

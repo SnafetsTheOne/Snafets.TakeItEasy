@@ -4,6 +4,7 @@ import HoneycombStandaloneCell from "../../components/Honeycomb/HoneycombStandal
 import HoneycombBoard from "../../components/Honeycomb/HoneycombBoard";
 import { fetchGameById } from '../../data-access/game';
 import { useAuth } from "../../infra/AuthProvider";
+import { useRealtime } from "../../infra/RealtimeProvider";
 
 export const GamePage = () => {
   const { gameId } = useParams();
@@ -11,14 +12,24 @@ export const GamePage = () => {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const playerId = user?.id;
+  const { on } = useRealtime();
+
+  const fetchGame = async () => {
+    const gameData = await fetchGameById(gameId);
+    setGame(gameData);
+    setLoading(false);
+  }
 
   useEffect(() => {
-    async function fetchGame() {
-      const gameData = await fetchGameById(gameId);
-      setGame(gameData);
-      setLoading(false);
-    }
     fetchGame();
+  }, [gameId]);
+
+  useEffect(() => {
+    on("gameUpdate", (p) => {
+      if(p == gameId) {
+        fetchGame();
+      }
+    });
   }, [gameId]);
 
   if (loading) return <div>Loading...</div>;
@@ -26,7 +37,7 @@ export const GamePage = () => {
 
   const playerBoard = game.playerBoards.find(board => board.playerId === playerId);
   const currentTile = game.nextTile;
-  const canPlay = currentTile !== null && playerBoard !== undefined && playerBoard.spaces.some(space => space.placedTile?.id === currentTile.id);
+  const canPlay = currentTile !== null && playerBoard !== undefined && !playerBoard.spaces.some(space => space.placedTile?.id === currentTile.id);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, boxSizing: 'border-box', alignItems: 'center', justifyContent: 'flex-start',
@@ -35,13 +46,13 @@ export const GamePage = () => {
       }}>
         <div style={{ display: 'flex', flexDirection: 'row', gap: 40, alignItems: 'flex-start', justifyContent: 'center', width: '100%' }}>
           {/* Score */}
-          <div style={{ minWidth: 120, textAlign: 'center', padding: '1.2rem 1.5rem', borderRadius: 10, boxShadow: '0 1px 6px rgba(0,0,0,0.04)', fontWeight: 600, fontSize: '1.1rem', color: '#222', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 120 }}>
+          <div style={{ minWidth: 120, textAlign: 'center', background: '#ffffffff', padding: '1.2rem 1.5rem', borderRadius: 10, boxShadow: '0 1px 6px rgba(0,0,0,0.04)', fontWeight: 600, fontSize: '1.1rem', color: '#222', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 120 }}>
             <span style={{ fontSize: '0.9rem', color: '#888', fontWeight: 400, marginBottom: 4 }}>Score</span>
             <span style={{ fontSize: '2rem', fontWeight: 700 }}>{playerBoard?.score != null ? playerBoard.score : '-'}</span>
           </div>
 
           {/* Next Cell Preview (no text) */}
-          <div style={{ minWidth: 120, textAlign: 'center', padding: '1.2rem 1.5rem', borderRadius: 10, boxShadow: '0 1px 6px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 120 }}>
+          <div style={{ minWidth: 120, textAlign: 'center', background: '#ffffffff', padding: '1.2rem 1.5rem', borderRadius: 10, boxShadow: '0 1px 6px rgba(0,0,0,0.04)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 120 }}>
             {currentTile ? (
               <HoneycombStandaloneCell tile={currentTile} />
             ) : (
@@ -51,7 +62,7 @@ export const GamePage = () => {
         </div>
 
         {/* Game Board below */}
-        <div style={{ width: '50%', minWidth: 320, maxWidth: 480, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 10, boxShadow: '0 1px 6px rgba(0,0,0,0.04)', padding: '1.2rem 1.5rem', minHeight: 400 }}>
+        <div style={{ width: '50%', minWidth: 320, maxWidth: 480, display: 'flex', background: '#ffffffff', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 10, boxShadow: '0 1px 6px rgba(0,0,0,0.04)', padding: '1.2rem 1.5rem', minHeight: 400 }}>
           <HoneycombBoard 
             tiles={playerBoard.spaces} 
             playerId={playerId} 

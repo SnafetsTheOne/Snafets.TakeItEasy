@@ -8,6 +8,7 @@ const Navbar = () => {
 	const { user, status, logout } = useAuth();
 	const { on } = useRealtime();
 	const [time, setTime] = useState(Date.now());
+	const [showTimeInput, setShowTimeInput] = useState(false);
 
 	useEffect(() => {
     	on("broadcast", (p) => setTime(p));
@@ -37,10 +38,16 @@ const Navbar = () => {
 
 					<Link to="/games" style={{ textDecoration: "none", color: "#222", fontWeight: 500, fontSize: "1.1rem" }}>Games</Link>
 				) : null}
-				<div style={{ marginLeft: "auto", display: "flex", gap: "1.2rem" }}>
+				<div
+					style={{ marginLeft: "auto", display: "flex", gap: "1.2rem", alignItems: "center" }}
+					onMouseEnter={() => setShowTimeInput(true)}
+					onMouseLeave={() => setShowTimeInput(false)}
+				>
 					{status === "authenticated" ? (
 						<>
-							<input type="text" value={time} readOnly style={{ width: '200px', textAlign: 'center' }} />
+							{showTimeInput && (
+								<input type="text" value={time} readOnly style={{ width: '200px', textAlign: 'center', transition: 'opacity 0.2s' }} />
+							)}
 							<span style={{ fontWeight: 500, fontSize: "1.1rem" }}>{user.name}</span>
 							<button onClick={logout} style={{ background: "none", border: "none", color: "#222", fontWeight: 500, fontSize: "1.1rem", cursor: "pointer" }}>Logout</button>
 						</>
