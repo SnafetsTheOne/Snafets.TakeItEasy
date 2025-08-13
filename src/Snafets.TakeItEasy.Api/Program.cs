@@ -3,9 +3,20 @@ using Snafets.TakeItEasy.Application;
 using Snafets.TakeItEasy.Application.Features.Game;
 using Snafets.TakeItEasy.Application.Features.Lobby;
 using Snafets.TakeItEasy.Application.Features.Player;
+using Snafets.TakeItEasy.Api.SignalR;
 using Snafets.TakeItEasy.Persistence;
+using Snafets.TakeItEasy.Api.Services;
+using Snafets.TakeItEasy.Application.Features;
 
 var builder = WebApplication.CreateBuilder(args);
+
+static bool IsApiOrSignalR(HttpRequest req)
+{
+    // treat JSON, API paths, and SignalR negotiation/ws as non-HTML
+    if (req.Path.StartsWithSegments("/hubs")) return true;
+    var accept = req.Headers.Accept.ToString() ?? "";
+    return accept.Contains("application/json", StringComparison.OrdinalIgnoreCase);
+}
 
 builder.Logging.AddConsole();
 
@@ -36,16 +47,25 @@ builder.Services
         {
             OnRedirectToLogin = ctx =>
             {
-                ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                return Task.CompletedTask;
-            },
+                if (IsApiOrSignalR(ctx.Request))
+                {
+                    ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    return Task.CompletedTask;
+                }
+                ctx.Response.Redirect(ctx.RedirectUri);
+                return Task.CompletedTask;            },
             OnRedirectToAccessDenied = ctx =>
             {
-                ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
-                return Task.CompletedTask;
-            }
+                if (IsApiOrSignalR(ctx.Request))
+                {
+                    ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    return Task.CompletedTask;
+                }
+                ctx.Response.Redirect(ctx.RedirectUri);
+                return Task.CompletedTask;            }
         };
     });
+builder.Services.AddSignalR();
 builder.Services.AddAuthorization();
 
 // Add OpenAPI/Swagger support
@@ -58,6 +78,9 @@ builder.Services.AddPersistenceDependencies();
 
 // Add controllers
 builder.Services.AddControllers();
+
+builder.Services.AddSingleton<INotifier, Notifier>();
+builder.Services.AddHostedService<BroadcastService>();
 
 var app = builder.Build();
 
@@ -76,6 +99,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<UpdatesHub>("/hubs/updates").RequireAuthorization();
 
 var player1 = await app.Services.GetRequiredService<IPlayerRepository>().AddPlayerAsync(new Snafets.TakeItEasy.Domain.PlayerModel()
 {

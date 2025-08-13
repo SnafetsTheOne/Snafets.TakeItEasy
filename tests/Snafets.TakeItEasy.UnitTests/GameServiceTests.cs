@@ -11,7 +11,8 @@ public class GameServiceTests
         // Arrange
         var playerIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
         var repo = new InMemoryGameRepository();
-        var service = new GameService(repo);
+        var notifier = new TestNotifier();
+        var service = new GameService(repo, notifier);
 
         // Act
         var game = await service.CreateGameAsync(playerIds, "name");
@@ -35,7 +36,8 @@ public class GameServiceTests
     {
         playerIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
         var repo = new InMemoryGameRepository();
-        return new GameService(repo);
+        var notifier = new TestNotifier();
+        return new GameService(repo, notifier);
     }
 
     [Fact]

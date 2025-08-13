@@ -31,7 +31,7 @@ public class PlayerController(IPlayerService playerService, ILogger<PlayerContro
 
         var claims = new List<Claim>
         {
-            new(ClaimTypes.Sid, player.Id.ToString()),
+            new(ClaimTypes.NameIdentifier, player.Id.ToString()),
             new(ClaimTypes.Name, player.Name)
         };
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -75,7 +75,7 @@ public class PlayerController(IPlayerService playerService, ILogger<PlayerContro
 
         var res = new
         {
-            id = user.FindFirstValue(ClaimTypes.Sid),
+            id = user.FindFirstValue(ClaimTypes.NameIdentifier),
             name = user.FindFirstValue(ClaimTypes.Name)
         };
         return Task.FromResult<IActionResult>(Ok(res));

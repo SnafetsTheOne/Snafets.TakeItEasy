@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../infra/AuthProvider";
 import { signUp } from "../../data-access/player";
+import { sha256Hex } from "./sha256";
 
 export const SignUpPage = () => {
   const { login } = useAuth();
@@ -11,8 +12,7 @@ export const SignUpPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simple hash for demonstration (not secure for production)
-    const passwordHash = btoa(password);
+    const passwordHash = await sha256Hex(name + ':' + password);
     await signUp(name, passwordHash);
     await login(name, passwordHash);
     setName("");

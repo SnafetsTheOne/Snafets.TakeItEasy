@@ -3,6 +3,7 @@ using Snafets.TakeItEasy.Api.Requests;
 using Snafets.TakeItEasy.Application.Features.Lobby;
 using Snafets.TakeItEasy.Api.Contracts.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Snafets.TakeItEasy.Api.Controllers;
 
@@ -66,7 +67,8 @@ public class LobbyController(ILobbyService lobbyService, ILogger<LobbyController
     public async Task<IActionResult> StartGame(Guid id)
     {
         logger.LogInformation("POST /api/lobby/{Id}/start", id);
-        var game = await lobbyService.DeleteLobbyAndStartGameAsync(id);
+        var playerId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var game = await lobbyService.DeleteLobbyAndStartGameAsync(id, playerId);
         if (game == null)
         {
             return NotFound();
@@ -81,7 +83,8 @@ public class LobbyController(ILobbyService lobbyService, ILogger<LobbyController
     public async Task<IActionResult> DeleteLobby(Guid id)
     {
         logger.LogInformation("DELETE /api/lobby/{Id}", id);
-        await lobbyService.DeleteLobbyAsync(id);
+        var playerId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        await lobbyService.DeleteLobbyAsync(id, playerId);
         return NoContent();
     }
 }

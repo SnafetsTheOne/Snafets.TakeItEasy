@@ -22,10 +22,10 @@ export const GamePage = () => {
   }, [gameId]);
 
   if (loading) return <div>Loading...</div>;
-  if (!game || !game.id) return <div style={{ color: '#888', textAlign: 'center', marginTop: '2rem' }}>Game not found.</div>;
+  if (!game?.id || !playerId) return <div style={{ color: '#888', textAlign: 'center', marginTop: '2rem' }}>Game not found.</div>;
 
   const playerBoard = game.playerBoards.find(board => board.playerId === playerId);
-  const currentTile = game.NextTile;
+  const currentTile = game.nextTile;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, boxSizing: 'border-box', alignItems: 'center', justifyContent: 'flex-start',
@@ -36,7 +36,7 @@ export const GamePage = () => {
           {/* Score */}
           <div style={{ minWidth: 120, textAlign: 'center', padding: '1.2rem 1.5rem', borderRadius: 10, boxShadow: '0 1px 6px rgba(0,0,0,0.04)', fontWeight: 600, fontSize: '1.1rem', color: '#222', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 120 }}>
             <span style={{ fontSize: '0.9rem', color: '#888', fontWeight: 400, marginBottom: 4 }}>Score</span>
-            <span style={{ fontSize: '2rem', fontWeight: 700 }}>{typeof playerBoard.score !== 'undefined' ? playerBoard.score : '-'}</span>
+            <span style={{ fontSize: '2rem', fontWeight: 700 }}>{playerBoard?.score != null ? playerBoard.score : '-'}</span>
           </div>
 
           {/* Next Cell Preview (no text) */}

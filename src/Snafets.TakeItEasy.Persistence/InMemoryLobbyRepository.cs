@@ -30,18 +30,14 @@ public class InMemoryLobbyRepository : ILobbyRepository
         return Task.FromResult<LobbyModel?>(null);
     }
 
-    public Task<bool> UpdateLobby_RemovePlayerAsync(Guid lobbyId, Guid playerId)
+    public Task<LobbyModel?> UpdateLobby_RemovePlayerAsync(Guid lobbyId, Guid playerId)
     {
         if (_lobbies.TryGetValue(lobbyId, out var lobby))
         {
             lobby.PlayerIds.Remove(playerId);
-            if (lobby.PlayerIds.Count == 0)
-            {
-                _lobbies.TryRemove(lobbyId, out _);
-            }
-            return Task.FromResult(true);
+            return Task.FromResult<LobbyModel?>(lobby);
         }
-        return Task.FromResult(false);
+        return Task.FromResult<LobbyModel?>(null);
     }
 
     public Task<LobbyModel?> GetLobbyAsync(Guid lobbyId)

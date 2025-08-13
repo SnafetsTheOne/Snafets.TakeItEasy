@@ -1,4 +1,3 @@
-using Snafets.TakeItEasy.Domain;
 using Snafets.TakeItEasy.Domain.Game;
 
 namespace Snafets.TakeItEasy.Application.Features.Game;
@@ -9,10 +8,12 @@ namespace Snafets.TakeItEasy.Application.Features.Game;
 public class GameService : IGameService
 {
     private readonly IGameRepository _repository;
+    private readonly INotifier _notifier;
 
-    public GameService(IGameRepository repository)
+    public GameService(IGameRepository repository, INotifier notifier)
     {
         _repository = repository;
+        _notifier = notifier;
     }
 
     /// <summary>
@@ -74,6 +75,11 @@ public class GameService : IGameService
         game.TryAdvanceDrawBagIfAllPlayersPlacedTopTile();
 
         await _repository.SaveGameAsync(game);
+
+        foreach (var otherPlayerBoard in game.PlayerBoards.Where(pb => pb.PlayerId != playerId))
+        {
+            await _notifier.NotifyGameUpdate(otherPlayerBoard.PlayerId, game.Id);
+        }
         
         return game;
     }

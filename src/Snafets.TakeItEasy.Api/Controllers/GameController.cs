@@ -16,7 +16,7 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
     public async Task<ActionResult<List<GameModel>>> GetAllGames()
     {
         logger.LogInformation("GET /api/game");
-        var playerId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.Sid)!);
+        var playerId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var games = await gameService.GetGamesByPlayerIdAsync(playerId);
         return Ok(games.Select(GameDto.FromDomain));
     }
@@ -27,7 +27,7 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
         logger.LogInformation("GET /api/game/{id}", id);
         var game = await gameService.GetGameAsync(id);
         if (game == null) return NotFound();
-        var playerId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.Sid)!);
+        var playerId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         if (game.PlayerBoards.Any(x => x.PlayerId == playerId))
         {
             return Ok(GameDto.FromDomain(game));
@@ -39,7 +39,7 @@ public class GameController(IGameService gameService, ILogger<GameController> lo
     public async Task<ActionResult<bool>> AddPlayerMove(Guid id, [FromBody] PlayerMoveRequest request)
     {
         logger.LogInformation("POST /api/game/{id}/move {PlayerId} {Index}", id, request.PlayerId, request.Index);
-        var playerId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.Sid)!);
+        var playerId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         if (playerId != request.PlayerId)
         {
             return Forbid();

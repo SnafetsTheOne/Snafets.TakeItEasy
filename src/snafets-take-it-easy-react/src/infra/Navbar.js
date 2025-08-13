@@ -1,10 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "./AuthProvider";
+import { useEffect, useState } from "react";
+import { useRealtime } from "./RealtimeProvider";
 
 const Navbar = () => {
 	const { user, status, logout } = useAuth();
-	
+	const { on } = useRealtime();
+	const [time, setTime] = useState(Date.now());
+
+	useEffect(() => {
+    	on("broadcast", (p) => setTime(p));
+	}, [on]);
+
 	return (
 		<nav style={{
 			width: "100%",
@@ -32,6 +40,7 @@ const Navbar = () => {
 				<div style={{ marginLeft: "auto", display: "flex", gap: "1.2rem" }}>
 					{status === "authenticated" ? (
 						<>
+							<input type="text" value={time} readOnly style={{ width: '200px', textAlign: 'center' }} />
 							<span style={{ fontWeight: 500, fontSize: "1.1rem" }}>{user.name}</span>
 							<button onClick={logout} style={{ background: "none", border: "none", color: "#222", fontWeight: 500, fontSize: "1.1rem", cursor: "pointer" }}>Logout</button>
 						</>

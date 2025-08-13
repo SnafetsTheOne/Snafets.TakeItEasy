@@ -8,11 +8,13 @@ public class LobbyService : ILobbyService
 {
     private readonly ILobbyRepository _repository;
     private readonly IGameService _gameService;
+    private readonly INotifier _notifier;
 
-    public LobbyService(ILobbyRepository repository, IGameService gameService)
+    public LobbyService(ILobbyRepository repository, IGameService gameService, INotifier notifier)
     {
         _repository = repository;
         _gameService = gameService;
+        _notifier = notifier;
     }
 
     public async Task<LobbyModel> CreateLobbyAsync(string name, Guid creatorId)
@@ -22,12 +24,35 @@ public class LobbyService : ILobbyService
 
     public async Task<LobbyModel?> UpdateLobby_AddPlayerAsync(Guid lobbyId, Guid playerId)
     {
-        return await _repository.UpdateLobby_AddPlayerAsync(lobbyId, playerId);
+        var lobby = await _repository.UpdateLobby_AddPlayerAsync(lobbyId, playerId);
+        if (lobby == null)
+        {
+            return null;
+        }
+        foreach (var otherPlayerId in lobby.PlayerIds.Where(id => id != playerId))
+        {
+            await _notifier.NotifyLobbyUpdate(otherPlayerId, lobby.Id);
+        }
+        return lobby;
     }
 
     public async Task<bool> UpdateLobby_RemovePlayerAsync(Guid lobbyId, Guid playerId)
     {
-        return await _repository.UpdateLobby_RemovePlayerAsync(lobbyId, playerId);
+        var lobby = await _repository.UpdateLobby_RemovePlayerAsync(lobbyId, playerId);
+        if (lobby == null)
+        {
+            return false;
+        }
+        if (lobby.PlayerIds.Count == 0)
+        {
+            await _repository.DeleteLobbyAsync(lobbyId);
+            return true;
+        }
+        foreach (var otherPlayerId in lobby.PlayerIds.Where(id => id != playerId))
+        {
+            await _notifier.NotifyLobbyUpdate(otherPlayerId, lobby.Id);
+        }
+        return true;
     }
 
     public async Task<LobbyModel?> GetLobbyAsync(Guid lobbyId)
@@ -35,7 +60,7 @@ public class LobbyService : ILobbyService
         return await _repository.GetLobbyAsync(lobbyId);
     }
 
-    public async Task<GameModel?> DeleteLobbyAndStartGameAsync(Guid lobbyId)
+    public async Task<GameModel?> DeleteLobbyAndStartGameAsync(Guid lobbyId, Guid playerId)
     {
         var lobby = await _repository.GetLobbyAsync(lobbyId);
         if (lobby == null || lobby.PlayerIds.Count == 0)
@@ -43,6 +68,10 @@ public class LobbyService : ILobbyService
 
         var game = await _gameService.CreateGameAsync(lobby.PlayerIds, lobby.Name);
         await _repository.DeleteLobbyAsync(lobbyId);
+        foreach (var otherPlayerId in lobby.PlayerIds.Where(id => id != playerId))
+        {
+            await _notifier.NotifyGameStartUpdate(otherPlayerId, lobbyId, game.Id);
+        }
         return game;
     }
 
@@ -51,8 +80,21 @@ public class LobbyService : ILobbyService
         return await _repository.GetAllLobbiesAsync();
     }
 
-    public async Task<bool> DeleteLobbyAsync(Guid lobbyId)
+    public async Task<bool> DeleteLobbyAsync(Guid lobbyId, Guid playerId)
     {
-        return await _repository.DeleteLobbyAsync(lobbyId);
+        var lobby = await _repository.GetLobbyAsync(lobbyId);
+        if(lobby == null)
+        {
+            return false;
+        }
+        var result = await _repository.DeleteLobbyAsync(lobbyId);
+        if (result)
+        {
+            foreach (var otherPlayerId in lobby.PlayerIds.Where(id => id != playerId))
+            {
+                await _notifier.NotifyLobbyUpdate(otherPlayerId, lobbyId);
+            }
+        }
+        return result;
     }
 }
