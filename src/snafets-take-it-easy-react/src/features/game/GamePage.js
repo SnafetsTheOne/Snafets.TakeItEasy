@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchGameById } from '../../data-access/game';
+import { getPlayerById } from '../../data-access/player';
 import { useAuth } from "../../infra/AuthProvider";
 import { useRealtime } from "../../infra/RealtimeProvider";
 import { GameBoard } from "./GameBoard";
@@ -10,24 +11,42 @@ export const GamePage = () => {
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(true);
   const [boardIndex, setBoardIndex] = useState(0);
+  const [playerNames, setPlayerNames] = useState({});
   const { user } = useAuth();
   const playerId = user?.id;
   const { on } = useRealtime();
 
-  const fetchGame = async () => {
+  // reload game
+  const reloadGame = async () => {
     const gameData = await fetchGameById(gameId);
     setGame(gameData);
-    setLoading(false);
   }
 
+  // load page
   useEffect(() => {
-    fetchGame();
+    fetchGameById(gameId).then(gameData => {
+      setGame(gameData);
+      const ids = [gameData.myBoard?.playerId, ...(gameData.otherPlayerBoards || []).map(b => b.playerId)].filter(Boolean);
+      const names = {};
+      Promise.all(ids.map(async (id) => {
+        try {
+          const player = await getPlayerById(id);
+          names[id] = player?.name || `Player ${id}`;
+        } catch {
+          names[id] = `Player ${id}`;
+        }
+      })).then(() => {
+        setPlayerNames(names);
+        setLoading(false);
+      });
+    });
   }, [gameId]);
 
+  // subscribe to game updates
   useEffect(() => {
     on("gameUpdate", (p) => {
       if(p == gameId) {
-        fetchGame();
+        reloadGame();
       }
     });
   }, [gameId]);
@@ -38,11 +57,12 @@ export const GamePage = () => {
   const playerBoard = game.myBoard;
   const currentTile = game.nextTile;
   const canPlay = game.myTurn;
+  const isCompleted = game.isCompleted
   const otherGameboards = game.otherPlayerBoards || [];
   const allBoards = [
-    { title: 'My Game', playerBoard, currentTile, canPlay, playerId, gameId, refreshGame: fetchGame },
+    { title: playerNames[playerBoard?.playerId] || 'My Game', playerBoard, currentTile, canPlay, playerId, gameId, refreshGame: reloadGame },
     ...otherGameboards.map((b, i) => ({
-      title: b.playerName || `Player ${i+1}`,
+      title: playerNames[b.playerId] || `Player ${i+1}`,
       playerBoard: b,
       currentTile: currentTile,
       canPlay: false,

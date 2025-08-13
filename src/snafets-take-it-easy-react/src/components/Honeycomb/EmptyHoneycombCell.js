@@ -36,7 +36,7 @@ export default function EmptyHoneycombCell({ cell, index, pts, playerId, gameId,
         fontSize={14}
         fontWeight={600}
       >
-        {index}
+
       </text>
     </g>
   );

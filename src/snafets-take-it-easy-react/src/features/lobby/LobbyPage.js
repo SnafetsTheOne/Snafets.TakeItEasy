@@ -14,7 +14,6 @@ export const LobbyPage = () => {
   const { user } = useAuth();
   const { on } = useRealtime();
 
-
   const myUserId = user?.id;
   const isInLobby = myUserId != null && lobby?.playerIds?.includes(myUserId);
 
@@ -26,7 +25,16 @@ export const LobbyPage = () => {
   const handleLeaveLobby = async () => {
     if (!lobbyId || !myUserId) return;
     await leaveLobby(lobbyId, myUserId);
-    await fetchLobby();
+    navigate('/');
+  };
+  const handleStartGame = async (e) => {
+    e.preventDefault();
+    const game = await startGameFromLobby(lobbyId);
+    navigate(`/game/${game.id}`);
+  };
+  const handleDeleteLobby = async () => {
+    await deleteLobby(lobbyId);
+    navigate('/');
   };
 
   const fetchLobby = async () => {
@@ -64,17 +72,6 @@ export const LobbyPage = () => {
       gameUpdate();
     };
   }, [lobbyId]);
-
-  const handleStartGame = async (e) => {
-    e.preventDefault();
-    const game = await startGameFromLobby(lobbyId);
-    navigate(`/game/${game.id}`);
-  };
-
-  const handleDeleteLobby = async () => {
-    await deleteLobby(lobbyId);
-    navigate('/');
-  };
 
   if (loading) return <div style={{ color: '#888', textAlign: 'center', marginTop: '2rem' }}>Loading...</div>;
   if (!lobby) return <div style={{ color: '#888', textAlign: 'center', marginTop: '2rem' }}>Lobby not found.</div>;
