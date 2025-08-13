@@ -1,18 +1,20 @@
+const baseUrl = window.__ENV__?.BACKEND_URL ?? "";
+
 // Centralized API calls for lobby
 export async function fetchAllLobbies() {
-    const res = await fetch(`http://localhost:5124/api/Lobby`);
+    const res = await fetch(`${baseUrl}api/Lobby`);
     if (!res.ok) throw new Error(`Failed to fetch lobbies ${res.statusText}`);
     return await res.json();
 }
 
 export async function getLobbyById(id) {
-    const res = await fetch(`http://localhost:5124/api/Lobby/${id}`);
+    const res = await fetch(`${baseUrl}api/Lobby/${id}`);
     if (!res.ok) throw new Error(`Failed to fetch lobby ${res.statusText}`);
     return await res.json();
 }
 
 export async function createLobby(name, creatorId) {
-    const response = await fetch(`http://localhost:5124/api/Lobby`, {
+    const response = await fetch(`${baseUrl}api/Lobby`, {
         method: 'POST',
         credentials: 'include',       
         headers: {
@@ -25,7 +27,7 @@ export async function createLobby(name, creatorId) {
 }
 
 export async function joinLobby(lobbyId, playerId) {
-    const response = await fetch(`http://localhost:5124/api/Lobby/${lobbyId}/join`, {
+    const response = await fetch(`${baseUrl}api/Lobby/${lobbyId}/join`, {
         method: 'POST',
         credentials: 'include',       
         headers: {
@@ -38,7 +40,7 @@ export async function joinLobby(lobbyId, playerId) {
 }
 
 export async function leaveLobby(lobbyId, playerId) {
-    const response = await fetch(`http://localhost:5124/api/Lobby/${lobbyId}/leave`, {
+    const response = await fetch(`${baseUrl}api/Lobby/${lobbyId}/leave`, {
         method: 'POST',
         credentials: 'include',       
         headers: {
@@ -50,7 +52,7 @@ export async function leaveLobby(lobbyId, playerId) {
 }
 
 export async function deleteLobby(lobbyId) {
-    const response = await fetch(`/api/lobby/${lobbyId}`, {
+    const response = await fetch(`${baseUrl}api/Lobby/${lobbyId}`, {
         method: 'DELETE',
         credentials: 'include',       
         headers: {
@@ -61,7 +63,7 @@ export async function deleteLobby(lobbyId) {
 }
 
 export async function startGameFromLobby(lobbyId) {
-    const response = await fetch(`http://localhost:5124/api/Lobby/${lobbyId}/start`, {
+    const response = await fetch(`${baseUrl}api/Lobby/${lobbyId}/start`, {
         method: 'POST',
         credentials: 'include',       
     });

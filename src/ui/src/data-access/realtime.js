@@ -1,8 +1,10 @@
 import * as signalR from "@microsoft/signalr";
 
+const baseUrl = window.__ENV__?.BACKEND_URL ?? "";
+
 export function buildConnection() {
   return new signalR.HubConnectionBuilder()
-    .withUrl(`http://localhost:5124/hubs/updates`, {
+    .withUrl(`${baseUrl}hubs/updates`, {
       withCredentials: true
     })
     .withAutomaticReconnect()

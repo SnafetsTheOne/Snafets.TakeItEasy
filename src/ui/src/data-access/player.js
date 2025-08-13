@@ -1,12 +1,14 @@
+const baseUrl = window.__ENV__?.BACKEND_URL ?? "";
+
 // Centralized API calls for player
 export async function getPlayerById(id) {
-    const response = await fetch(`http://localhost:5124/api/Player/${id}`);
+    const response = await fetch(`${baseUrl}api/Player/${id}`);
     if (!response.ok) throw new Error(`Failed to fetch player ${response.statusText}`);
     return await response.json();
 }
 
 export async function signUp(name, passwordHash) {
-    const response = await fetch(`http://localhost:5124/api/Player/signup`, {
+    const response = await fetch(`${baseUrl}api/Player/signup`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -18,7 +20,7 @@ export async function signUp(name, passwordHash) {
 }
 
 export async function loginPlayer(name, passwordHash) {
-    const response = await fetch(`http://localhost:5124/api/Player/login`, {
+    const response = await fetch(`${baseUrl}api/Player/login`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -31,7 +33,7 @@ export async function loginPlayer(name, passwordHash) {
 }
 
 export async function me() {
-    const response = await fetch(`http://localhost:5124/api/player/me`, {
+    const response = await fetch(`${baseUrl}api/player/me`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -43,7 +45,7 @@ export async function me() {
 }
 
 export async function logoutPlayer() {
-    const response = await fetch(`http://localhost:5124/api/Player/logout`, {
+    const response = await fetch(`${baseUrl}api/Player/logout`, {
         method: 'POST',
         credentials: "include",
         headers: {

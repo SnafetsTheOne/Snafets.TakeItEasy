@@ -1,6 +1,8 @@
+const baseUrl = window.__ENV__?.BACKEND_URL ?? "";
+
 // Centralized API calls for game
 export async function fetchGameById(id) {
-	const res = await fetch(`http://localhost:5124/api/Game/${id}`, {
+	const res = await fetch(`${baseUrl}api/Game/${id}`, {
         credentials: 'include',
     });
 	if (!res.ok) throw new Error(`Failed to fetch game ${res.statusText}`);
@@ -8,7 +10,7 @@ export async function fetchGameById(id) {
 }
 
 export async function postPlayerMove(gameId, playerId, index) {
-    const response = await fetch(`http://localhost:5124/api/Game/${gameId}/move`, {
+    const response = await fetch(`${baseUrl}api/Game/${gameId}/move`, {
         method: 'POST',
         credentials: 'include',       
         headers: {
@@ -20,7 +22,7 @@ export async function postPlayerMove(gameId, playerId, index) {
 }
 
 export async function getPlayersGames() {
-    const res = await fetch(`http://localhost:5124/api/Game/`, {
+    const res = await fetch(`${baseUrl}api/Game/`, {
         credentials: 'include',
     });
     if (!res.ok) throw new Error(`Failed to fetch games for player ${res.statusText}`);
