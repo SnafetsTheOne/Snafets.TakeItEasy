@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace Snafets.TakeItEasy.IntegrationTests;
 
 public class LobbyDto
@@ -10,8 +12,9 @@ public class LobbyDto
 public class GameDto
 {
     public Guid? Id { get; set; }
-    public List<PlayerBoardDto>? PlayerBoards { get; set; }
-    public TileDto? NextTile { get; set; }
+    public List<PlayerBoardDto>? Boards { get; set; }
+    public TileDto? CurrentTile { get; set; }
+    public bool IsCompleted { get; set; }
 }
 
 public class PlayerBoardDto
@@ -31,6 +34,8 @@ public class PlayerDto
 {
     public Guid? Id { get; set; }
     public string? Name { get; set; }
+    public CookieContainer Cookies { get; set; }
+    public HttpClient HttpClient { get; set; }
 }
 
 public class TileDto
@@ -39,9 +44,4 @@ public class TileDto
     public int? Vertical { get; set; }
     public int? LeftDiagonal { get; set; }
     public int? RightDiagonal { get; set; }
-}
-
-public class DrawBagDto
-{
-    public List<TileDto>? Tiles { get; set; }
 }

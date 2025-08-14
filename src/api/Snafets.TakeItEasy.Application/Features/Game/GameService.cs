@@ -40,14 +40,10 @@ public class GameService : IGameService
         if (playerBoard is null)
             return null;
 
-        var topTile = game.CallerBag.PeekTopTile();
-        if (topTile is null)
-            return null;
-
-        var moveResult = playerBoard.TryAddTileAtIndex(topTile, index);
+        var moveResult = playerBoard.TryAddTileAtIndex(game.CurrentTile, index);
         if (!moveResult) return null;
 
-        game.TryAdvanceDrawBagIfAllPlayersPlacedTopTile();
+        game.TryAdvanceDrawBagIfAllPlayersPlacedCurrentTile();
 
         await _repository.SaveGameAsync(game);
 

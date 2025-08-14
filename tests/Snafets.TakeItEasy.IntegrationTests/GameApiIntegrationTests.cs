@@ -2,21 +2,35 @@ using System.Net.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Snafets.TakeItEasy.Domain.Game;
 using Snafets.TakeItEasy.Application.Features.Game;
-using Snafets.TakeItEasy.Domain;
-using Snafets.TakeItEasy.Application.Features.Player;
+using System.Net;
+using Microsoft.Net.Http.Headers;
+using Microsoft.AspNetCore.Http;
 
 namespace Snafets.TakeItEasy.IntegrationTests;
 
 public class GameApiIntegrationTests(CustomWebApplicationFactory factory) : IClassFixture<CustomWebApplicationFactory>
 {
-    private readonly HttpClient _client = factory.CreateClient();
-
-    private async Task<PlayerModel> CreatePlayerAsync(string name, string passwordHash)
+    private async Task<PlayerDto> CreatePlayerAsync(string name, string passwordHash)
     {
+        var httpClient = factory.CreateClient();
         var request = new { Name = name, PasswordHash = passwordHash };
-        var response = await _client.PostAsJsonAsync("/api/player/signup", request);
-        response.EnsureSuccessStatusCode();
-        var player = await response.Content.ReadFromJsonAsync<PlayerModel>();
+        var signupResponse = await httpClient.PostAsJsonAsync("/api/player/signup", request);
+        signupResponse.EnsureSuccessStatusCode();
+        var playerDto = await signupResponse.Content.ReadFromJsonAsync<Api.Contracts.Models.PlayerDto>();
+        Assert.NotNull(playerDto);
+        var player = new PlayerDto
+        {
+            Id = playerDto.Id,
+            Name = playerDto.Name,
+            Cookies = new CookieContainer(),
+            HttpClient = httpClient
+        };
+        var loginResponse = await httpClient.PostAsJsonAsync("/api/player/login", request);
+        var cookies = loginResponse.Headers.GetValues(HeaderNames.SetCookie);
+        foreach (var cookie in cookies)
+        {
+            player.Cookies.SetCookies(httpClient.BaseAddress, cookie);
+        }
         Assert.NotNull(player);
         Assert.Equal(name, player.Name);
         return player;
@@ -26,24 +40,24 @@ public class GameApiIntegrationTests(CustomWebApplicationFactory factory) : ICla
     public async Task NoSetup_CreatePlayersLobbyAndGame_AllSuccessfullyCreated()
     {
         // Arrange: create two players using CreatePlayerAsync
-        var alice = await CreatePlayerAsync("Alice", "hash1");
-        var bob = await CreatePlayerAsync("Bob", "hash2");
-        var players = new List<PlayerModel> { alice, bob };
-        var createLobbyResponse = await _client.PostAsJsonAsync("/api/lobby",
+        var alice = await CreatePlayerAsync("TestPlayer1" + Guid.NewGuid(), "hash1");
+        var bob = await CreatePlayerAsync("TestPlayer2" + Guid.NewGuid(), "hash2");
+
+        var createLobbyResponse = await alice.PostAsJsonAsync("/api/lobby",
             new { Name = "Test Lobby", CreatorId = alice.Id });
         createLobbyResponse.EnsureSuccessStatusCode();
         var createdLobby = await createLobbyResponse.Content.ReadFromJsonAsync<LobbyDto>();
-        var joinLobbyResponse = await _client.PostAsJsonAsync($"/api/lobby/{createdLobby!.Id}/join",
+        var joinLobbyResponse = await bob.PostAsJsonAsync($"/api/lobby/{createdLobby!.Id}/join",
             new { PlayerId = bob.Id });
         joinLobbyResponse.EnsureSuccessStatusCode();
-        var startGameResponse = await _client.PostAsJsonAsync($"/api/lobby/{createdLobby.Id}/start", new { });
+        var startGameResponse = await alice.PostAsJsonAsync($"/api/lobby/{createdLobby.Id}/start", new { });
         startGameResponse.EnsureSuccessStatusCode();
         var createdGame = await startGameResponse.Content.ReadFromJsonAsync<GameDto>();
         Assert.NotNull(createdGame);
         Assert.NotEqual(Guid.Empty, createdGame.Id);
 
         // Act: get the game by id
-        var getResponse = await _client.GetAsync($"/api/game/{createdGame.Id}");
+        var getResponse = await alice.GetAsync($"/api/game/{createdGame.Id}");
         getResponse.EnsureSuccessStatusCode();
         var fetchedGame = await getResponse.Content.ReadFromJsonAsync<GameDto>();
 
@@ -56,17 +70,17 @@ public class GameApiIntegrationTests(CustomWebApplicationFactory factory) : ICla
     public async Task NoSetup_CreatePlayersLobbyAndGame_CanPlay()
     {
         // Create two players using CreatePlayerAsync
-        var alice = await CreatePlayerAsync("Alice", "hash1");
-        var bob = await CreatePlayerAsync("Bob", "hash2");
+        var alice = await CreatePlayerAsync("TestPlayer1" + Guid.NewGuid(), "hash1");
+        var bob = await CreatePlayerAsync("TestPlayer2" + Guid.NewGuid(), "hash2");
         var players = new[] { alice, bob };
-        var createLobbyResponse = await _client.PostAsJsonAsync("/api/lobby",
+        var createLobbyResponse = await alice.PostAsJsonAsync("/api/lobby",
             new { Name = "Test Lobby", CreatorId = alice.Id });
         createLobbyResponse.EnsureSuccessStatusCode();
         var createdLobby = await createLobbyResponse.Content.ReadFromJsonAsync<LobbyDto>();
-        var joinLobbyResponse = await _client.PostAsJsonAsync($"/api/lobby/{createdLobby!.Id}/join",
+        var joinLobbyResponse = await bob.PostAsJsonAsync($"/api/lobby/{createdLobby!.Id}/join",
             new { PlayerId = bob.Id });
         joinLobbyResponse.EnsureSuccessStatusCode();
-        var startGameResponse = await _client.PostAsJsonAsync($"/api/lobby/{createdLobby.Id}/start", new { });
+        var startGameResponse = await alice.PostAsJsonAsync($"/api/lobby/{createdLobby.Id}/start", new { });
         startGameResponse.EnsureSuccessStatusCode();
         var createdGame = await startGameResponse.Content.ReadFromJsonAsync<GameDto>();
         Assert.NotNull(createdGame);
@@ -78,32 +92,30 @@ public class GameApiIntegrationTests(CustomWebApplicationFactory factory) : ICla
             foreach (var player in players)
             {
                 // Fetch latest game state to get the current top tile
-                var gameStateResponse = await _client.GetAsync($"/api/game/{createdGame.Id}");
+                var gameStateResponse = await player.GetAsync($"/api/game/{createdGame.Id}");
                 gameStateResponse.EnsureSuccessStatusCode();
                 var gameState = await gameStateResponse.Content.ReadFromJsonAsync<GameDto>();
                 Assert.NotNull(gameState);
-                var topTile = gameState.NextTile;
-                Assert.NotNull(topTile);
+                Assert.NotNull(gameState.CurrentTile);
                 // Find first empty space for this player
-                var playerBoard = gameState.PlayerBoards?.Find(pb => pb.PlayerId == player.Id);
+                var playerBoard = gameState.Boards?.Find(pb => pb.PlayerId == player.Id);
                 Assert.NotNull(playerBoard);
                 var firstEmptySpace = playerBoard.Spaces?.FirstOrDefault(s => s.PlacedTile == null);
                 Assert.NotNull(firstEmptySpace);
-                var moveResponse = await _client.PostAsJsonAsync($"/api/game/{createdGame.Id}/move",
-                    new { PlayerId = player.Id, Index = firstEmptySpace.Index }
-                );
+                var moveResponse = await player.PostAsJsonAsync($"/api/game/{createdGame.Id}/move",
+                    new { PlayerId = player.Id, Index = firstEmptySpace.Index });
                 moveResponse.EnsureSuccessStatusCode();
             }
         }
 
         // Assert: Each player should have 2 placed tiles
-        var stateResponse = await _client.GetAsync($"/api/game/{createdGame.Id}");
+        var stateResponse = await alice.GetAsync($"/api/game/{createdGame.Id}");
         stateResponse.EnsureSuccessStatusCode();
         var stateObj = await stateResponse.Content.ReadFromJsonAsync<GameDto>();
         Assert.NotNull(stateObj);
         foreach (var player in players)
         {
-            var playerBoard = stateObj.PlayerBoards?.Find(pb => pb.PlayerId == player.Id);
+            var playerBoard = stateObj.Boards?.Find(pb => pb.PlayerId == player.Id);
             Assert.NotNull(playerBoard);
             var placedTiles = playerBoard.Spaces?.Where(s => s.PlacedTile != null).ToList();
             Assert.NotNull(placedTiles);
@@ -114,44 +126,39 @@ public class GameApiIntegrationTests(CustomWebApplicationFactory factory) : ICla
     [Fact]
     public async Task PlayAllMovesWithSeededDrawBag_CheckScore()
     {
+        var player = await CreatePlayerAsync("TestPlayer1" + Guid.NewGuid(), "hash1");
+
         // Get required services
         var scopeFactory = factory.Services.GetRequiredService<IServiceScopeFactory>();
         using var scope = scopeFactory.CreateScope();
-        var player = await scope.ServiceProvider.GetRequiredService<IPlayerRepository>().SavePlayerAsync(new PlayerModel
-        {
-            Id = Guid.NewGuid(),
-            Name = "TestPlayer",
-            PasswordHash = "Hash"
-        });
         // Set DrawBag RNG to a known seed
-        DrawBag.Rng = new Random(420);
-        var game = new GameModel(new List<Guid> { player.Id }, "Name");
+        GameModel.Rng = new Random(420);
+        var game = new GameModel(new List<Guid> { player.Id!.Value }, "Name");
         await scope.ServiceProvider.GetRequiredService<IGameRepository>().SaveGameAsync(game);
 
         // Play all 19 moves via the client
         for (int i = 0; i < 19; i++)
         {
             // Get latest game state
-            var stateResponse = await _client.GetAsync($"/api/game/{game.Id}");
+            var stateResponse = await player.GetAsync($"/api/game/{game.Id}");
             stateResponse.EnsureSuccessStatusCode();
             var state = await stateResponse.Content.ReadFromJsonAsync<GameDto>();
-            var topTile = state?.NextTile;
+            var topTile = state?.CurrentTile;
             Assert.NotNull(topTile);
-            var playerBoard = state?.PlayerBoards?.Find(pb => pb.PlayerId == player.Id);
+            var playerBoard = state?.Boards?.Find(pb => pb.PlayerId == player.Id);
             Assert.NotNull(playerBoard);
             var firstEmptySpace = playerBoard.Spaces?.FirstOrDefault(s => s.PlacedTile == null);
             Assert.NotNull(firstEmptySpace);
-            var moveResponse = await _client.PostAsJsonAsync($"/api/game/{game.Id}/move",
-                new { PlayerId = player.Id, Index = firstEmptySpace.Index }
-            );
+            var moveResponse = await player.PostAsJsonAsync($"/api/game/{game.Id}/move",
+                new { PlayerId = player.Id, Index = firstEmptySpace.Index });
             moveResponse.EnsureSuccessStatusCode();
         }
 
         // Get final game state and check score
-        var finalResponse = await _client.GetAsync($"/api/game/{game.Id}");
+        var finalResponse = await player.GetAsync($"/api/game/{game.Id}");
         finalResponse.EnsureSuccessStatusCode();
         var finalState = await finalResponse.Content.ReadFromJsonAsync<GameDto>();
-        var finalPlayerBoard = finalState?.PlayerBoards?.Find(pb => pb.PlayerId == player.Id);
+        var finalPlayerBoard = finalState?.Boards?.Find(pb => pb.PlayerId == player.Id);
         Assert.NotNull(finalPlayerBoard);
 
         // Calculate expected score (deterministic for seed 42)
@@ -161,5 +168,30 @@ public class GameApiIntegrationTests(CustomWebApplicationFactory factory) : ICla
         Assert.Equal(19, placedTiles.Count);
         // If you know the expected score for seed 42, set it here:
         Assert.Equal(51, finalPlayerBoard.Score);
+    }
+
+}
+
+public static class HttpClientExtensions
+{
+    public static async Task<HttpResponseMessage> GetAsync(this PlayerDto player, string url)
+    {
+        var uri = new Uri(player.HttpClient.BaseAddress!.AbsoluteUri + url.Substring(1), UriKind.Absolute);
+        var request = new HttpRequestMessage(HttpMethod.Get, uri);
+        request.Headers.Add("Cookie", player.Cookies.GetCookieHeader(uri));
+        return await player.HttpClient.SendAsync(request);
+    }
+
+    public static async Task<HttpResponseMessage> PostAsJsonAsync(this PlayerDto player, string url, object data)
+    {
+        var uri = new Uri(player.HttpClient.BaseAddress!.AbsoluteUri + url.Substring(1), UriKind.Absolute);
+        var content = JsonContent.Create(data);
+        var requestMessage = new HttpRequestMessage(HttpMethod.Post, uri)
+        {
+            Content = content
+        };
+        requestMessage.Headers.Add("Cookie", player.Cookies.GetCookieHeader(uri));
+
+        return await player.HttpClient.SendAsync(requestMessage);
     }
 }

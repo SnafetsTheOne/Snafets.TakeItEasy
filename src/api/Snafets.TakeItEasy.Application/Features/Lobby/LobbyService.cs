@@ -78,7 +78,7 @@ public class LobbyService : ILobbyService
         return await _repository.GetLobbyAsync(lobbyId);
     }
 
-    public async Task<GameModel?> DeleteLobbyAndStartGameAsync(Guid lobbyId, Guid playerId)
+    public async Task<GameModel?> StartLobbyAsync(Guid lobbyId, Guid playerId)
     {
         var lobby = await _repository.GetLobbyAsync(lobbyId);
         if (lobby == null || lobby.PlayerIds.Count == 0)

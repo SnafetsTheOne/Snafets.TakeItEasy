@@ -13,8 +13,7 @@ public class GameDto
 
     public static GameDto FromDomain(GameModel game, Guid playerId)
     {
-        var isCompleted = game.CallerBag.Tiles.Count <= 8;
-        var currentTile = isCompleted ? null : game.CallerBag.PeekTopTile();
+        var currentTile = game.IsCompleted ? null : game.CurrentTile;
         return new GameDto
         {
             Id = game.Id,
@@ -24,7 +23,7 @@ public class GameDto
                 .Select(x => PlayerBoardDto.FromDomain(x, currentTile))
                 .ToList(),
             CurrentTile = currentTile != null ? TileDto.FromDomain(currentTile) : null,
-            IsCompleted = isCompleted
+            IsCompleted = game.IsCompleted
         };
     }
 }

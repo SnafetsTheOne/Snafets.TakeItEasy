@@ -28,9 +28,8 @@ public class GameServiceTests
             Assert.NotNull(pb.Spaces);
             Assert.Equal(19, pb.Spaces.Count);
         }
-        Assert.NotNull(game.CallerBag);
-        Assert.NotNull(game.CallerBag.Tiles);
-        Assert.Equal(27, game.CallerBag.Tiles.Count); // 3 verticals x 3 left diagonals x 3 right diagonals = 27
+        Assert.NotNull(game.Bag);
+        Assert.Equal(27, game.Bag.Count); // 3 verticals x 3 left diagonals x 3 right diagonals = 27
     }
     private static GameService CreateServiceWithPlayerIds(out List<Guid> playerIds)
     {
@@ -70,7 +69,7 @@ public class GameServiceTests
         var game = await service.CreateGameAsync(playerIds, "name");
         var gameId = game.Id;
         var playerId = playerIds[0];
-        var topTile = game.CallerBag.PeekTopTile();
+        var topTile = game.CurrentTile;
         Assert.NotNull(topTile);
         int index = 0;
         // Add move for first player
@@ -80,7 +79,7 @@ public class GameServiceTests
         var result2 = await service.AddPlayerMoveAsync(gameId, playerIds[1], index);
         Assert.NotNull(result2);
         // After both players have placed, draw bag should advance
-        var newTopTile = game.CallerBag.PeekTopTile();
+        var newTopTile = game.CurrentTile;
         Assert.NotEqual(topTile.Id, newTopTile?.Id);
     }
 
@@ -91,7 +90,7 @@ public class GameServiceTests
         var game = await service.CreateGameAsync(playerIds, "name");
         var gameId = game.Id;
         var playerId = playerIds[0];
-        var topTile = game.CallerBag.PeekTopTile();
+        var topTile = game.CurrentTile;
         Assert.NotNull(topTile);
         // Invalid index
         var result = await service.AddPlayerMoveAsync(gameId, playerId, -1);
@@ -105,14 +104,14 @@ public class GameServiceTests
         var game = await service.CreateGameAsync(playerIds, "name");
         var gameId = game.Id;
         var playerId = playerIds[0];
-        var topTile = game.CallerBag.PeekTopTile();
+        var topTile = game.CurrentTile;
         Assert.NotNull(topTile);
         int index = 0;
         // Add move for only one player
         var result = await service.AddPlayerMoveAsync(gameId, playerId, index);
         Assert.NotNull(result);
         // Draw bag should NOT advance yet
-        var stillTopTile = game.CallerBag.PeekTopTile();
+        var stillTopTile = game.CurrentTile;
         Assert.Equal(topTile.Id, stillTopTile?.Id);
     }
 }

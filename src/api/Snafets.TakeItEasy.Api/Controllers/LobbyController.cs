@@ -68,7 +68,7 @@ public class LobbyController(ILobbyService lobbyService, ILogger<LobbyController
     {
         logger.LogInformation("POST /api/lobby/{Id}/start", id);
         var playerId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var game = await lobbyService.DeleteLobbyAndStartGameAsync(id, playerId);
+        var game = await lobbyService.StartLobbyAsync(id, playerId);
         if (game == null)
         {
             return NotFound();
