@@ -1,4 +1,3 @@
-using Snafets.TakeItEasy.Domain;
 using Snafets.TakeItEasy.Domain.Game;
 
 namespace Snafets.TakeItEasy.UnitTests;

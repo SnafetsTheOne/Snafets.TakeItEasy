@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using Snafets.TakeItEasy.Domain;
 using Snafets.TakeItEasy.Application.Features.Player;
 using System.Collections.Concurrent;

@@ -14,6 +14,10 @@ public class GameModel
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
+    public GameModel()
+    {
+    }
+
     /// <summary>
     /// Creates a new TakeItEasyGame for the given players.
     /// </summary>
