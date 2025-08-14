@@ -51,16 +51,6 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task GetAllGamesAsync_ReturnsAllCreatedGames()
-    {
-        var service = CreateServiceWithPlayerIds(out var playerIds);
-        await service.CreateGameAsync(playerIds, "name");
-        await service.CreateGameAsync(playerIds, "name");
-        var allGames = await service.GetAllGamesAsync();
-        Assert.Equal(2, allGames.Count);
-    }
-
-    [Fact]
     public async Task LoadGameForPlayerAsync_ReturnsGamesForPlayer()
     {
         var service = CreateServiceWithPlayerIds(out var playerIds);

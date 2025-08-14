@@ -8,6 +8,8 @@ using Snafets.TakeItEasy.Persistence;
 using Snafets.TakeItEasy.Api.Services;
 using Snafets.TakeItEasy.Application.Features;
 using Snafets.TakeItEasy.Api;
+using Snafets.TakeItEasy.Domain.Lobby;
+using Snafets.TakeItEasy.Domain.Game;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -106,15 +108,23 @@ app.MapHub<UpdatesHub>("/hubs/updates").RequireAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
-    var player1 = await app.Services.GetRequiredService<IPlayerRepository>().SavePlayerAsync(new Snafets.TakeItEasy.Domain.PlayerModel()
-    {
-        Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
-        Name = "Alice",
-        PasswordHash = "hash1"
-    });
-
-    await app.Services.GetRequiredService<IGameRepository>().SaveGameAsync(new Snafets.TakeItEasy.Domain.Game.GameModel(new List<Guid>{player1.Id}, "name"));
-    await app.Services.GetRequiredService<ILobbyRepository>().AddLobbyAsync("Test Lobby", player1.Id);
+    var player1 = await app.Services.GetRequiredService<IPlayerRepository>()
+        .SavePlayerAsync(new Snafets.TakeItEasy.Domain.PlayerModel()
+        {
+            Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+            Name = "Alice",
+            PasswordHash = "hash1"
+        });
+    await app.Services.GetRequiredService<IGameRepository>()
+        .SaveGameAsync(new GameModel(new List<Guid>{player1.Id}, "name"));
+    await app.Services.GetRequiredService<ILobbyRepository>()
+        .SaveLobbyAsync(new LobbyModel()
+        {
+            Id = Guid.NewGuid(),
+            Name = "Test Lobby",
+            PlayerIds = new List<Guid> { player1.Id },
+            CreatedAt = DateTime.UtcNow
+        });
 }
 await app.RunAsync();
 

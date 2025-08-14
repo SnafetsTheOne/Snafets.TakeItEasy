@@ -6,6 +6,6 @@ public interface IGameRepository
 {
     Task SaveGameAsync(GameModel game);
     Task<GameModel?> GetGameAsync(Guid id);
-    Task<IEnumerable<GameModel>> GetAllGamesAsync();
+    Task<IEnumerable<GameModel>> GetAllGamesAsync(Guid playerId);
     Task DeleteGameAsync(Guid id);
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Snafets.TakeItEasy.Application.Features.Game;
 using Snafets.TakeItEasy.Domain.Game;
@@ -23,9 +24,9 @@ public class InMemoryGameRepository : IGameRepository
         return await Task.FromResult(game);
     }
 
-    public async Task<IEnumerable<GameModel>> GetAllGamesAsync()
+    public async Task<IEnumerable<GameModel>> GetAllGamesAsync(Guid playerId)
     {
-        return await Task.FromResult(_store.Values);
+        return await Task.FromResult(_store.Values.Where(g => g.PlayerBoards.Any(pb => pb.PlayerId == playerId)));
     }
 
     public async Task DeleteGameAsync(Guid id)
