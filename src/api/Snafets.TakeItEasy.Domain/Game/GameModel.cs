@@ -9,6 +9,8 @@ public class GameModel
     public string Name { get; set; }
     public List<PlayerBoard> PlayerBoards { get; set; }
     public DrawBag CallerBag { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     /// <summary>
     /// Creates a new TakeItEasyGame for the given players.

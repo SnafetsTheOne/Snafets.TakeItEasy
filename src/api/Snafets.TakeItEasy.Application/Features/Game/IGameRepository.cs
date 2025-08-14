@@ -5,7 +5,7 @@ namespace Snafets.TakeItEasy.Application.Features.Game;
 public interface IGameRepository
 {
     Task SaveGameAsync(GameModel game);
-    Task<GameModel?> LoadGameAsync(Guid id);
+    Task<GameModel?> GetGameAsync(Guid id);
     Task<IEnumerable<GameModel>> GetAllGamesAsync();
     Task DeleteGameAsync(Guid id);
 }

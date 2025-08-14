@@ -117,7 +117,7 @@ public class GameApiIntegrationTests(CustomWebApplicationFactory factory) : ICla
         // Get required services
         var scopeFactory = factory.Services.GetRequiredService<IServiceScopeFactory>();
         using var scope = scopeFactory.CreateScope();
-        var player = await scope.ServiceProvider.GetRequiredService<IPlayerRepository>().AddPlayerAsync(new PlayerModel
+        var player = await scope.ServiceProvider.GetRequiredService<IPlayerRepository>().SavePlayerAsync(new PlayerModel
         {
             Id = Guid.NewGuid(),
             Name = "TestPlayer",

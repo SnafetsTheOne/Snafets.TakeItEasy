@@ -44,7 +44,7 @@ public class GameService : IGameService
     /// </summary>
     public async Task<GameModel?> GetGameAsync(Guid id)
     {
-        return await _repository.LoadGameAsync(id);
+        return await _repository.GetGameAsync(id);
     }
 
     /// <summary>
@@ -57,7 +57,7 @@ public class GameService : IGameService
     /// <returns>True if the move was successful; otherwise, false.</returns>
     public async Task<GameModel?> AddPlayerMoveAsync(Guid gameId, Guid playerId, int index)
     {
-        var game = await _repository.LoadGameAsync(gameId);
+        var game = await _repository.GetGameAsync(gameId);
         if (game is null)
             return null;
 
@@ -80,7 +80,7 @@ public class GameService : IGameService
         {
             await _notifier.NotifyGameUpdate(otherPlayerBoard.PlayerId, game.Id);
         }
-        
+
         return game;
     }
 }

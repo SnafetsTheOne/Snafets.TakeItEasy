@@ -11,33 +11,11 @@ public class InMemoryLobbyRepository : ILobbyRepository
 {
     private readonly ConcurrentDictionary<Guid, LobbyModel> _lobbies = new();
 
-    public Task<LobbyModel> AddLobbyAsync(string name, Guid creatorId)
+    public Task SaveLobbyAsync(LobbyModel lobby)
     {
-        var lobby = new LobbyModel { Id = Guid.NewGuid(), Name = name };
-        lobby.PlayerIds.Add(creatorId);
+        lobby.UpdatedAt = DateTime.UtcNow;
         _lobbies[lobby.Id] = lobby;
-        return Task.FromResult(lobby);
-    }
-
-    public Task<LobbyModel?> UpdateLobby_AddPlayerAsync(Guid lobbyId, Guid playerId)
-    {
-        if (_lobbies.TryGetValue(lobbyId, out var lobby))
-        {
-            if (!lobby.PlayerIds.Contains(playerId))
-                lobby.PlayerIds.Add(playerId);
-            return Task.FromResult<LobbyModel?>(lobby);
-        }
-        return Task.FromResult<LobbyModel?>(null);
-    }
-
-    public Task<LobbyModel?> UpdateLobby_RemovePlayerAsync(Guid lobbyId, Guid playerId)
-    {
-        if (_lobbies.TryGetValue(lobbyId, out var lobby))
-        {
-            lobby.PlayerIds.Remove(playerId);
-            return Task.FromResult<LobbyModel?>(lobby);
-        }
-        return Task.FromResult<LobbyModel?>(null);
+        return Task.CompletedTask;
     }
 
     public Task<LobbyModel?> GetLobbyAsync(Guid lobbyId)

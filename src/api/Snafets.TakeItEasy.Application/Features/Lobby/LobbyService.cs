@@ -19,15 +19,28 @@ public class LobbyService : ILobbyService
 
     public async Task<LobbyModel> CreateLobbyAsync(string name, Guid creatorId)
     {
-        return await _repository.AddLobbyAsync(name, creatorId);
+        var lobby = new LobbyModel
+        {
+            Id = Guid.NewGuid(),
+            Name = name,
+            PlayerIds = new List<Guid> { creatorId },
+            CreatedAt = DateTime.UtcNow
+        };
+        await _repository.SaveLobbyAsync(lobby);
+        return lobby;
     }
 
     public async Task<LobbyModel?> UpdateLobby_AddPlayerAsync(Guid lobbyId, Guid playerId)
     {
-        var lobby = await _repository.UpdateLobby_AddPlayerAsync(lobbyId, playerId);
+        var lobby = await _repository.GetLobbyAsync(lobbyId);
         if (lobby == null)
         {
             return null;
+        }
+        if (!lobby.PlayerIds.Contains(playerId))
+        {
+            lobby.PlayerIds.Add(playerId);
+            await _repository.SaveLobbyAsync(lobby);
         }
         foreach (var otherPlayerId in lobby.PlayerIds.Where(id => id != playerId))
         {
@@ -38,15 +51,20 @@ public class LobbyService : ILobbyService
 
     public async Task<bool> UpdateLobby_RemovePlayerAsync(Guid lobbyId, Guid playerId)
     {
-        var lobby = await _repository.UpdateLobby_RemovePlayerAsync(lobbyId, playerId);
+        var lobby = await _repository.GetLobbyAsync(lobbyId);
         if (lobby == null)
         {
             return false;
         }
-        if (lobby.PlayerIds.Count == 0)
+        if (lobby.PlayerIds.Contains(playerId))
         {
-            await _repository.DeleteLobbyAsync(lobbyId);
-            return true;
+            lobby.PlayerIds.Remove(playerId);
+            if (lobby.PlayerIds.Count == 0)
+            {
+                await _repository.DeleteLobbyAsync(lobbyId);
+                return true;
+            }
+            await _repository.SaveLobbyAsync(lobby);
         }
         foreach (var otherPlayerId in lobby.PlayerIds.Where(id => id != playerId))
         {
@@ -83,7 +101,7 @@ public class LobbyService : ILobbyService
     public async Task<bool> DeleteLobbyAsync(Guid lobbyId, Guid playerId)
     {
         var lobby = await _repository.GetLobbyAsync(lobbyId);
-        if(lobby == null)
+        if (lobby == null)
         {
             return false;
         }

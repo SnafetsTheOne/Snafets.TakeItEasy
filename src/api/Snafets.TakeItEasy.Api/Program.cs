@@ -106,7 +106,7 @@ app.MapHub<UpdatesHub>("/hubs/updates").RequireAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
-    var player1 = await app.Services.GetRequiredService<IPlayerRepository>().AddPlayerAsync(new Snafets.TakeItEasy.Domain.PlayerModel()
+    var player1 = await app.Services.GetRequiredService<IPlayerRepository>().SavePlayerAsync(new Snafets.TakeItEasy.Domain.PlayerModel()
     {
         Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
         Name = "Alice",

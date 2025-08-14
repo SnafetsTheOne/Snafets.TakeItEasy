@@ -12,11 +12,12 @@ public class InMemoryGameRepository : IGameRepository
 
     public async Task SaveGameAsync(GameModel game)
     {
+        game.UpdatedAt = DateTime.UtcNow;
         _store[game.Id] = game;
         await Task.CompletedTask;
     }
 
-    public async Task<GameModel?> LoadGameAsync(Guid id)
+    public async Task<GameModel?> GetGameAsync(Guid id)
     {
         _store.TryGetValue(id, out var game);
         return await Task.FromResult(game);
