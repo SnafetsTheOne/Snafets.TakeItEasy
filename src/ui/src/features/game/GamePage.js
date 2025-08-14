@@ -149,7 +149,7 @@ export const GamePage = () => {
         </div>
 
         {/* Desktop navigation */}
-        <div className="mobile-hidden" style={{ 
+        <div style={{ 
           display: 'flex', 
           flexDirection: 'row', 
           alignItems: 'center', 
@@ -159,11 +159,6 @@ export const GamePage = () => {
           <div style={{ flex: 1 }}>
             <GameBoard {...boards[boardIndex]} />
           </div>
-        </div>
-
-        {/* Mobile game board */}
-        <div className="desktop-hidden" style={{ width: '100%' }}>
-          <GameBoard {...boards[boardIndex]} />
         </div>
       </div>
 

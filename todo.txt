@@ -8,3 +8,5 @@
 - make ui mobile friendly
 
 - Icons and website defaults
+
+- chat: for a more social experience

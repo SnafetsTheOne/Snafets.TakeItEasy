@@ -98,20 +98,10 @@ input, select, textarea {
   }
 }
 
-/* Hide elements on mobile */
-.mobile-hidden {
-  display: none;
-}
-
 @media (min-width: 768px) {
   .mobile-hidden {
     display: block;
   }
-}
-
-/* Show elements only on mobile */
-.desktop-hidden {
-  display: block;
 }
 
 @media (min-width: 768px) {
