@@ -45,24 +45,32 @@ export const LobbiesPage = () => {
         Lobbies
       </h1>
       <div>
-        <form
-          style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem" }}
-          onSubmit={handleAddLobby}
-        >
-          <input
-            type="text"
-            value={newLobbyName}
-            onChange={(e) => setNewLobbyName(e.target.value)}
-            placeholder="Enter lobby name"
-            style={{ flex: 1, padding: "0.5rem 0.75rem", fontSize: "1rem", border: "1px solid #ddd", borderRadius: "6px", outline: "none", background: "#fafafa", color: "#222", boxSizing: "border-box" }}
-          />
-          <button
-            type="submit"
-            style={{ padding: "0.5rem 1rem", fontSize: "1rem", border: "1px solid #ddd", borderRadius: "6px", background: "#fff", color: "#222", fontWeight: 500, cursor: "pointer", transition: "background 0.2s, border 0.2s" }}
+        {user ? (
+          <form
+            style={{ display: "flex", alignItems: "center", marginBottom: "1rem", gap: "0.5rem" }}
+            onSubmit={handleAddLobby}
           >
-            Add Lobby
-          </button>
-        </form>
+            <input
+              type="text"
+              value={newLobbyName}
+              onChange={(e) => setNewLobbyName(e.target.value)}
+              placeholder="Enter lobby name"
+              style={{ flex: 1, padding: "0.5rem 0.75rem", fontSize: "1rem", border: "1px solid #ddd", borderRadius: "6px", outline: "none", background: "#fafafa", color: "#222", boxSizing: "border-box" }}
+            />
+            <button
+              type="submit"
+              style={{ padding: "0.5rem 1rem", fontSize: "1rem", border: "1px solid #ddd", borderRadius: "6px", background: "#fff", color: "#222", fontWeight: 500, cursor: "pointer", transition: "background 0.2s, border 0.2s" }}
+            >
+              Add Lobby
+            </button>
+          </form>
+        ) : (
+          <div
+            style={{ color: "#888", background: '#ffffffff', padding: '1rem', borderRadius: '8px', textAlign: "center", marginBottom: "1rem" }}
+          >
+            Sign Up to Play
+          </div>
+        )}
         {lobbys && lobbys.length > 0 ? (
           lobbys.map((lobby) => {
             return (

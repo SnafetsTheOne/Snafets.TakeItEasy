@@ -1,0 +1,2 @@
+- Persistent Storage
+- automate deployment BACKEND_URL: https://takeiteasy.sitkovich.com/

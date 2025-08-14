@@ -27,7 +27,7 @@ export default function GameCard({ id, game }) {
         <span style={nameStyle}>{game.name}</span>
         <span style={idStyle}>ID: {game.id}</span>
 
-        {game.myTurn && <span style={turnBadgeStyle}>Your Turn</span>}
+        {game.boards[0].canPlay && <span style={turnBadgeStyle}>Your Turn</span>}
         {game.isCompleted && <span style={completedBadgeStyle}>Completed</span>}
       </div>
     </button>

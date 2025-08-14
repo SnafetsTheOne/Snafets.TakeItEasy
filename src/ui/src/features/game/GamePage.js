@@ -7,16 +7,15 @@ import { useRealtime } from "../../infra/RealtimeProvider";
 import { GameBoard } from "./GameBoard";
 
 export const GamePage = () => {
-  const { gameId } = useParams();
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(true);
   const [boardIndex, setBoardIndex] = useState(0);
   const [playerNames, setPlayerNames] = useState({});
   const [showPopup, setShowPopup] = useState(false);
 
-  const { user } = useAuth();
+  const { gameId } = useParams();
   const { on } = useRealtime();
-  const playerId = user?.id;
+  const { user } = useAuth();
 
   // reload game
   const reloadGame = async () => {
@@ -25,8 +24,8 @@ export const GamePage = () => {
   }
   const handleSwipe = (direction) => {
     setBoardIndex(idx => {
-      if (direction === 'left') return idx === 0 ? allBoards.length - 1 : idx - 1;
-      if (direction === 'right') return idx === allBoards.length - 1 ? 0 : idx + 1;
+      if (direction === 'left') return idx === 0 ? boards.length - 1 : idx - 1;
+      if (direction === 'right') return idx === boards.length - 1 ? 0 : idx + 1;
       return idx;
     });
   };
@@ -35,7 +34,7 @@ export const GamePage = () => {
   useEffect(() => {
     fetchGameById(gameId).then(gameData => {
       setGame(gameData);
-      const ids = [gameData.myBoard?.playerId, ...(gameData.otherPlayerBoards || []).map(b => b.playerId)].filter(Boolean);
+      const ids = [gameData.boards.map(b => b.playerId)].filter(Boolean);
       const names = {};
       Promise.all(ids.map(async (id) => {
         try {
@@ -62,7 +61,7 @@ export const GamePage = () => {
 
   // Check if game is completed
   useEffect(() => {
-    if (game && game.isCompleted) {
+    if (game?.isCompleted) {
       setShowPopup(true);
     } else {
       setShowPopup(false);
@@ -70,34 +69,26 @@ export const GamePage = () => {
   }, [game]);
 
   if (loading) return <div>Loading...</div>;
-  if (!game?.id || !playerId) return <div style={{ color: '#888', textAlign: 'center', marginTop: '2rem' }}>Game not found.</div>;
+  if (!game?.id) return <div style={{ color: '#888', textAlign: 'center', marginTop: '2rem' }}>Game not found.</div>;
 
-  const playerBoard = game.myBoard;
-  const currentTile = game.nextTile;
-  const canPlay = game.myTurn;
-  const scores = [game.myBoard, ...(game.otherPlayerBoards || [])]
+  const scores = game.boards
                   .map(b => ({ id: b.playerId, name: playerNames[b.playerId], score: b.score }))
                   .sort((a, b) => b.score - a.score);
-  const otherGameboards = game.otherPlayerBoards || [];
-  const allBoards = [
-    { title: playerNames[playerBoard?.playerId] || 'My Game', playerBoard, currentTile, canPlay, playerId, gameId, refreshGame: reloadGame },
-    ...otherGameboards.map((b, i) => ({
+  const boards = game.boards.map((b, i) => ({
       title: playerNames[b.playerId] || `Player ${i+1}`,
-      playerBoard: b,
-      currentTile: currentTile,
-      canPlay: false,
-      playerId: b.playerId,
       gameId,
-      refreshGame: () => {},
-    }))
-  ];
+      board: b,
+      currentTile: game.currentTile,
+      reloadGame: reloadGame,
+      isUser: b.playerId == user?.id
+    }));
 
   return (
     <div style={{ width: '100%', maxWidth: 900, margin: '0 auto', position: 'relative' }}>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 24 }}>
         <button onClick={() => handleSwipe('left')} style={{ fontSize: 24, padding: '0.5rem 1rem', borderRadius: 8, border: '1px solid #ccc', background: '#f5f5f5', cursor: 'pointer' }}>&lt;</button>
         <div style={{ flex: 1 }}>
-          <GameBoard {...allBoards[boardIndex]} />
+          <GameBoard {...boards[boardIndex]} />
         </div>
         <button onClick={() => handleSwipe('right')} style={{ fontSize: 24, padding: '0.5rem 1rem', borderRadius: 8, border: '1px solid #ccc', background: '#f5f5f5', cursor: 'pointer' }}>&gt;</button>
       </div>

@@ -1,17 +1,14 @@
-
-
-
 import { useState } from "react";
 import { postPlayerMove } from '../../data-access/game';
 
-export default function EmptyHoneycombCell({ cell, index, pts, playerId, gameId, canPlay, refreshGame }) {
+export default function EmptyHoneycombCell({ cell, index, pts, playerId, gameId, canPlay, reloadGame }) {
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
-    if (loading || !canPlay) return; // Prevent action if already loading or can't play
+    if (loading || !canPlay) return;
     setLoading(true);
     await postPlayerMove(gameId, playerId, index);
-    await refreshGame();
+    await reloadGame();
     setLoading(false);
   };
 
@@ -20,7 +17,7 @@ export default function EmptyHoneycombCell({ cell, index, pts, playerId, gameId,
       key={cell.i}
       tabIndex={0}
       onClick={handleClick}
-      style={{ cursor: loading ? "wait" : "pointer" }}
+      style={{ cursor: canPlay ? (loading ? "wait" : "pointer") : "default" }}
     >
       <polygon
         points={pts}
