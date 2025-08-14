@@ -1,2 +1,8 @@
-- Persistent Storage
-- automate deployment BACKEND_URL: https://takeiteasy.sitkovich.com/
+- automate frontend deployment
+  - 9009:80
+  - BACKEND_URL: https://takeiteasy.sitkovich.com/
+- automate backend deployment:
+  - 9008:8080
+  - /docker/takeiteasy:/var/lib/takeiteasy
+
+- make ui mobile friendly
