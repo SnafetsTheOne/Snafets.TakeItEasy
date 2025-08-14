@@ -34,7 +34,7 @@ export const GamePage = () => {
   useEffect(() => {
     fetchGameById(gameId).then(gameData => {
       setGame(gameData);
-      const ids = [gameData.boards.map(b => b.playerId)].filter(Boolean);
+      const ids = gameData.boards.map(b => b.playerId);
       const names = {};
       Promise.all(ids.map(async (id) => {
         try {
