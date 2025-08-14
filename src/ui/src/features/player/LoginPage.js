@@ -19,41 +19,109 @@ export const LoginPage = () => {
   };
 
   return (
-    <div
-      style={{ maxWidth: 400, margin: "3rem auto", padding: "2rem 1.5rem", background: "#fff", borderRadius: 10, boxShadow: "0 2px 8px rgba(0,0,0,0.04)", }}
-    >
-      <h1
-        style={{ fontSize: "1.7rem", fontWeight: 600, marginBottom: "2rem", color: "#222", textAlign: "center", }}
-      >
-        Login
-      </h1>
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}
-      >
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Name"
-          style={{ padding: "0.7rem 1rem", fontSize: "1rem", border: "1px solid #ddd", borderRadius: 6, background: "#fafafa", color: "#222", }}
-          required
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          style={{ padding: "0.7rem 1rem", fontSize: "1rem", border: "1px solid #ddd", borderRadius: 6, background: "#fafafa", color: "#222", }}
-          required
-        />
-        <button
-          type="submit"
-          style={{ padding: "0.7rem 1.5rem", fontSize: "1rem", border: "1px solid #ddd", borderRadius: 6, background: "#fff", color: "#222", fontWeight: 500, cursor: "pointer", }}
-        >
+    <div className="container" style={{ 
+      width: "80%",
+      maxWidth: "400px",
+      minHeight: "calc(100vh - 150px)",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center"
+    }}>
+      <div style={{ 
+        background: "#fff", 
+        borderRadius: 12, 
+        boxShadow: "0 4px 16px rgba(0,0,0,0.08)", 
+        padding: "1rem 1rem",
+        width: "100%"
+      }}>
+        <h1 style={{ 
+          fontSize: "1.75rem", 
+          fontWeight: 600, 
+          marginBottom: "1.5rem", 
+          color: "#222", 
+          textAlign: "center" 
+        }}>
           Login
-        </button>
-      </form>
+        </h1>
+        <form
+          onSubmit={handleSubmit}
+          style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+        >
+          <div>
+            <label htmlFor="name" style={{
+              display: "block",
+              marginBottom: "0.25rem",
+              fontWeight: 500,
+              color: "#374151",
+              fontSize: "0.85rem"
+            }}>
+              Name
+            </label>
+            <input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your name"
+              style={{ 
+                width: "100%",
+                padding: "0.75rem 0.875rem", 
+                fontSize: "1rem", 
+                border: "1px solid #d1d5db", 
+                borderRadius: 8, 
+                background: "#fff", 
+                color: "#222",
+                boxSizing: "border-box",
+                minHeight: "44px"
+              }}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="password" style={{
+              display: "block",
+              marginBottom: "0.25rem",
+              fontWeight: 500,
+              color: "#374151",
+              fontSize: "0.85rem"
+            }}>
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              style={{ 
+                width: "100%",
+                padding: "0.75rem 0.875rem", 
+                fontSize: "1rem", 
+                border: "1px solid #d1d5db", 
+                borderRadius: 8, 
+                background: "#fff", 
+                color: "#222",
+                boxSizing: "border-box",
+                minHeight: "44px"
+              }}
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="btn btn-primary"
+            style={{ 
+              marginTop: "0.5rem",
+              width: "100%",
+              fontSize: "1rem",
+              fontWeight: 600,
+              padding: "0.75rem 1rem"
+            }}
+          >
+            Login
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

@@ -7,12 +7,6 @@ export function GameBoard({ title, board, currentTile, gameId, reloadGame, isUse
   return (
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, boxSizing: 'border-box', alignItems: 'center', justifyContent: 'flex-start', }}>
       <div style={{display: 'flex',flexDirection: 'column',gap: 32,alignItems: 'center',justifyContent: 'flex-start',width: '100%',maxWidth: 900,margin: '0 auto',boxSizing: 'border-box', }}>
-        {/* Game Board header */}
-        <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-          <div style={{ minWidth: 180, height: 48, textAlign: 'center', background: '#fff', padding: '0.5rem 1.5rem', borderRadius: 10, boxShadow: '0 1px 6px rgba(0,0,0,0.08)', fontWeight: 600, fontSize: '1.5rem', color: '#222', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            {title}
-          </div>
-        </div>
 
         <div style={{ display: 'flex', flexDirection: 'row', gap: 40, alignItems: 'flex-start', justifyContent: 'center', width: '100%' }}>
           {/* Score */}

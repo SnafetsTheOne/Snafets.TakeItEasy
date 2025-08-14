@@ -4,6 +4,16 @@ const cardStyle = { background: '#fff', borderRadius: '10px', boxShadow: '0 2px 
 
 const nameStyle = { fontSize: '1.4rem', fontWeight: 700, color: '#222', };
 
+const idStyle = {
+  fontSize: "0.8rem",
+  color: "#bbb",
+  marginLeft: "1.2rem",
+  fontWeight: 400,
+  letterSpacing: "0.01em",
+  display: "block",
+  marginTop: "0.2rem",
+};
+
 const countStyle = { fontSize: '1rem', color: '#00796b', background: '#e0f7fa', borderRadius: '6px', padding: '0.3rem 0.7rem', fontWeight: 500, marginLeft: '1.2rem', };
 
 export default function LobbyCard({ lobby, currentUserId, handleJoin }) {
@@ -25,8 +35,12 @@ export default function LobbyCard({ lobby, currentUserId, handleJoin }) {
       tabIndex={0}
       aria-label={`Open lobby ${lobby.name}`}
     >
-      <span style={nameStyle}>{lobby.name}</span>
-      <span style={countStyle}>{lobby.playerIds.length} Players</span>
+        <div style={{ flex: 1, textAlign: "left" }}>
+          <span style={nameStyle}>{lobby.name}</span>
+          <span style={idStyle}>ID: {lobby.id}</span>
+        </div>
+
+      <span style={countStyle}>{lobby.playerIds.length} {lobby.playerIds.length == 1 ? "Player" : "Players"}</span>
       {joined ? (
         <span
           style={{ marginLeft: "1.2rem", color: "#388e3c", fontWeight: 500 }}

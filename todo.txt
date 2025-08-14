@@ -6,3 +6,5 @@
   - /docker/takeiteasy:/var/lib/takeiteasy
 
 - make ui mobile friendly
+
+- Icons and website defaults
