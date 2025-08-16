@@ -113,7 +113,7 @@ export const GamePage = () => {
       position: 'relative',
       padding: '0 1rem'
     }}>
-      {/* Mobile-friendly navigation */}
+      {/* Game holder */}
       <div style={{ 
         display: 'flex', 
         flexDirection: 'column', 
@@ -121,8 +121,8 @@ export const GamePage = () => {
         gap: '1rem',
         marginBottom: '1rem'
       }}>
-        {/* Player selector for mobile */}
-        <div className="desktop-hidden" style={{
+        {/* Player selector */}
+        <div style={{
           display: 'flex',
           gap: '0.5rem',
           flexWrap: 'wrap',
@@ -148,7 +148,7 @@ export const GamePage = () => {
           ))}
         </div>
 
-        {/* Desktop navigation */}
+        {/* GameBoard */}
         <div style={{ 
           display: 'flex', 
           flexDirection: 'row', 

@@ -8,26 +8,17 @@ const Navbar = () => {
 	const { on } = useRealtime();
 	const [time, setTime] = useState(Date.now());
 	const [showTimeInput, setShowTimeInput] = useState(false);
-	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
 	useEffect(() => {
     	on("broadcast", (p) => setTime(p));
 	}, [on]);
-
-	const toggleMobileMenu = () => {
-		setIsMobileMenuOpen(!isMobileMenuOpen);
-	};
-
-	const closeMobileMenu = () => {
-		setIsMobileMenuOpen(false);
-	};
 
 	return (
 		<nav style={{
 			width: "100%",
 			background: "#fff",
 			borderBottom: "1px solid #eee",
-			padding: "0.75rem 0",
+			padding: "0.5rem 0 0.75rem 0",
 			marginBottom: "2rem",
 			boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
 			position: "sticky",
@@ -59,7 +50,7 @@ const Navbar = () => {
 							{showTimeInput && (
 								<input type="text" value={time} readOnly style={{ width: '200px', textAlign: 'center', transition: 'opacity 0.2s' }} />
 							)}
-							<span style={{ background: "none",fontWeight: 500, border: "none", color: "#222", fontWeight: 500, fontSize: "1.1rem",  }}>{user.name}</span>
+							<span style={{ background: "none", border: "none", color: "#222", fontWeight: 500, fontSize: "1.1rem",  }}>{user.name}</span>
 							<button onClick={logout} style={{ background: "none", border: "none", color: "#222", fontWeight: 500, fontSize: "1.1rem", cursor: "pointer" }}>Logout</button>
 						</>
 					) : (

@@ -5,7 +5,17 @@ import {
   createLobby,
 } from "../../data-access/lobby";
 import LobbyCard from "./LobbyCard";
+import CreateLobbyCard from "./CreateLobbyCard";
 import { useAuth } from "../../infra/AuthProvider";
+import {
+  cardStyle,
+  cardNameStyle,
+  cardIdStyle,
+  head1,
+  head2,
+  verticalContainer,
+  verticalContainerItem,
+} from "../../infra/css";
 
 export const LobbiesPage = () => {
   const [lobbys, setLobbys] = React.useState([]);
@@ -38,114 +48,54 @@ export const LobbiesPage = () => {
   };
 
   return (
-    <div className="container" style={{ 
-      maxWidth: 600, 
-      margin: "2rem auto", 
-      padding: "1rem"
-    }}>
-      <h1 style={{ 
-        fontSize: "2.5rem", 
-        fontWeight: 600, 
-        marginBottom: "2rem", 
-        color: "#222", 
-        textAlign: "center" 
-      }}>
+    <div
+      style={{
+        ...verticalContainer,
+        maxWidth: 500,
+        margin: "auto",
+      }}
+    >
+      <h1
+        style={{
+          ...verticalContainerItem,
+          ...head1
+        }}
+      >
         Lobbies
       </h1>
-      <div>
-        {user ? (
-          <form
-            style={{ 
-              display: "flex", 
-              flexDirection: "column",
-              gap: "1rem",
-              marginBottom: "2rem",
-              padding: "1.5rem",
-              background: "#f8fafc",
-              borderRadius: "12px",
-              border: "1px solid #e2e8f0"
-            }}
-            onSubmit={handleAddLobby}
-          >
-            <div>
-              <label htmlFor="lobbyName" style={{
-                display: "block",
-                marginBottom: "0.5rem",
-                fontWeight: 500,
-                color: "#374151",
-                fontSize: "0.9rem"
-              }}>
-                Lobby Name
-              </label>
-              <input
-                id="lobbyName"
-                type="text"
-                value={newLobbyName}
-                onChange={(e) => setNewLobbyName(e.target.value)}
-                placeholder="Enter lobby name"
-                style={{ 
-                  width: "100%",
-                  padding: "0.875rem 1rem", 
-                  fontSize: "1rem", 
-                  border: "1px solid #d1d5db", 
-                  borderRadius: "8px", 
-                  outline: "none", 
-                  background: "#fff", 
-                  color: "#222", 
-                  boxSizing: "border-box",
-                  minHeight: "44px"
-                }}
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              style={{ 
-                width: "100%",
-                fontSize: "1.1rem",
-                fontWeight: 600
-              }}
-            >
-              Create Lobby
-            </button>
-          </form>
-        ) : (
-          <div style={{ 
-            color: "#888", 
-            background: '#fff', 
-            padding: '1.5rem', 
-            borderRadius: '12px', 
-            textAlign: "center", 
-            marginBottom: "2rem",
-            border: "1px solid #e2e8f0"
-          }}>
-            Sign Up to Play
-          </div>
-        )}
+      <div style={{ ...verticalContainerItem, ...verticalContainer }}>
+        {/* Lobby creation form */}
+        <CreateLobbyCard 
+          user={user}
+          handleAddLobby={handleAddLobby} 
+          newLobbyName={newLobbyName} 
+          setNewLobbyName={setNewLobbyName} 
+        />
+        {/* Lobby list */}
         {lobbys && lobbys.length > 0 ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {lobbys.map((lobby) => {
-              return (
-                <LobbyCard
-                  key={lobby.id}
-                  lobby={lobby}
-                  currentUserId={currentUserId}
-                  handleJoin={handleJoin}
-                />
-              );
-            })}
-          </div>
+          lobbys.map((lobby) => {
+            return (
+              <LobbyCard
+                key={lobby.id}
+                lobby={lobby}
+                currentUserId={currentUserId}
+                handleJoin={handleJoin}
+              />
+            );
+          })
         ) : (
-          <div style={{ 
-            color: "#888", 
-            background: '#fff', 
-            padding: '2rem', 
-            borderRadius: '12px', 
-            textAlign: "center", 
-            marginTop: "2rem",
-            border: "1px solid #e2e8f0"
-          }}>
+          <div
+            style={{
+              ...verticalContainerItem,
+              color: "#888",
+              background: "#fff",
+              padding: "2rem",
+              borderRadius: "12px",
+              textAlign: "center",
+              marginTop: "2rem",
+              border: "1px solid #e2e8f0",
+            }}
+          >
             No lobbies found.
           </div>
         )}

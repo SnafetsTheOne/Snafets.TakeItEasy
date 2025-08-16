@@ -106,9 +106,8 @@ function totalCells(R) {
 
 // --- Component -----------------------------------------------------------------
 
-export default function HoneycombBoard({ tiles, gameId, playerId, canPlay, reloadGame }) {
-  const radius = 2;
-  const size = 40;
+export default function HoneycombBoard({ radius, tiles, gameId, playerId, canPlay, reloadGame }) {
+  const size = 35;
   const startCorner = 'topLeft'
   const ariaLabel = "Honeycomb board";
 

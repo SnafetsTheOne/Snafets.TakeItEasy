@@ -1,20 +1,13 @@
 import { useNavigate } from "react-router-dom";
-
-const cardStyle = { background: '#fff', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.07)', padding: '1.5rem', marginBottom: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'box-shadow 0.2s', cursor: 'pointer', };
-
-const nameStyle = { fontSize: '1.4rem', fontWeight: 700, color: '#222', };
-
-const idStyle = {
-  fontSize: "0.8rem",
-  color: "#bbb",
-  marginLeft: "1.2rem",
-  fontWeight: 400,
-  letterSpacing: "0.01em",
-  display: "block",
-  marginTop: "0.2rem",
-};
-
-const countStyle = { fontSize: '1rem', color: '#00796b', background: '#e0f7fa', borderRadius: '6px', padding: '0.3rem 0.7rem', fontWeight: 500, marginLeft: '1.2rem', };
+import {
+  cardStyle,
+  cardNameStyle,
+  cardIdStyle,
+  horizontalContainer,
+  horizontalContainerItem,
+  verticalContainer,
+  verticalContainerItem,
+} from "../../infra/css";
 
 export default function LobbyCard({ lobby, currentUserId, handleJoin }) {
   const loggedIn = currentUserId != null;
@@ -29,33 +22,93 @@ export default function LobbyCard({ lobby, currentUserId, handleJoin }) {
   return (
     <div
       key={lobby.id}
-      style={cardStyle}
+      style={{
+        ...cardStyle,
+        ...verticalContainerItem,
+        ...verticalContainer,
+        cursor: "pointer",
+        userSelect: "none",
+        alignItems: "left",
+        textAlign: "left",
+      }}
       onClick={handleCardClick}
       role="button"
       tabIndex={0}
       aria-label={`Open lobby ${lobby.name}`}
     >
-        <div style={{ flex: 1, textAlign: "left" }}>
-          <span style={nameStyle}>{lobby.name}</span>
-          <span style={idStyle}>ID: {lobby.id}</span>
-        </div>
-
-      <span style={countStyle}>{lobby.playerIds.length} {lobby.playerIds.length == 1 ? "Player" : "Players"}</span>
-      {joined ? (
+      <div
+        style={{
+          ...verticalContainerItem,
+          ...horizontalContainer,
+        }}
+      >
         <span
-          style={{ marginLeft: "1.2rem", color: "#388e3c", fontWeight: 500 }}
+          style={{
+            ...cardNameStyle,
+            ...verticalContainerItem,
+            flex: 1,
+          }}
         >
-          Joined
+          {lobby.name}
         </span>
-      ) : (
-        <button
-          style={{ marginLeft: "1.2rem", padding: "0.3rem 0.9rem", borderRadius: 6, border: "none", background: "#00796b", color: "#fff", fontWeight: 500, cursor: "pointer", fontSize: "1rem", }}
-          disabled={!loggedIn}
-          onClick={() => handleJoin(lobby.id)}
+
+        <span
+          style={{
+            ...horizontalContainerItem,
+            fontSize: "1rem",
+            color: "#00796b",
+            background: "#eeeeee",
+            borderRadius: "6px",
+            padding: "0.3rem 0.7rem",
+            fontWeight: 500,
+            marginLeft: "1.2rem",
+          }}
         >
-          Join
-        </button>
-      )}
+          {lobby.playerIds.length}{" "}
+          {lobby.playerIds.length == 1 ? "Player" : "Players"}
+        </span>
+        <div style={{ ...horizontalContainerItem }}>
+          {joined ? (
+            <span
+              style={{
+                marginLeft: "1.2rem",
+                color: "#388e3c",
+                fontWeight: 500,
+              }}
+            >
+              Joined
+            </span>
+          ) : (
+            <button
+              style={{
+                marginLeft: "1.2rem",
+                padding: "0.3rem 0.9rem",
+                borderRadius: 6,
+                border: "none",
+                background: "#00796b",
+                color: "#fff",
+                fontWeight: 500,
+                cursor: "pointer",
+                fontSize: "1rem",
+              }}
+              disabled={!loggedIn}
+              onClick={() => handleJoin(lobby.id)}
+            >
+              Join
+            </button>
+          )}
+        </div>
+      </div>
+
+      <span
+        style={{
+          ...verticalContainerItem,
+          ...cardIdStyle,
+          textAlign: "left",
+        }}
+      >
+        ID: {lobby.id}
+      </span>
     </div>
   );
 }

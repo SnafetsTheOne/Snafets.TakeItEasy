@@ -1,6 +1,15 @@
 import { useEffect, useState } from 'react';
 import { getPlayersGames } from '../../data-access/game';
 import GameCard from "./GameCard";
+import {
+  cardStyle,
+  cardNameStyle,
+  cardIdStyle,
+  head1,
+  head2,
+  verticalContainer,
+  verticalContainerItem,
+} from "../../infra/css";
 
 export const GamesPage = () => {
   const [games, setGames] = useState([]);
@@ -10,21 +19,20 @@ export const GamesPage = () => {
   }, []);
 
   return (
-    <div className="container" style={{ 
-      maxWidth: 600, 
-      margin: '2rem auto', 
-      padding: '1rem' 
+    <div style={{ 
+        ...verticalContainer,
+        maxWidth: 500,
+        margin: "auto",
     }}>
       <h1 style={{ 
-        fontSize: '2.5rem', 
-        fontWeight: 600, 
-        marginBottom: '2rem', 
-        color: '#222', 
-        textAlign: 'center' 
+          ...verticalContainerItem,
+          ...head1
       }}>
         Games
       </h1>
-      <div>
+      <div style={{ 
+        ...verticalContainerItem, 
+        ...verticalContainer }}>
         {games && games.length > 0 ? (
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             {games.map(game => (

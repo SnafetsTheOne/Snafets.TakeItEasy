@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { postPlayerMove } from '../../data-access/game';
+import { postPlayerMove } from '../../../data-access/game';
 
 export default function EmptyHoneycombCell({ cell, index, pts, playerId, gameId, canPlay, reloadGame }) {
   const [loading, setLoading] = useState(false);

@@ -1,6 +1,7 @@
 import HoneycombCell from "./HoneycombCell";
 
 export default function HoneycombStandaloneCell({ tile }) {
+  const sizeMultiplier = 0.80;
   const minX = 80;
   const minY = -40;
   const maxX = 160;

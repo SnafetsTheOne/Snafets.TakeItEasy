@@ -1,34 +1,13 @@
 import { useNavigate } from "react-router-dom";
-
-const cardStyle = {
-  background: "#fff",
-  borderRadius: "10px",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
-  padding: "1.5rem",
-  marginBottom: "1.2rem",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  transition: "box-shadow 0.2s",
-};
-
-const nameStyle = {
-  fontSize: "1.6rem",
-  fontWeight: 700,
-  color: "#222",
-  letterSpacing: "0.02em",
-  display: "block",
-};
-
-const idStyle = {
-  fontSize: "0.8rem",
-  color: "#bbb",
-  marginLeft: "1.2rem",
-  fontWeight: 400,
-  letterSpacing: "0.01em",
-  display: "block",
-  marginTop: "0.2rem",
-};
+import {
+  cardStyle,
+  cardNameStyle,
+  cardIdStyle,
+  verticalContainer,
+  verticalContainerItem,
+  horizontalContainer,
+  horizontalContainerItem,
+} from "../../infra/css";
 
 const turnBadgeStyle = {
   background: "#e0f7fa",
@@ -37,7 +16,7 @@ const turnBadgeStyle = {
   padding: "0.3rem 0.7rem",
   fontSize: "0.95rem",
   fontWeight: 500,
-  boxShadow: "0 1px 4px rgba(0,0,0,0.04)"
+  boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
 };
 
 const completedBadgeStyle = {
@@ -47,60 +26,64 @@ const completedBadgeStyle = {
   padding: "0.3rem 0.7rem",
   fontSize: "0.95rem",
   fontWeight: 500,
-  boxShadow: "0 1px 4px rgba(0,0,0,0.04)"
-};
-
-const clickableCardStyle = {
-  ...cardStyle,
-  cursor: "pointer",
-  userSelect: "none",
+  boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
 };
 
 export default function GameCard({ id, game }) {
   const navigate = useNavigate();
 
   return (
-    <button
+    <div
       key={game.id}
-      style={{ 
-        ...clickableCardStyle, 
-        border: "none", 
-        outline: "none", 
-        width: "100%", 
-        textAlign: "left", 
-        padding: "0", 
+      style={{
+        ...cardStyle,
+        ...verticalContainerItem,
+        ...horizontalContainer,
+        cursor: "pointer",
+        userSelect: "none",
+        alignItems: "left",
+        textAlign: "left",
       }}
       onClick={() => navigate(`/game/${game.id}`)}
+      role="button"
+      tabIndex={0}
       aria-label={`Open game ${game.name}`}
     >
       <div
-        style={{ 
-          ...cardStyle, 
-          margin: 0, 
-          boxShadow: "none", 
-          padding: "1.5rem",
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          width: "100%",
-          height: "100%"
+        style={{
+          ...horizontalContainerItem,
+          ...verticalContainer,
         }}
       >
-        <div style={{ flex: 1 }}>
-          <span style={nameStyle}>{game.name}</span>
-          <span style={idStyle}>ID: {game.id}</span>
-        </div>
-
-        <div style={{ 
-          display: "flex", 
-          flexDirection: "column", 
-          alignItems: "flex-end",
-          gap: "0.5rem"
-        }}>
-          {game.boards[0].canPlay && <span style={turnBadgeStyle}>Your Turn</span>}
-          {game.isCompleted && <span style={completedBadgeStyle}>Completed</span>}
-        </div>
+        <span
+          style={{
+            ...cardNameStyle,
+            ...verticalContainerItem,
+          }}
+        >
+          {game.name}
+        </span>
+        <span
+          style={{
+            ...cardIdStyle,
+            ...verticalContainerItem,
+          }}
+        >
+          ID: {game.id}
+        </span>
       </div>
-    </button>
+      <div
+        style={{
+          ...horizontalContainerItem,
+        }}
+      >
+        {game.boards[0].canPlay && (
+          <span style={{ ...turnBadgeStyle, whiteSpace: "nowrap" }}>
+            Your Turn
+          </span>
+        )}
+        {game.isCompleted && <span style={completedBadgeStyle}>Completed</span>}
+      </div>
+    </div>
   );
 }
