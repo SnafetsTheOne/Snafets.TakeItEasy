@@ -1,4 +1,3 @@
-import HoneycombStandaloneCell from "./Honeycomb/HoneycombStandaloneCell";
 import HoneycombBoard from "./Honeycomb/HoneycombBoard";
 import {
   cardStyle,
@@ -107,9 +106,8 @@ export function GameBoard({
         style={{
           ...cardStyle,
           ...verticalContainerItem,
-          height: 320,
-          width: 300,
           justifyContent: "flex-end",
+          padding: "0rem"
         }}
       >
         <HoneycombBoard

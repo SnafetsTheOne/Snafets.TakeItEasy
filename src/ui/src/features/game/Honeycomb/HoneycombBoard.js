@@ -139,9 +139,9 @@ export default function HoneycombBoard({ radius, tiles, gameId, playerId, canPla
   return (
     <div style={{ display: "grid", placeItems: "center" }}>
       <svg
-        viewBox={`${minX} ${minY} ${width} ${height}`}
-        width={Math.min(1080, width)}
-        height={Math.min(1080, height)}
+        viewBox={`${minX} ${minY+20} ${width} ${height-20}`}
+        width={width}
+        height={height}
         role="img"
         aria-label={ariaLabel}
       >
