@@ -33,13 +33,17 @@ export default function LobbyCard({
       style={{
         ...verticalContainerItem,
         ...cardStyle,
+        alignSelf: "stretch",
         alignItems: "center",
+        flexGrow: 1,
       }}
       onSubmit={handleAddLobby}
     >
       <div
         style={{
           ...verticalContainer,
+          alignItems: "center",
+          flexGrow: 1,
         }}
       >
         <label
@@ -59,7 +63,6 @@ export default function LobbyCard({
           placeholder="Enter lobby name"
           style={{
             ...verticalContainerItem,
-            width: "100%",
             padding: "0.875rem 1rem",
             fontSize: "1rem",
             border: "1px solid #d1d5db",
@@ -77,7 +80,6 @@ export default function LobbyCard({
           className="btn btn-primary"
           style={{
             ...verticalContainerItem,
-            width: "100%",
             fontSize: "1.1rem",
             fontWeight: 600,
           }}

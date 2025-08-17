@@ -9,24 +9,13 @@ import {
   horizontalContainerItem,
 } from "../../infra/css";
 
-const turnBadgeStyle = {
-  background: "#e0f7fa",
-  color: "#00796b",
+const badgeStyle = {
   borderRadius: "6px",
   padding: "0.3rem 0.7rem",
   fontSize: "0.95rem",
   fontWeight: 500,
   boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-};
-
-const completedBadgeStyle = {
-  background: "#c8e6c9",
-  color: "#388e3c",
-  borderRadius: "6px",
-  padding: "0.3rem 0.7rem",
-  fontSize: "0.95rem",
-  fontWeight: 500,
-  boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+  alignSelf: "flex-start",
 };
 
 export default function GameCard({ id, game }) {
@@ -36,9 +25,9 @@ export default function GameCard({ id, game }) {
     <div
       key={game.id}
       style={{
-        ...cardStyle,
         ...verticalContainerItem,
         ...horizontalContainer,
+        ...cardStyle,
         cursor: "pointer",
         userSelect: "none",
         alignItems: "left",
@@ -78,11 +67,26 @@ export default function GameCard({ id, game }) {
         }}
       >
         {game.boards[0].canPlay && (
-          <span style={{ ...turnBadgeStyle, whiteSpace: "nowrap" }}>
+          <span style={{ 
+            ...badgeStyle, 
+            whiteSpace: "nowrap",
+            background: "#e0f7fa",
+            color: "#00796b",
+           }}>
             Your Turn
           </span>
         )}
-        {game.isCompleted && <span style={completedBadgeStyle}>Completed</span>}
+        {game.isCompleted && (
+          <span
+            style={{
+              ...badgeStyle,
+              background: "#c8e6c9",
+              color: "#388e3c",
+            }}
+          >
+            Completed
+          </span>
+        )}
       </div>
     </div>
   );

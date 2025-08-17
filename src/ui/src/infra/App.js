@@ -4,7 +4,7 @@ import Navbar from "./Navbar";
 
 function App() {
   return (
-    <div className="App" style={{ height: '100vh', padding: '1rem' }}>
+    <div className="App">
       <Navbar />
       <div className="flex-grow">
         <AppRoutes />

@@ -82,13 +82,13 @@ export default function LobbyCard({ lobby, currentUserId, handleJoin }) {
             <button
               style={{
                 marginLeft: "1.2rem",
-                padding: "0.3rem 0.9rem",
+                padding: "0.3rem 0.7rem",
                 borderRadius: 6,
                 border: "none",
                 background: "#00796b",
                 color: "#fff",
                 fontWeight: 500,
-                cursor: "pointer",
+                cursor: loggedIn ? "pointer" : "not-allowed",
                 fontSize: "1rem",
               }}
               disabled={!loggedIn}

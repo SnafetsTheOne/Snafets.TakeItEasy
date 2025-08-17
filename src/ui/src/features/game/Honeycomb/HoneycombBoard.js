@@ -1,4 +1,3 @@
-
 import HoneycombCell from "./HoneycombCell";
 import EmptyHoneycombCell from "./EmptyHoneycombCell";
 
@@ -54,21 +53,15 @@ function makeRowStarts(R) {
 
 // Cell: { i, q, r, s, x, y }
 
-function layoutCells(tilesLen, R, size, startCorner = 'topLeft') {
+function layoutCells(tilesLen, R, size) {
   const rows = [];
   for (let r = -R; r <= R; r++) rows.push(r);
-
-  const verticalFromTop = startCorner === 'topLeft' || startCorner === 'topRight';
-  if (!verticalFromTop) rows.reverse();
 
   const cells = [];
   let i = 0;
   for (const r of rows) {
     const qs = [];
     for (let q = qMin(r, R); q <= qMax(r, R); q++) qs.push(q);
-
-    const horizontalFromLeft = startCorner === 'topLeft' || startCorner === 'bottomLeft';
-    if (!horizontalFromLeft) qs.reverse();
 
     for (const q of qs) {
       if (i >= tilesLen) break;
@@ -81,17 +74,13 @@ function layoutCells(tilesLen, R, size, startCorner = 'topLeft') {
   return cells;
 }
 
-function enumerateAxials(R, startCorner = 'topLeft') {
+function enumerateAxials(R) {
   const rows = [];
   for (let r = -R; r <= R; r++) rows.push(r);
-  const verticalFromTop = startCorner === 'topLeft' || startCorner === 'topRight';
-  if (!verticalFromTop) rows.reverse();
   const coords = [];
   for (const r of rows) {
     const qs = [];
     for (let q = qMin(r, R); q <= qMax(r, R); q++) qs.push(q);
-    const horizontalFromLeft = startCorner === 'topLeft' || startCorner === 'bottomLeft';
-    if (!horizontalFromLeft) qs.reverse();
     for (const q of qs) {
       const s = -q - r;
       coords.push({ q, r, s });
@@ -106,16 +95,19 @@ function totalCells(R) {
 
 // --- Component -----------------------------------------------------------------
 
-export default function HoneycombBoard({ radius, tiles, gameId, playerId, canPlay, reloadGame }) {
-  const size = 35;
-  const startCorner = 'topLeft'
-  const ariaLabel = "Honeycomb board";
-
-  const expected = totalCells(radius);
+export default function HoneycombBoard({
+  radius,
+  size,
+  tiles,
+  gameId,
+  playerId,
+  canPlay,
+  reloadGame,
+}) {
 
   const cells = React.useMemo(
-    () => layoutCells(tiles.length, radius, size, startCorner),
-    [tiles.length, radius, size, startCorner]
+    () => layoutCells(tiles.length, radius, size),
+    [tiles.length, radius, size]
   );
 
   // Compute extents for a tight SVG viewBox
@@ -137,28 +129,32 @@ export default function HoneycombBoard({ radius, tiles, gameId, playerId, canPla
   const cy = (minY + maxY) / 2 + 20;
 
   return (
-    <div style={{ display: "grid", placeItems: "center" }}>
+    <div style={{ display: "grid", placeItems: "center"}}>
       <svg
-        viewBox={`${minX} ${minY+20} ${width} ${height-20}`}
+        viewBox={`${minX} ${minY+cy} ${width} ${height-cy}`}
         width={width}
         height={height}
         role="img"
-        aria-label={ariaLabel}
+        aria-label={"Honeycomb board"}
+        style={{ textAlign: "center" }}
       >
         <g transform={`rotate(90 ${cx} ${cy})`}>
           {cells.map((c) => {
             const pts = hexPolygonPoints(c.x, c.y, size);
             const tile = tiles[c.i];
-            if(tile.placedTile) {
-                return <HoneycombCell
-                    key={c.i}
-                    cell={c}
-                    index={tile.index}
-                    tile={tile.placedTile}
-                    pts={pts}
+            if (tile.placedTile) {
+              return (
+                <HoneycombCell
+                  key={c.i}
+                  cell={c}
+                  index={tile.index}
+                  tile={tile.placedTile}
+                  pts={pts}
                 />
+              );
             }
-            return <EmptyHoneycombCell
+            return (
+              <EmptyHoneycombCell
                 key={c.i}
                 cell={c}
                 index={tile.index}
@@ -168,7 +164,7 @@ export default function HoneycombBoard({ radius, tiles, gameId, playerId, canPla
                 canPlay={canPlay}
                 reloadGame={reloadGame}
               />
-            
+            );
           })}
         </g>
       </svg>
@@ -177,13 +173,13 @@ export default function HoneycombBoard({ radius, tiles, gameId, playerId, canPla
 }
 
 // --- Optional helpers you might want to reuse elsewhere ------------------------
-export function indexToAxial(i, radius, startCorner = 'topLeft') {
-  const coords = enumerateAxials(radius, startCorner);
+export function indexToAxial(i, radius) {
+  const coords = enumerateAxials(radius);
   const { q, r, s } = coords[i];
   return { q, r, s };
 }
 
-export function axialToIndex(q, r, radius, startCorner = 'topLeft') {
-  const coords = enumerateAxials(radius, startCorner);
+export function axialToIndex(q, r, radius) {
+  const coords = enumerateAxials(radius);
   return coords.findIndex((c) => c.q === q && c.r === r);
 }

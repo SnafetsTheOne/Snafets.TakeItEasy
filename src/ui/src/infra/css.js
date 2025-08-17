@@ -2,18 +2,18 @@ const baseGap = "0.5rem";
 
 export const verticalContainer = {
   display: "flex",
-  alignItems: "flex-start",
+  alignItems: "center",
   flexDirection: "column",
   justifyContent: "space-between",
-  width: "100%",
+  minWidth: 0,
   gap: baseGap,
 };
 
 export const verticalContainerItem = {
   display: "flex",
-  flexDirection: "column",
-  width: "100%",
+  minHeight: 0,
   gap: baseGap,
+  alignSelf: "stretch"
 };
 
 export const horizontalContainer = {
@@ -21,14 +21,13 @@ export const horizontalContainer = {
   alignItems: "flex-start",
   flexDirection: "row",
   justifyContent: "space-between",
-  height: "100%",
+  minWidth: 0,
   gap: baseGap,
 };
 
 export const horizontalContainerItem = {
   display: "flex",
-  flexDirection: "row",
-  height: "100%",
+  minHeight: 0,
   gap: baseGap,
 };
 
@@ -37,6 +36,7 @@ export const head1 = {
   fontWeight: 600,
   color: "#222",
   textAlign: "center",
+  alignSelf: "center"
 };
 
 export const head2 = {
@@ -44,8 +44,8 @@ export const head2 = {
   fontWeight: 400,
   color: "#222",
   textAlign: "center",
+  alignSelf: "center"
 };
-
 
 export const cardStyle = {
   border: "none",
@@ -62,7 +62,7 @@ export const cardNameStyle = {
   color: "#222",
   letterSpacing: "0.02em",
   display: "block",
-  wordBreak: "break-word"
+  wordBreak: "break-word",
 };
 
 export const cardIdStyle = {

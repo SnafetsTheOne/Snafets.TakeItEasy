@@ -15,11 +15,10 @@ const Navbar = () => {
 
 	return (
 		<nav style={{
-			width: "100%",
 			background: "#fff",
 			borderBottom: "1px solid #eee",
 			padding: "0.5rem 0 0.75rem 0",
-			marginBottom: "2rem",
+			marginBottom: "1rem",
 			boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
 			position: "sticky",
 			top: 0,

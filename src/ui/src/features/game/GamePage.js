@@ -107,7 +107,6 @@ export const GamePage = () => {
 
   return (
     <div style={{ 
-      width: '100%', 
       maxWidth: 900, 
       margin: '0 auto', 
       position: 'relative',
@@ -228,7 +227,6 @@ export const GamePage = () => {
                   cursor: "pointer", 
                   boxShadow: "0 2px 8px rgba(99,102,241,0.15)",
                   minHeight: '44px',
-                  width: '100%',
                   maxWidth: '150px'
                 }}
               >

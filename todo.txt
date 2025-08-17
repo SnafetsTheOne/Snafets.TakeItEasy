@@ -1,12 +1,3 @@
-- automate frontend deployment
-  - 9009:80
-  - BACKEND_URL: https://takeiteasy.sitkovich.com/
-- automate backend deployment:
-  - 9008:8080
-  - /docker/takeiteasy:/var/lib/takeiteasy
+# TODO List
 
-- make ui mobile friendly
-
-- Icons and website defaults
-
-- chat: for a more social experience
+- Add Feature: chat: for a more social experience

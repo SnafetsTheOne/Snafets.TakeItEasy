@@ -1,10 +1,6 @@
 import HoneycombBoard from "./Honeycomb/HoneycombBoard";
 import {
   cardStyle,
-  cardNameStyle,
-  cardIdStyle,
-  head1,
-  head2,
   verticalContainer,
   verticalContainerItem,
   horizontalContainer,
@@ -12,14 +8,17 @@ import {
 } from "../../infra/css";
 
 export function GameBoard({
-  title,
   board,
   currentTile,
   gameId,
   reloadGame,
   isUser,
 }) {
-  console.log(board);
+  console.log("window.height", window.innerHeight)
+  console.log("window.width", window.innerWidth)
+  const mobile = window.innerWidth < window.innerHeight;
+  const size = mobile ? 35 : 40;
+  const padding = mobile ? "1rem" : "1.5rem";
   currentTile = board.canPlay ? currentTile : null;
   return (
     <div
@@ -50,6 +49,7 @@ export function GameBoard({
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
+            padding: padding,
           }}
         >
           <span
@@ -59,6 +59,8 @@ export function GameBoard({
               color: "#888",
               fontWeight: 400,
               marginBottom: 4,
+              textAlign: "center",
+              alignSelf: "center",
             }}
           >
             Score
@@ -68,6 +70,8 @@ export function GameBoard({
               ...verticalContainerItem,
               fontSize: "2rem",
               fontWeight: 700,
+              textAlign: "center",
+              alignSelf: "center",
             }}
           >
             {board?.score != null ? board.score : "-"}
@@ -84,11 +88,13 @@ export function GameBoard({
             borderRadius: 10,
             alignItems: "center",
             justifyContent: "center",
+            padding: padding,
           }}
         >
           {currentTile ? (
-            <HoneycombBoard           
+            <HoneycombBoard
               radius={0}
+              size={size}
               tiles={[{ placedTile: currentTile }]}
               playerId={board.playerId}
               gameId={gameId}
@@ -107,11 +113,12 @@ export function GameBoard({
           ...cardStyle,
           ...verticalContainerItem,
           justifyContent: "flex-end",
-          padding: "0rem"
+          padding: padding,
         }}
       >
         <HoneycombBoard
           radius={2}
+          size={size}
           tiles={board.spaces}
           playerId={board.playerId}
           gameId={gameId}
