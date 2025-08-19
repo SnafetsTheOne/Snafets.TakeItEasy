@@ -21,8 +21,8 @@ export async function postPlayerMove(gameId, playerId, index) {
     if (!response.ok) throw new Error(`Failed to post move ${response.statusText}`);
 }
 
-export async function getPlayersGames() {
-    const res = await fetch(`${baseUrl}api/Game/`, {
+export async function getPlayersGames(showCompleted = false) {
+    const res = await fetch(`${baseUrl}api/Game/?includeCompleted=${showCompleted}`, {
         credentials: 'include',
     });
     if (!res.ok) throw new Error(`Failed to fetch games for player ${res.statusText}`);

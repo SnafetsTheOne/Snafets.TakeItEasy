@@ -14,6 +14,7 @@ public class LiteDbPlayerRepository(IOptions<LiteDbOptions> options) : IPlayerRe
     {
         return await Task.Run(() =>
         {
+            player.UpdatedAt = DateTime.UtcNow;
             using var db = new LiteDatabase(options.Value.DatabasePath);
             var col = db.GetCollection<PlayerModel>(options.Value.PlayersCollectionName);
             col.Upsert(player);

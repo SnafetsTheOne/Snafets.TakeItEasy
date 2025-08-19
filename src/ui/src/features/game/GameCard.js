@@ -20,6 +20,7 @@ const badgeStyle = {
 
 export default function GameCard({ id, game }) {
   const navigate = useNavigate();
+  console.log(game);
 
   return (
     <div

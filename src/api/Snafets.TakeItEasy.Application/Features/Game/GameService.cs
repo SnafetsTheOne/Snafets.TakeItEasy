@@ -20,9 +20,12 @@ public class GameService : IGameService
         return game;
     }
 
-    public async Task<List<GameModel>> GetGamesByPlayerIdAsync(Guid playerId)
+    public async Task<List<GameModel>> GetGamesByPlayerIdAsync(Guid playerId, bool includeCompleted = false)
     {
-        return (await _repository.GetAllGamesAsync(playerId)).ToList();
+        var games = await _repository.GetAllGamesAsync(playerId);
+        if (!includeCompleted)
+            games = games.Where(g => !g.IsCompleted);
+        return games.OrderBy(g => g.CreatedAt).ToList();
     }
 
     public async Task<GameModel?> GetGameAsync(Guid id)

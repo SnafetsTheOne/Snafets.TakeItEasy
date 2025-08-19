@@ -47,7 +47,7 @@ export const LobbiesPage = () => {
       newLobbys[idx] = lobbyObj;
       return newLobbys;
     } else {
-      return [...prevLobbys, lobbyObj];
+      return [lobbyObj, ...prevLobbys];
     }
   };
 

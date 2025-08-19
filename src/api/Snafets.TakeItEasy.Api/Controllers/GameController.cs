@@ -13,11 +13,11 @@ namespace Snafets.TakeItEasy.Api.Controllers;
 public class GameController(IGameService gameService, ILogger<GameController> logger) : ControllerBase
 {
     [HttpGet, Authorize]
-    public async Task<ActionResult<List<GameModel>>> GetAllGames()
+    public async Task<ActionResult<List<GameModel>>> GetAllGames([FromQuery] bool includeCompleted = false)
     {
         logger.LogInformation("GET /api/game");
         var playerId = Guid.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var games = await gameService.GetGamesByPlayerIdAsync(playerId);
+        var games = await gameService.GetGamesByPlayerIdAsync(playerId, includeCompleted);
         return Ok(games.Select(x => GameDto.FromDomain(x, playerId)));
     }
 

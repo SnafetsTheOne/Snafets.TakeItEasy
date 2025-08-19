@@ -15,6 +15,7 @@ public class LiteDbGameRepository(IOptions<LiteDbOptions> options) : IGameReposi
     {
         await Task.Run(() =>
         {
+            game.UpdatedAt = DateTime.UtcNow;
             using var db = new LiteDatabase(options.Value.DatabasePath);
             var col = db.GetCollection<GameModel>(options.Value.GamesCollectionName);
             col.Upsert(game);

@@ -92,7 +92,8 @@ public class LobbyService : ILobbyService
 
     public async Task<IEnumerable<LobbyModel>> GetAllLobbiesAsync()
     {
-        return await _repository.GetAllLobbiesAsync();
+        var lobbies = await _repository.GetAllLobbiesAsync();
+        return lobbies.OrderByDescending(l => l.CreatedAt);
     }
 
     public async Task<bool> DeleteLobbyAsync(Guid lobbyId, Guid playerId)

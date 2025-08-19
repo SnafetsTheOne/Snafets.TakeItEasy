@@ -46,6 +46,7 @@ public class LiteDbLobbyRepository(IOptions<LiteDbOptions> options) : ILobbyRepo
     {
         await Task.Run(() =>
         {
+            lobby.UpdatedAt = DateTime.UtcNow;
             using var db = new LiteDatabase(options.Value.DatabasePath);
             var col = db.GetCollection<LobbyModel>(options.Value.LobbiesCollectionName);
             col.Upsert(lobby);

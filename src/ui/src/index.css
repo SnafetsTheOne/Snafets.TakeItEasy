@@ -49,21 +49,3 @@ code {
   color: #374151;
   border: 1px solid #d1d5db;
 }
-
-/* Mobile-optimized form elements */
-input, select, textarea {
-  min-height: 44px;
-  font-size: 16px; /* Prevents zoom on iOS */
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.cardstyle {
-  background: #e3f2fd;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  padding: 1.5rem;
-}
