@@ -44,11 +44,11 @@ const Navbar = () => {
 					onMouseEnter={() => setShowTimeInput(true)}
 					onMouseLeave={() => setShowTimeInput(false)}
 				>
+					{showTimeInput && (
+						<input type="text" value={time} readOnly style={{ width: '200px', textAlign: 'center', transition: 'opacity 0.2s' }} />
+					)}
 					{status === "authenticated" ? (
 						<>
-							{showTimeInput && (
-								<input type="text" value={time} readOnly style={{ width: '200px', textAlign: 'center', transition: 'opacity 0.2s' }} />
-							)}
 							<span style={{ background: "none", border: "none", color: "#222", fontWeight: 500, fontSize: "1.1rem",  }}>{user.name}</span>
 							<button onClick={logout} style={{ background: "none", border: "none", color: "#222", fontWeight: 500, fontSize: "1.1rem", cursor: "pointer" }}>Logout</button>
 						</>

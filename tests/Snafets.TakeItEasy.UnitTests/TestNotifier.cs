@@ -9,17 +9,17 @@ public class TestNotifier : INotifier
         return Task.CompletedTask;
     }
 
-    public Task NotifyGameStartUpdate(Guid userId, Guid lobbyId, Guid gameId)
-    {
-        return Task.CompletedTask;
-    }
-
     public Task NotifyGameUpdate(Guid playerId, Guid gameId)
     {
         return Task.CompletedTask;
     }
 
-    public Task NotifyLobbyUpdate(Guid userId, Guid lobbyId)
+    public Task NotifyLobbyUpdateAll(Guid lobbyId)
+    {
+        return Task.CompletedTask;
+    }
+
+        public Task NotifyGameStartUpdate(Guid userId, Guid lobbyId, Guid gameId)
     {
         return Task.CompletedTask;
     }

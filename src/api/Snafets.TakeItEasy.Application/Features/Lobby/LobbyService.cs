@@ -27,6 +27,7 @@ public class LobbyService : ILobbyService
             CreatedAt = DateTime.UtcNow
         };
         await _repository.SaveLobbyAsync(lobby);
+        await _notifier.NotifyLobbyUpdateAll(lobby.Id);
         return lobby;
     }
 
@@ -42,10 +43,7 @@ public class LobbyService : ILobbyService
             lobby.PlayerIds.Add(playerId);
             await _repository.SaveLobbyAsync(lobby);
         }
-        foreach (var otherPlayerId in lobby.PlayerIds.Where(id => id != playerId))
-        {
-            await _notifier.NotifyLobbyUpdate(otherPlayerId, lobby.Id);
-        }
+        await _notifier.NotifyLobbyUpdateAll(lobby.Id);
         return lobby;
     }
 
@@ -62,14 +60,12 @@ public class LobbyService : ILobbyService
             if (lobby.PlayerIds.Count == 0)
             {
                 await _repository.DeleteLobbyAsync(lobbyId);
+                await _notifier.NotifyLobbyUpdateAll(lobbyId);
                 return true;
             }
             await _repository.SaveLobbyAsync(lobby);
         }
-        foreach (var otherPlayerId in lobby.PlayerIds.Where(id => id != playerId))
-        {
-            await _notifier.NotifyLobbyUpdate(otherPlayerId, lobby.Id);
-        }
+        await _notifier.NotifyLobbyUpdateAll(lobby.Id);
         return true;
     }
 
@@ -90,6 +86,7 @@ public class LobbyService : ILobbyService
         {
             await _notifier.NotifyGameStartUpdate(otherPlayerId, lobbyId, game.Id);
         }
+        await _notifier.NotifyLobbyUpdateAll(lobbyId);
         return game;
     }
 
@@ -108,10 +105,7 @@ public class LobbyService : ILobbyService
         var result = await _repository.DeleteLobbyAsync(lobbyId);
         if (result)
         {
-            foreach (var otherPlayerId in lobby.PlayerIds.Where(id => id != playerId))
-            {
-                await _notifier.NotifyLobbyUpdate(otherPlayerId, lobbyId);
-            }
+            await _notifier.NotifyLobbyUpdateAll(lobbyId);
         }
         return result;
     }

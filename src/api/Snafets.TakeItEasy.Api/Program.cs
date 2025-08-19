@@ -99,7 +99,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.MapHub<UpdatesHub>("/hubs/updates").RequireAuthorization();
+app.MapHub<UpdatesHub>("/hubs/updates");
 
 await app.RunAsync();
 

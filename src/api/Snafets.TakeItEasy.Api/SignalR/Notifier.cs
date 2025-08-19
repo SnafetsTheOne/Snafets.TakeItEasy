@@ -23,8 +23,8 @@ public class Notifier : INotifier
         return _hub.Clients.User(userId.ToString()).SendAsync("gameUpdate", gameId);
     }
 
-    public Task NotifyLobbyUpdate(Guid userId, Guid lobbyId)
+    public Task NotifyLobbyUpdateAll(Guid lobbyId)
     {
-        return _hub.Clients.User(userId.ToString()).SendAsync("lobbyUpdate", lobbyId);
+        return _hub.Clients.All.SendAsync("lobbyUpdate", lobbyId);
     }
 }

@@ -34,43 +34,40 @@ export const LobbiesPage = () => {
     reloadPage();
   }, []);
 
+  // Function to update the lobby list with a given id and lobby object
+  // Expects lobbyObj=null when lobby not found (deleted)
+  const updateLobbyList = (prevLobbys, lobbyId, lobbyObj) => {
+    if (lobbyObj == null) {
+      // Remove the lobby by id
+      return prevLobbys.filter(l => l.id !== lobbyId);
+    }
+    const idx = prevLobbys.findIndex(l => l.id === lobbyId);
+    if (idx !== -1) {
+      const newLobbys = [...prevLobbys];
+      newLobbys[idx] = lobbyObj;
+      return newLobbys;
+    } else {
+      return [...prevLobbys, lobbyObj];
+    }
+  };
+
   // Subscribe to LobbyUpdate SignalR event
   React.useEffect(() => {
-    // Handler for LobbyUpdate event
-    const unsubscribe = on("lobbyUpdate", async (updatedLobbyOrId) => {
-      let updatedLobby = updatedLobbyOrId;
-      let lobbyNotFound = false;
-      // If only an id is provided, fetch the full lobby
-      if (typeof updatedLobbyOrId === "string" || typeof updatedLobbyOrId === "number") {
-        try {
-          updatedLobby = await getLobbyById(updatedLobbyOrId);
-        } catch (e) {
-          // If 404, lobby was deleted; remove it from the list
-          lobbyNotFound = true;
-        }
+    const unsubscribe = on("lobbyUpdate", async (updatedLobbyId) => {
+      let lobbyObj = null;
+      try {
+        lobbyObj = await getLobbyById(updatedLobbyId);
+      } catch (e) {
+        lobbyObj = null;
       }
-      setLobbys((prevLobbys) => {
-        if (lobbyNotFound) {
-          // Remove the lobby by id
-          return prevLobbys.filter(l => l.id !== updatedLobbyOrId);
-        }
-        const idx = prevLobbys.findIndex(l => l.id === updatedLobby.id);
-        if (idx !== -1) {
-          const newLobbys = [...prevLobbys];
-          newLobbys[idx] = updatedLobby;
-          return newLobbys;
-        } else {
-          return [...prevLobbys, updatedLobby];
-        }
-      });
+      setLobbys((prevLobbys) => updateLobbyList(prevLobbys, updatedLobbyId, lobbyObj));
     });
     return unsubscribe;
   }, [on]);
 
   const handleJoin = async (lobbyId) => {
-    await joinLobby(lobbyId, currentUserId);
-    // Refresh lobbys after join
-    reloadPage();
+    const newLobby = await joinLobby(lobbyId, currentUserId);
+    setLobbys((prevLobbys) => updateLobbyList(prevLobbys, lobbyId, newLobby));
   };
 
   const [newLobbyName, setNewLobbyName] = React.useState("");
@@ -78,9 +75,9 @@ export const LobbiesPage = () => {
   const handleAddLobby = async (e) => {
     e.preventDefault();
     if (!newLobbyName.trim()) return;
-    await createLobby(newLobbyName.trim(), currentUserId);
+    const newLobby = await createLobby(newLobbyName.trim(), currentUserId);
     setNewLobbyName("");
-    reloadPage();
+    setLobbys((prevLobbys) => updateLobbyList(prevLobbys, newLobby.id, newLobby));
   };
 
   return (
