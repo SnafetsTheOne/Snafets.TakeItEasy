@@ -3,6 +3,7 @@ import {
   fetchAllLobbies,
   joinLobby,
   createLobby,
+  getLobbyById,
 } from "../../data-access/lobby";
 import LobbyCard from "./LobbyCard";
 import CreateLobbyCard from "./CreateLobbyCard";
@@ -16,10 +17,12 @@ import {
   verticalContainer,
   verticalContainerItem,
 } from "../../infra/css";
+import { useRealtime } from "../../infra/RealtimeProvider";
 
 export const LobbiesPage = () => {
   const [lobbys, setLobbys] = React.useState([]);
   const { user } = useAuth();
+  const { on } = useRealtime();
 
   const currentUserId = user?.id;
 
@@ -30,6 +33,39 @@ export const LobbiesPage = () => {
   React.useEffect(() => {
     reloadPage();
   }, []);
+
+  // Subscribe to LobbyUpdate SignalR event
+  React.useEffect(() => {
+    // Handler for LobbyUpdate event
+    const unsubscribe = on("lobbyUpdate", async (updatedLobbyOrId) => {
+      let updatedLobby = updatedLobbyOrId;
+      let lobbyNotFound = false;
+      // If only an id is provided, fetch the full lobby
+      if (typeof updatedLobbyOrId === "string" || typeof updatedLobbyOrId === "number") {
+        try {
+          updatedLobby = await getLobbyById(updatedLobbyOrId);
+        } catch (e) {
+          // If 404, lobby was deleted; remove it from the list
+          lobbyNotFound = true;
+        }
+      }
+      setLobbys((prevLobbys) => {
+        if (lobbyNotFound) {
+          // Remove the lobby by id
+          return prevLobbys.filter(l => l.id !== updatedLobbyOrId);
+        }
+        const idx = prevLobbys.findIndex(l => l.id === updatedLobby.id);
+        if (idx !== -1) {
+          const newLobbys = [...prevLobbys];
+          newLobbys[idx] = updatedLobby;
+          return newLobbys;
+        } else {
+          return [...prevLobbys, updatedLobby];
+        }
+      });
+    });
+    return unsubscribe;
+  }, [on]);
 
   const handleJoin = async (lobbyId) => {
     await joinLobby(lobbyId, currentUserId);

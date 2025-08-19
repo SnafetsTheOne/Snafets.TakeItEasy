@@ -7,31 +7,44 @@ export function RealtimeProvider({  children, }) {
   const connectionRef = useRef(null);
   const handlersRef = useRef(new Map());
 
-  useEffect(() => {
+  // Helper to rebind all handlers
+  const rebindAll = () => {
+    const conn = connectionRef.current;
+    handlersRef.current.forEach((set, evt) => {
+      conn.off(evt);
+      set.forEach((h) => conn.on(evt, h));
+    });
+  };
+
+  // Helper to start connection
+  const startConnection = async () => {
     const conn = buildConnection();
     connectionRef.current = conn;
-
-    // Rebind all handlers after reconnects
-    const rebindAll = () => {
-      handlersRef.current.forEach((set, evt) => {
-        // Clear any previous bindings for safety
-        conn.off(evt);
-        set.forEach((h) => conn.on(evt, h));
-      });
-    };
-
     conn.onreconnected(rebindAll);
-    conn.onreconnecting(() => {
-      // optional: emit an app-wide status event
-    });
+    conn.onreconnecting(() => {});
+    try {
+      await conn.start();
+      rebindAll();
+    } catch (e) {
+      console.error("SignalR start failed", e);
+    }
+  };
 
-    conn
-      .start()
-      .then(rebindAll)
-      .catch((e) => console.error("SignalR start failed", e));
+  // Expose restartConnection
+  const restartConnection = async () => {
+    if (connectionRef.current) {
+      try {
+        await connectionRef.current.stop();
+      } catch {}
+      connectionRef.current = null;
+    }
+    await startConnection();
+  };
 
+  useEffect(() => {
+    startConnection();
     return () => {
-      conn.stop().catch(() => {});
+      if (connectionRef.current) connectionRef.current.stop().catch(() => {});
       connectionRef.current = null;
       handlersRef.current.clear();
     };
@@ -44,9 +57,7 @@ export function RealtimeProvider({  children, }) {
         const conn = connectionRef.current;
         if (!handlersRef.current.has(event)) handlersRef.current.set(event, new Set());
         handlersRef.current.get(event).add(handler);
-
         if (conn) conn.on(event, handler);
-
         // Unsubscribe
         return () => {
           handlersRef.current.get(event)?.delete(handler);
@@ -58,6 +69,7 @@ export function RealtimeProvider({  children, }) {
         if (!conn) throw new Error("No SignalR connection");
         await conn.send(method, ...args);
       },
+      restartConnection, // <-- Expose here
     };
   }, []);
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../infra/AuthProvider";
+import { useRealtime } from "../../infra/RealtimeProvider";
 import { sha256Hex } from "./sha256";
 import {
   cardStyle,
@@ -14,6 +15,7 @@ import {
 
 export const LoginPage = () => {
   const { login } = useAuth();
+  const { restartConnection } = useRealtime();
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -22,6 +24,7 @@ export const LoginPage = () => {
     e.preventDefault();
     const passwordHash = await sha256Hex(name + ":" + password);
     await login(name, passwordHash);
+    await restartConnection();
     setName("");
     setPassword("");
     navigate("/");

@@ -7,6 +7,13 @@ export function buildConnection() {
     .withUrl(`${baseUrl}hubs/updates`, {
       withCredentials: true
     })
-    .withAutomaticReconnect()
+    .withAutomaticReconnect({
+      nextRetryDelayInMilliseconds(ctx) {
+        if (!ctx) return 0;
+        const tries = ctx.previousRetryCount + 1;
+        const delays = [2000, 5000, 10000, 20000, 30000];
+        return delays[Math.min(tries - 1, delays.length - 1)];
+      },
+    })
     .build();
 }

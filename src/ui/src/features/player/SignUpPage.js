@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../infra/AuthProvider";
 import { signUp } from "../../data-access/player";
 import { sha256Hex } from "./sha256";
+import { useRealtime } from "../../infra/RealtimeProvider";
 import {
   cardStyle,
   cardNameStyle,
@@ -15,6 +16,7 @@ import {
 
 export const SignUpPage = () => {
   const { login } = useAuth();
+  const { restartConnection } = useRealtime();
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -24,6 +26,7 @@ export const SignUpPage = () => {
     const passwordHash = await sha256Hex(name + ":" + password);
     await signUp(name, passwordHash);
     await login(name, passwordHash);
+    await restartConnection();
     setName("");
     setPassword("");
     navigate("/");
