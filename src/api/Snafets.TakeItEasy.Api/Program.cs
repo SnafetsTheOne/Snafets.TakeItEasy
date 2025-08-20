@@ -41,7 +41,7 @@ builder.Services
         options.Cookie.SameSite = SameSiteMode.Lax; // Lax is a good default for CSRF protection + UX
         options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; // use HTTPS in prod
         options.SlidingExpiration = true;
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // session length
+        options.ExpireTimeSpan = TimeSpan.FromDays(30); // session length
         // No LoginPath redirect since we're building an API; we'll return 401s
         options.Events = new CookieAuthenticationEvents
         {
@@ -53,7 +53,8 @@ builder.Services
                     return Task.CompletedTask;
                 }
                 ctx.Response.Redirect(ctx.RedirectUri);
-                return Task.CompletedTask;            },
+                return Task.CompletedTask;
+            },
             OnRedirectToAccessDenied = ctx =>
             {
                 if (IsApiOrSignalR(ctx.Request))
@@ -62,7 +63,8 @@ builder.Services
                     return Task.CompletedTask;
                 }
                 ctx.Response.Redirect(ctx.RedirectUri);
-                return Task.CompletedTask;            }
+                return Task.CompletedTask;
+            }
         };
     });
 builder.Services.AddSignalR();

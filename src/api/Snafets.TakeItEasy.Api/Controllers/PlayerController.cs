@@ -39,8 +39,8 @@ public class PlayerController(IPlayerService playerService, ILogger<PlayerContro
 
         var authProps = new AuthenticationProperties
         {
-            IsPersistent = true,                          // keep cookie across sessions
-            ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(60) // match ExpireTimeSpan above
+            IsPersistent = true,                           // keep cookie across sessions
+            ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30) // match ExpireTimeSpan above
         };
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProps);
