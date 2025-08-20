@@ -1,5 +1,5 @@
 # Use official Node.js image for build
-FROM node:latest AS build
+FROM library/node:latest AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
