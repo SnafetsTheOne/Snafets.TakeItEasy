@@ -402,3 +402,9 @@ FodyWeavers.xsd
 
 # images
 images/
+
+# cursor
+.cursor
+
+# github copilot
+.github/instructions
