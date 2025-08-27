@@ -1,6 +1,6 @@
 const baseUrl = window.__ENV__?.BACKEND_URL ?? "";
 
-// Centralized API calls for game
+// api: src/api/Snafets.TakeItEasy.Api/Controllers/GameController.cs
 export async function fetchGameById(id) {
 	const res = await fetch(`${baseUrl}api/Game/${id}`, {
         credentials: 'include',

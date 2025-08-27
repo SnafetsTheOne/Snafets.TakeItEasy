@@ -2,6 +2,7 @@ import * as signalR from "@microsoft/signalr";
 
 const baseUrl = window.__ENV__?.BACKEND_URL ?? "";
 
+// api: src/api/Snafets.TakeItEasy.Api/SignalR/UpdatesHub.cs
 export function buildConnection() {
   return new signalR.HubConnectionBuilder()
     .withUrl(`${baseUrl}hubs/updates`, {

@@ -1,6 +1,6 @@
 const baseUrl = window.__ENV__?.BACKEND_URL ?? "";
 
-// Centralized API calls for lobby
+// api: src/api/Snafets.TakeItEasy.Api/Controllers/LobbyController.cs
 export async function fetchAllLobbies() {
     const res = await fetch(`${baseUrl}api/Lobby`);
     if (!res.ok) throw new Error(`Failed to fetch lobbies ${res.statusText}`);

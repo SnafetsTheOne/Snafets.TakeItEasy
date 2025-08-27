@@ -8,6 +8,7 @@ using Snafets.TakeItEasy.Domain.Game;
 
 namespace Snafets.TakeItEasy.Api.Controllers;
 
+// data access: src/ui/src/data-access/game.js
 [ApiController]
 [Route("api/[controller]")]
 public class GameController(IGameService gameService, ILogger<GameController> logger) : ControllerBase

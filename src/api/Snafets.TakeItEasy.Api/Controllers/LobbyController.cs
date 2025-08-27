@@ -7,6 +7,7 @@ using System.Security.Claims;
 
 namespace Snafets.TakeItEasy.Api.Controllers;
 
+// data access: src/ui/src/data-access/lobby.js
 [ApiController]
 [Route("api/[controller]")]
 public class LobbyController(ILobbyService lobbyService, ILogger<LobbyController> logger) : ControllerBase

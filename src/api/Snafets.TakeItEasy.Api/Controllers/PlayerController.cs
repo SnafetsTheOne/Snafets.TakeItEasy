@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Snafets.TakeItEasy.Api.Controllers;
 
+// data access: src/ui/src/data-access/player.js
 [ApiController]
 [Route("api/[controller]")]
 public class PlayerController(IPlayerService playerService, ILogger<PlayerController> logger) : ControllerBase

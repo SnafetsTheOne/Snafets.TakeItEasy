@@ -3,6 +3,7 @@ using System.Security.Claims;
 
 namespace Snafets.TakeItEasy.Api.SignalR;
 
+// data-access: src/ui/src/data-access/realtime.js
 public class UpdatesHub : Hub
 {
     public override Task OnConnectedAsync()

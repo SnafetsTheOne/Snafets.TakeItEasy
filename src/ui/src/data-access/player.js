@@ -1,6 +1,6 @@
 const baseUrl = window.__ENV__?.BACKEND_URL ?? "";
 
-// Centralized API calls for player
+// api: src/api/Snafets.TakeItEasy.Api/Controllers/PlayerController.cs
 export async function getPlayerById(id) {
     const response = await fetch(`${baseUrl}api/Player/${id}`);
     if (!response.ok) throw new Error(`Failed to fetch player ${response.statusText}`);
