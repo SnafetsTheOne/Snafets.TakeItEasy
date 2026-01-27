@@ -1,5 +1,9 @@
-# Use the official .NET 9 SDK image for build
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+# Use BuildKit's inferred platforms
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+
+# Use the official .NET 9 SDK image for build (matching the build platform)
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copy csproj and restore as distinct layers
@@ -13,12 +17,13 @@ RUN dotnet restore Snafets.TakeItEasy.Api/Snafets.TakeItEasy.Api.csproj
 COPY . ./
 RUN dotnet publish -c Release -o /app/publish Snafets.TakeItEasy.Api/Snafets.TakeItEasy.Api.csproj
 
-# Use the official ASP.NET Core runtime image for final stage
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
+# Use the official ASP.NET Core runtime image for final stage, targeting the requested platform (e.g., linux/arm64)
+ARG TARGETPLATFORM
+FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
-# Expose port 80
+# Expose port 8080
 EXPOSE 8080
 
 # Start the web service

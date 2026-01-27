@@ -1,0 +1,36 @@
+# Build artifacts
+**/bin/
+**/obj/
+**/TestResults/
+**/.vs/
+**/.vscode/
+**/.idea/
+
+# Git
+.git
+.gitignore
+
+# Node modules and build output
+src/ui/node_modules/
+src/ui/build/
+src/ui/dist/
+
+# Docker
+**/.docker/
+**/*.md
+**/*.tar
+
+# OS files
+**/.DS_Store
+**/Thumbs.db
+
+# Local databases and secrets
+**/*.db
+**/*.sqlite
+**/*.sqlite3
+**/.env
+**/.env.*
+
+# Coverage
+**/coverage/
+**/lcov.info
